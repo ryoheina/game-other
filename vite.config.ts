@@ -11,7 +11,11 @@ export default defineConfig({
     server: {
       // Render forwards requests using this public hostname. Vite blocks hosts
       // that are not explicitly trusted when the development server is exposed.
-      allowedHosts: ["game-other.onrender.com"],
+      allowedHosts: [
+        "game-other.onrender.com",
+        "regendofwar.publicvm.com",
+        "www.regendofwar.publicvm.com",
+      ],
     },
     build: {
       sourcemap: false,
