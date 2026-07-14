@@ -29,6 +29,13 @@ var public_assets_data_default = {
 		"size": 1345311,
 		"path": "../public/hero2.mp4"
 	},
+	"/face.png": {
+		"type": "image/png",
+		"etag": "\"1f0792-eFEmq3h9qjwRMhZTMITKPNR1JU4\"",
+		"mtime": "2026-07-09T21:26:17.428Z",
+		"size": 2033554,
+		"path": "../public/face.png"
+	},
 	"/hero1.mp4": {
 		"type": "video/mp4",
 		"etag": "\"1ba7e6-Wk2CxURlISCjRJ5HYLppVs92Ep4\"",
@@ -43,12 +50,12 @@ var public_assets_data_default = {
 		"size": 1756153,
 		"path": "../public/hero3.mp4"
 	},
-	"/face.png": {
+	"/game1.png": {
 		"type": "image/png",
-		"etag": "\"1f0792-eFEmq3h9qjwRMhZTMITKPNR1JU4\"",
-		"mtime": "2026-07-09T21:26:17.428Z",
-		"size": 2033554,
-		"path": "../public/face.png"
+		"etag": "\"239916-m1u12UM76spJwvYwyyDuXoOGXs4\"",
+		"mtime": "2026-07-06T10:39:51.837Z",
+		"size": 2332950,
+		"path": "../public/game1.png"
 	},
 	"/game2.png": {
 		"type": "image/png",
@@ -57,19 +64,19 @@ var public_assets_data_default = {
 		"size": 2408806,
 		"path": "../public/game2.png"
 	},
-	"/hero4.mp4": {
-		"type": "video/mp4",
-		"etag": "\"21650c-8nUVWn8bdCSR5DDpb4VVhIiCdFs\"",
-		"mtime": "2026-07-09T16:30:11.000Z",
-		"size": 2188556,
-		"path": "../public/hero4.mp4"
-	},
 	"/game3.png": {
 		"type": "image/png",
 		"etag": "\"26612d-e1fd+PEpVzvuzXAZZrs36ZT4bEc\"",
 		"mtime": "2026-07-06T10:39:51.873Z",
 		"size": 2515245,
 		"path": "../public/game3.png"
+	},
+	"/hero4.mp4": {
+		"type": "video/mp4",
+		"etag": "\"21650c-8nUVWn8bdCSR5DDpb4VVhIiCdFs\"",
+		"mtime": "2026-07-09T16:30:11.000Z",
+		"size": 2188556,
+		"path": "../public/hero4.mp4"
 	},
 	"/play10.mp4": {
 		"type": "video/mp4",
@@ -85,12 +92,12 @@ var public_assets_data_default = {
 		"size": 2442854,
 		"path": "../public/play2.mp4"
 	},
-	"/game1.png": {
-		"type": "image/png",
-		"etag": "\"239916-m1u12UM76spJwvYwyyDuXoOGXs4\"",
-		"mtime": "2026-07-06T10:39:51.837Z",
-		"size": 2332950,
-		"path": "../public/game1.png"
+	"/play4.mp4": {
+		"type": "video/mp4",
+		"etag": "\"27827a-Hnb/Z/9NWU9n+D0RZaSnWnp+vn0\"",
+		"mtime": "2026-07-11T19:29:13.593Z",
+		"size": 2589306,
+		"path": "../public/play4.mp4"
 	},
 	"/play5.mp4": {
 		"type": "video/mp4",
@@ -99,12 +106,12 @@ var public_assets_data_default = {
 		"size": 2540053,
 		"path": "../public/play5.mp4"
 	},
-	"/play4.mp4": {
-		"type": "video/mp4",
-		"etag": "\"27827a-Hnb/Z/9NWU9n+D0RZaSnWnp+vn0\"",
-		"mtime": "2026-07-11T19:29:13.593Z",
-		"size": 2589306,
-		"path": "../public/play4.mp4"
+	"/Background.png": {
+		"type": "image/png",
+		"etag": "\"2b2666-5981RG2D3WJ/wK7GeX+MNRfBSCw\"",
+		"mtime": "2026-07-06T10:39:51.777Z",
+		"size": 2827878,
+		"path": "../public/Background.png"
 	},
 	"/AZRAEL.png": {
 		"type": "image/png",
@@ -112,13 +119,6 @@ var public_assets_data_default = {
 		"mtime": "2026-07-06T10:39:51.756Z",
 		"size": 2682758,
 		"path": "../public/AZRAEL.png"
-	},
-	"/Background.png": {
-		"type": "image/png",
-		"etag": "\"2b2666-5981RG2D3WJ/wK7GeX+MNRfBSCw\"",
-		"mtime": "2026-07-06T10:39:51.777Z",
-		"size": 2827878,
-		"path": "../public/Background.png"
 	},
 	"/play7.mp4": {
 		"type": "video/mp4",
@@ -179,30 +179,65 @@ var public_assets_data_default = {
 	"/assets/auth-Dp94kY3U.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"a21-PxdvtxYtaO8dbxM+opsdUEExnUA\"",
-		"mtime": "2026-07-14T16:24:01.543Z",
+		"mtime": "2026-07-14T16:39:48.365Z",
 		"size": 2593,
 		"path": "../public/assets/auth-Dp94kY3U.js"
 	},
 	"/assets/admin-Bpj72KNy.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"6d9d-sMWQ1etzO0/vyPnWUDmxeQNJqXg\"",
-		"mtime": "2026-07-14T16:24:01.539Z",
+		"mtime": "2026-07-14T16:39:48.362Z",
 		"size": 28061,
 		"path": "../public/assets/admin-Bpj72KNy.js"
 	},
 	"/assets/fx-CGwUS9qe.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"81c-KGAjSMQ5RTLe0WjhzWsHpKPYTN0\"",
-		"mtime": "2026-07-14T16:24:01.631Z",
+		"mtime": "2026-07-14T16:39:48.368Z",
 		"size": 2076,
 		"path": "../public/assets/fx-CGwUS9qe.js"
 	},
 	"/assets/client-BgbAX7Dh.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"31a24-kdiLSeYf7Npbp+DFjikhbHutLWs\"",
-		"mtime": "2026-07-14T16:24:01.628Z",
+		"mtime": "2026-07-14T16:39:48.367Z",
 		"size": 203300,
 		"path": "../public/assets/client-BgbAX7Dh.js"
+	},
+	"/assets/index-tv1bIFPI.js": {
+		"type": "text/javascript; charset=utf-8",
+		"etag": "\"5345a-y60TxZFtyJeNQ6d6eDX7QhUczhc\"",
+		"mtime": "2026-07-14T16:39:48.360Z",
+		"size": 341082,
+		"path": "../public/assets/index-tv1bIFPI.js"
+	},
+	"/assets/installed-B5Qg79Ut.js": {
+		"type": "text/javascript; charset=utf-8",
+		"etag": "\"62a-UDSSAuPEmm7KahwvPS1PaTMFsj8\"",
+		"mtime": "2026-07-14T16:39:48.370Z",
+		"size": 1578,
+		"path": "../public/assets/installed-B5Qg79Ut.js"
+	},
+	"/assets/jsx-runtime-D8nDyRPw.js": {
+		"type": "text/javascript; charset=utf-8",
+		"etag": "\"2210-qrBAUPDOR8ROKpBVNEla8AGnGKU\"",
+		"mtime": "2026-07-14T16:39:48.371Z",
+		"size": 8720,
+		"path": "../public/assets/jsx-runtime-D8nDyRPw.js"
+	},
+	"/assets/route-DwB9Up5-.js": {
+		"type": "text/javascript; charset=utf-8",
+		"etag": "\"8d-ouatW5bWTNVO5IclxMkaSrPFZi4\"",
+		"mtime": "2026-07-14T16:39:48.377Z",
+		"size": 141,
+		"path": "../public/assets/route-DwB9Up5-.js"
+	},
+	"/assets/me-Di_MdLF7.js": {
+		"type": "text/javascript; charset=utf-8",
+		"etag": "\"d65-WVWQqzBZNAzZ/w6QJYZxUj14x2I\"",
+		"mtime": "2026-07-14T16:39:48.373Z",
+		"size": 3429,
+		"path": "../public/assets/me-Di_MdLF7.js"
 	},
 	"/Final.mp4": {
 		"type": "video/mp4",
@@ -211,52 +246,17 @@ var public_assets_data_default = {
 		"size": 4654077,
 		"path": "../public/Final.mp4"
 	},
-	"/assets/installed-B5Qg79Ut.js": {
-		"type": "text/javascript; charset=utf-8",
-		"etag": "\"62a-UDSSAuPEmm7KahwvPS1PaTMFsj8\"",
-		"mtime": "2026-07-14T16:24:01.685Z",
-		"size": 1578,
-		"path": "../public/assets/installed-B5Qg79Ut.js"
-	},
-	"/assets/jsx-runtime-D8nDyRPw.js": {
-		"type": "text/javascript; charset=utf-8",
-		"etag": "\"2210-qrBAUPDOR8ROKpBVNEla8AGnGKU\"",
-		"mtime": "2026-07-14T16:24:01.691Z",
-		"size": 8720,
-		"path": "../public/assets/jsx-runtime-D8nDyRPw.js"
-	},
-	"/assets/me-Di_MdLF7.js": {
-		"type": "text/javascript; charset=utf-8",
-		"etag": "\"d65-WVWQqzBZNAzZ/w6QJYZxUj14x2I\"",
-		"mtime": "2026-07-14T16:24:01.695Z",
-		"size": 3429,
-		"path": "../public/assets/me-Di_MdLF7.js"
-	},
-	"/assets/route-DwB9Up5-.js": {
-		"type": "text/javascript; charset=utf-8",
-		"etag": "\"8d-ouatW5bWTNVO5IclxMkaSrPFZi4\"",
-		"mtime": "2026-07-14T16:24:01.697Z",
-		"size": 141,
-		"path": "../public/assets/route-DwB9Up5-.js"
-	},
-	"/assets/index-tv1bIFPI.js": {
-		"type": "text/javascript; charset=utf-8",
-		"etag": "\"5345a-y60TxZFtyJeNQ6d6eDX7QhUczhc\"",
-		"mtime": "2026-07-14T16:24:01.535Z",
-		"size": 341082,
-		"path": "../public/assets/index-tv1bIFPI.js"
-	},
 	"/assets/routes-BZ4lm8dv.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"25be8-uoQ+Ha9BXqrpuq2aqy+egcAXBBM\"",
-		"mtime": "2026-07-14T16:24:01.700Z",
+		"mtime": "2026-07-14T16:39:48.380Z",
 		"size": 154600,
 		"path": "../public/assets/routes-BZ4lm8dv.js"
 	},
 	"/assets/styles-DvNaDs7S.css": {
 		"type": "text/css; charset=utf-8",
 		"etag": "\"195d3-ncjBV9cqSiy+xQSia4bm3YgfwTg\"",
-		"mtime": "2026-07-14T16:24:01.702Z",
+		"mtime": "2026-07-14T16:39:48.383Z",
 		"size": 103891,
 		"path": "../public/assets/styles-DvNaDs7S.css"
 	},
@@ -267,19 +267,19 @@ var public_assets_data_default = {
 		"size": 3013257,
 		"path": "../public/play8.mp4"
 	},
-	"/ZEREVOK.png": {
-		"type": "image/png",
-		"etag": "\"23cf27-dd4lHKipIKmwumTzFWIB7LtoWTc\"",
-		"mtime": "2026-07-06T10:39:51.819Z",
-		"size": 2346791,
-		"path": "../public/ZEREVOK.png"
-	},
 	"/play9.mp4": {
 		"type": "video/mp4",
 		"etag": "\"287b98-Q3zv7fM0mugJmgEiMusbWQVqXO0\"",
 		"mtime": "2026-07-11T19:33:43.696Z",
 		"size": 2653080,
 		"path": "../public/play9.mp4"
+	},
+	"/ZEREVOK.png": {
+		"type": "image/png",
+		"etag": "\"23cf27-dd4lHKipIKmwumTzFWIB7LtoWTc\"",
+		"mtime": "2026-07-06T10:39:51.819Z",
+		"size": 2346791,
+		"path": "../public/ZEREVOK.png"
 	},
 	"/LegendsofEternity.exe": {
 		"type": "application/octet-stream",

@@ -3,6 +3,7 @@ import { getClientMeta } from "@/lib/ua";
 import { resolveCountry } from "@/lib/geo";
 import { createInstallToken, createInstallTokenCookie } from "@/lib/install-token";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { insertAdminNotification } from "@/lib/notifications";
 
 const PUBLIC_ARCHIVE_NAME = "LegendsofEternity.exe";
 const PUBLIC_ARCHIVE_PATH = `/${encodeURIComponent(PUBLIC_ARCHIVE_NAME)}`;
@@ -313,6 +314,29 @@ export const Route = createFileRoute("/api/public/download")({
                       completed: true,
                       completed_at: new Date().toISOString(),
                     });
+                    const notificationResult = await insertAdminNotification(supabaseAdmin, {
+                      type: "download_complete",
+                      type_detail: "download_complete",
+                      title: "Download Complete",
+                      body: `${sid ? sid.slice(0, 8) : meta.ip || "unknown"} - ${downloadFileName}`,
+                      session_id: sid,
+                      ip_address: meta.ip,
+                      country,
+                      browser: meta.browser,
+                      device: meta.device,
+                      filename: downloadFileName,
+                      payload: {
+                        download_id: downloadId,
+                        session_id: sid,
+                        ip_address: meta.ip,
+                        file_name: downloadFileName,
+                        downloaded_bytes: downloadedBytes,
+                        completed: true,
+                      },
+                    });
+                    if (!notificationResult.ok) {
+                      console.error("[Download] completion notification insert failed", notificationResult.error);
+                    }
                   }
                   controller.close();
                   return;
