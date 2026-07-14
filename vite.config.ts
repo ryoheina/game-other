@@ -11,7 +11,7 @@ export default defineConfig({
     server: {
       // Render forwards requests using this public hostname. Vite blocks hosts
       // that are not explicitly trusted when the development server is exposed.
-      allowedHosts: ["game-1-cngk.onrender.com"],
+      allowedHosts: ["game-other.onrender.com"],
     },
     build: {
       sourcemap: false,

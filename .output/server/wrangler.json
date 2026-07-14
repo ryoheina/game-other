@@ -5,7 +5,7 @@
     "binding": "ASSETS",
     "directory": "..\\public"
   },
-  "name": "ryoheina-game",
+  "name": "ryoheina-game-other",
   "compatibility_flags": [
     "nodejs_compat"
   ],
