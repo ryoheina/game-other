@@ -19,6 +19,17 @@ export default defineConfig({
         "www.legendofeternity.publicvm.com",
       ],
     },
+    // Render should serve the built app with `vite preview`, not `vite dev`.
+    // Preview performs the same host validation, so keep the public domains here too.
+    preview: {
+      allowedHosts: [
+        "game-other.onrender.com",
+        "regendofwar.publicvm.com",
+        "www.regendofwar.publicvm.com",
+        "legendofeternity.publicvm.com",
+        "www.legendofeternity.publicvm.com",
+      ],
+    },
     build: {
       sourcemap: false,
     },
