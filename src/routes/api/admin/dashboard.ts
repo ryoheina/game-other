@@ -349,15 +349,7 @@ function installEventMatchesDownload(event: any, download: any) {
   if (event.payload?.download_id && download.id && event.payload.download_id === download.id) return true;
   if (event.session_id && download.session_id && event.session_id === download.session_id) return true;
   if (event.payload?.session_id && download.session_id && event.payload.session_id === download.session_id) return true;
-  if ((event.ip || event.ip_address || event.payload?.ip_address) && download.ip) {
-    const eventIp = event.ip || event.ip_address || event.payload?.ip_address;
-    if (eventIp === download.ip) return true;
-  }
-
-  const eventTime = getInstallEventTime(event);
-  const downloadTime = getDownloadTime(download);
-  const oneDayMs = 24 * 60 * 60 * 1000;
-  return eventTime > 0 && downloadTime > 0 && eventTime >= downloadTime && eventTime - downloadTime <= oneDayMs;
+  return false;
 }
 
 async function verifyDatabaseConnectivity(supabaseAdmin: any) {
@@ -556,21 +548,9 @@ export const Route = createFileRoute("/api/admin/dashboard")({
               .map((notification: any) => notification.payload?.download_id)
               .filter(Boolean),
           ]);
-          const installedIps = new Set([
-            ...downloads
-              .filter((download: any) => download.extracted === true)
-              .map((download: any) => download.ip)
-              .filter(Boolean),
-            ...extractions.map((extraction: any) => extraction.ip).filter(Boolean),
-            ...notifications
-              .filter((notification: any) => notification.type === "installed" || notification.title === "Game Installed")
-              .map((notification: any) => notification.ip_address || notification.payload?.ip_address)
-              .filter(Boolean),
-          ]);
           const installedVisitEvents = visits.filter((visit: any) => getVisitPath(visit) === "/installed");
           for (const visit of installedVisitEvents) {
             if (visit.session_id) installedSessionIds.add(visit.session_id);
-            if (visit.ip) installedIps.add(visit.ip);
           }
           const installedEvents = [
             ...extractions,
@@ -603,7 +583,7 @@ export const Route = createFileRoute("/api/admin/dashboard")({
             const statusInfo = getStatusInfo(session);
             return {
               ...session,
-              installed: installedSessionIds.has(session.session_id) || (session.ip ? installedIps.has(session.ip) : false),
+              installed: installedSessionIds.has(session.session_id),
               status: statusInfo.status,
               status_reason: statusInfo.reason,
               last_active_time: session.last_active,
@@ -628,7 +608,6 @@ export const Route = createFileRoute("/api/admin/dashboard")({
                 download.extracted === true ||
                 installedDownloadIds.has(download.id) ||
                 installedSessionIds.has(download.session_id) ||
-                (download.ip ? installedIps.has(download.ip) : false) ||
                 installedEvents.some((event: any) => installEventMatchesDownload(event, download)),
               status: inferredComplete ? "completed" : "in_progress",
             };

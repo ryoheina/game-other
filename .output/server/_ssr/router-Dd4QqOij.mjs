@@ -10,7 +10,7 @@ import { n as objectType, r as stringType, t as booleanType } from "../_libs/zod
 import processModule from "node:process";
 import { Buffer } from "node:buffer";
 import crypto$1 from "node:crypto";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-BzUZX3Jp.js
+//#region node_modules/.nitro/vite/services/ssr/assets/router-Dd4QqOij.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function isNewSupabaseApiKey$1(value) {
@@ -609,7 +609,7 @@ async function recordVisit(request, data) {
 	};
 	const country = meta.country ?? (request ? await resolveCountry(request.headers, meta.ip) : null);
 	const networkMeta = getNetworkMeta$1(request, country);
-	const { supabaseAdmin } = await import("./client.server-B0tdcmm_.mjs");
+	const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
 	const now = (/* @__PURE__ */ new Date()).toISOString();
 	const { data: existing } = await supabaseAdmin.from("sessions").select("session_id,last_active,notified_left").eq("session_id", data.sessionId).maybeSingle();
 	if (existing) {
@@ -907,7 +907,7 @@ var Route$18 = createFileRoute("/api/public/mark-extracted")({ server: { handler
 			headers: { "Cache-Control": "no-store" }
 		});
 		const meta = getClientMeta(request);
-		const { supabaseAdmin } = await import("./client.server-B0tdcmm_.mjs");
+		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
 		const { data: download, error: downloadError } = await findDownloadByInstallToken$1(supabaseAdmin, installToken);
 		if (downloadError) throw downloadError;
 		if (!download) return new Response("", {
@@ -1007,28 +1007,6 @@ async function findLatestDownloadBySession(supabaseAdmin, sessionId, fileName) {
 	if (!/started_at|schema cache|column .* does not exist|Could not find .* column/i.test(byStartedAt.error.message)) return byStartedAt;
 	return supabaseAdmin.from("downloads").select("id,session_id,ip,file_name").eq("session_id", sessionId).eq("file_name", fileName).order("created_at", { ascending: false }).limit(1).maybeSingle();
 }
-async function findLatestDownloadByIp(supabaseAdmin, ip, fileName) {
-	if (!ip) return {
-		data: null,
-		error: null
-	};
-	let byStartedAt = await supabaseAdmin.from("downloads").select("id,session_id,ip,file_name").eq("ip", ip).order("started_at", { ascending: false }).limit(1).maybeSingle();
-	if (!byStartedAt.error) return {
-		data: byStartedAt.data,
-		error: null
-	};
-	if (!/started_at|schema cache|column .* does not exist|Could not find .* column/i.test(byStartedAt.error.message)) return byStartedAt;
-	return supabaseAdmin.from("downloads").select("id,session_id,ip,file_name").eq("ip", ip).order("created_at", { ascending: false }).limit(1).maybeSingle();
-}
-async function findLatestDownloadByFile(supabaseAdmin, fileName) {
-	let byStartedAt = await supabaseAdmin.from("downloads").select("id,session_id,ip,file_name,started_at,created_at").eq("file_name", fileName).order("started_at", { ascending: false }).limit(1).maybeSingle();
-	if (!byStartedAt.error) return {
-		data: byStartedAt.data,
-		error: null
-	};
-	if (!/started_at|schema cache|column .* does not exist|Could not find .* column/i.test(byStartedAt.error.message)) return byStartedAt;
-	return supabaseAdmin.from("downloads").select("id,session_id,ip,file_name,created_at").eq("file_name", fileName).order("created_at", { ascending: false }).limit(1).maybeSingle();
-}
 async function insertExtraction(supabaseAdmin, data) {
 	let result = await supabaseAdmin.from("extractions").insert(data);
 	if (!result.error || !isRecoverableExtractionInsertError(result.error)) return result;
@@ -1046,19 +1024,19 @@ var Route$17 = createFileRoute("/api/public/installed")({ server: { handlers: { 
 		const bodySessionId = typeof body?.sessionId === "string" && body.sessionId.length >= 8 && body.sessionId.length <= 64 ? body.sessionId : null;
 		const meta = getClientMeta(request);
 		const installToken = getInstallTokenFromRequest(request, body?.token);
-		const { supabaseAdmin } = await import("./client.server-B0tdcmm_.mjs");
+		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
 		let { data: download, error: downloadError } = installToken ? await findDownloadByInstallToken(supabaseAdmin, installToken) : await findLatestDownloadBySession(supabaseAdmin, bodySessionId, fileName);
 		if (downloadError) throw downloadError;
-		if (!download) {
-			const byIp = await findLatestDownloadByIp(supabaseAdmin, meta.ip, fileName);
-			if (byIp.error) throw byIp.error;
-			download = byIp.data;
-		}
-		if (!download) {
-			const byFile = await findLatestDownloadByFile(supabaseAdmin, fileName);
-			if (byFile.error) throw byFile.error;
-			download = byFile.data;
-		}
+		if (!download) return new Response(JSON.stringify({
+			success: false,
+			error: "Matching download not found"
+		}), {
+			status: 404,
+			headers: {
+				"content-type": "application/json",
+				"Cache-Control": "no-store"
+			}
+		});
 		const sessionId = download?.session_id || bodySessionId;
 		const installedFileName = download?.file_name || fileName;
 		if (sessionId) await recordVisit(request, {
@@ -1627,7 +1605,7 @@ var Route$14 = createFileRoute("/api/me/stats")({ server: { handlers: { GET: asy
 				headers: { "Content-Type": "application/json" }
 			});
 		}
-		const { supabaseAdmin } = await import("./client.server-B0tdcmm_.mjs");
+		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
 		(/* @__PURE__ */ new Date(Date.now() - 24 * 36e5)).toISOString();
 		const since5m = (/* @__PURE__ */ new Date(Date.now() - 5 * 6e4)).toISOString();
 		const sinceToday = new Date((/* @__PURE__ */ new Date()).setHours(0, 0, 0, 0)).toISOString();
@@ -1801,7 +1779,7 @@ var Route$11 = createFileRoute("/api/admin/mark-notification-read")({ server: { 
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-B0tdcmm_.mjs");
+		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
 		const res = await supabaseAdmin.from("notifications").update({ read: true }).eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$8(res.error)), {
 			status: 500,
@@ -2048,7 +2026,7 @@ var Route$7 = createFileRoute("/api/admin/delete-user")({ server: { handlers: { 
 		});
 		let supabaseAdmin;
 		try {
-			supabaseAdmin = (await import("./client.server-B0tdcmm_.mjs")).supabaseAdmin;
+			supabaseAdmin = (await import("./client.server-BMV8BJf7.mjs")).supabaseAdmin;
 			if (!supabaseAdmin) throw new Error("Supabase admin client unavailable");
 		} catch (err) {
 			console.error("[Delete user] Supabase admin client load failed", err);
@@ -2123,7 +2101,7 @@ var Route$6 = createFileRoute("/api/admin/delete-session")({ server: { handlers:
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-B0tdcmm_.mjs");
+		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
 		await supabaseAdmin.from("visits").delete().eq("session_id", id);
 		await supabaseAdmin.from("downloads").delete().eq("session_id", id);
 		await supabaseAdmin.from("extractions").delete().eq("session_id", id);
@@ -2169,7 +2147,7 @@ var Route$5 = createFileRoute("/api/admin/delete-notification")({ server: { hand
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-B0tdcmm_.mjs");
+		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
 		const res = await supabaseAdmin.from("notifications").delete().eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$4(res.error)), {
 			status: 500,
@@ -2211,7 +2189,7 @@ var Route$4 = createFileRoute("/api/admin/delete-download")({ server: { handlers
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-B0tdcmm_.mjs");
+		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
 		const res = await supabaseAdmin.from("downloads").delete().eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$3(res.error)), {
 			status: 500,
@@ -2445,11 +2423,6 @@ function collapseDuplicateDownloads(downloads) {
 function normalizeFileName(value) {
 	return typeof value === "string" && value.trim() ? value.trim().toLowerCase() : "legendsofeternity.exe";
 }
-function getInstallEventTime(event) {
-	const value = event.created_at || event.inserted_at || event.timestamp;
-	const time = new Date(value || 0).getTime();
-	return Number.isFinite(time) ? time : 0;
-}
 function getInstallEventFile(event) {
 	return normalizeFileName(event.file_name || event.filename || event.payload?.file_name);
 }
@@ -2468,12 +2441,7 @@ function installEventMatchesDownload(event, download) {
 	if (event.payload?.download_id && download.id && event.payload.download_id === download.id) return true;
 	if (event.session_id && download.session_id && event.session_id === download.session_id) return true;
 	if (event.payload?.session_id && download.session_id && event.payload.session_id === download.session_id) return true;
-	if ((event.ip || event.ip_address || event.payload?.ip_address) && download.ip) {
-		if ((event.ip || event.ip_address || event.payload?.ip_address) === download.ip) return true;
-	}
-	const eventTime = getInstallEventTime(event);
-	const downloadTime = getDownloadTime(download);
-	return eventTime > 0 && downloadTime > 0 && eventTime >= downloadTime && eventTime - downloadTime <= 1440 * 60 * 1e3;
+	return false;
 }
 async function verifyDatabaseConnectivity(supabaseAdmin) {
 	console.log("[Dashboard] Verifying database connectivity using sessions table...");
@@ -2544,7 +2512,7 @@ var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 		let supabaseAdmin;
 		try {
 			console.log("[Dashboard] Importing Supabase admin client");
-			supabaseAdmin = (await import("./client.server-B0tdcmm_.mjs")).supabaseAdmin;
+			supabaseAdmin = (await import("./client.server-BMV8BJf7.mjs")).supabaseAdmin;
 			if (!supabaseAdmin) throw new Error("Supabase admin client import returned undefined");
 		} catch (importError) {
 			const message = importError instanceof Error ? importError.message : String(importError);
@@ -2675,16 +2643,8 @@ var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 			...extractions.map((extraction) => extraction.download_id).filter(Boolean),
 			...notifications.filter((notification) => notification.type === "installed" || notification.title === "Game Installed").map((notification) => notification.payload?.download_id).filter(Boolean)
 		]);
-		const installedIps = /* @__PURE__ */ new Set([
-			...downloads.filter((download) => download.extracted === true).map((download) => download.ip).filter(Boolean),
-			...extractions.map((extraction) => extraction.ip).filter(Boolean),
-			...notifications.filter((notification) => notification.type === "installed" || notification.title === "Game Installed").map((notification) => notification.ip_address || notification.payload?.ip_address).filter(Boolean)
-		]);
 		const installedVisitEvents = visits.filter((visit) => getVisitPath(visit) === "/installed");
-		for (const visit of installedVisitEvents) {
-			if (visit.session_id) installedSessionIds.add(visit.session_id);
-			if (visit.ip) installedIps.add(visit.ip);
-		}
+		for (const visit of installedVisitEvents) if (visit.session_id) installedSessionIds.add(visit.session_id);
 		const installedEvents = [
 			...extractions,
 			...installedVisitEvents.map((visit) => ({
@@ -2712,7 +2672,7 @@ var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 			const statusInfo = getStatusInfo(session);
 			return {
 				...session,
-				installed: installedSessionIds.has(session.session_id) || (session.ip ? installedIps.has(session.ip) : false),
+				installed: installedSessionIds.has(session.session_id),
 				status: statusInfo.status,
 				status_reason: statusInfo.reason,
 				last_active_time: session.last_active,
@@ -2729,7 +2689,7 @@ var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 				...download,
 				completed: inferredComplete,
 				progress_percent: inferredComplete ? 100 : progressPercent,
-				installed: download.extracted === true || installedDownloadIds.has(download.id) || installedSessionIds.has(download.session_id) || (download.ip ? installedIps.has(download.ip) : false) || installedEvents.some((event) => installEventMatchesDownload(event, download)),
+				installed: download.extracted === true || installedDownloadIds.has(download.id) || installedSessionIds.has(download.session_id) || installedEvents.some((event) => installEventMatchesDownload(event, download)),
 				status: inferredComplete ? "completed" : "in_progress"
 			};
 		}));
@@ -2815,7 +2775,7 @@ var Route$2 = createFileRoute("/api/admin/clear-notifications")({ server: { hand
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-B0tdcmm_.mjs");
+		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
 		const res = await supabaseAdmin.from("notifications").delete().not("id", "is", null);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$2(res.error)), {
 			status: 500,
@@ -2853,7 +2813,7 @@ var Route$1 = createFileRoute("/api/admin/clear-history")({ server: { handlers: 
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-B0tdcmm_.mjs");
+		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
 		await clearTable(supabaseAdmin, "notifications");
 		await clearTable(supabaseAdmin, "downloads");
 		await clearTable(supabaseAdmin, "extractions");
@@ -2888,7 +2848,7 @@ var Route = createFileRoute("/api/admin/clear-downloads")({ server: { handlers: 
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-B0tdcmm_.mjs");
+		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
 		const res = await supabaseAdmin.from("downloads").delete().not("id", "is", null);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload(res.error)), {
 			status: 500,

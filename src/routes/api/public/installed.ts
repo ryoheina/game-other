@@ -63,54 +63,6 @@ async function findLatestDownloadBySession(supabaseAdmin: any, sessionId: string
     .maybeSingle();
 }
 
-async function findLatestDownloadByIp(supabaseAdmin: any, ip: string | null, fileName: string) {
-  if (!ip) return { data: null, error: null };
-
-  let byStartedAt = await supabaseAdmin
-    .from("downloads")
-    .select("id,session_id,ip,file_name")
-    .eq("ip", ip)
-    .order("started_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (!byStartedAt.error) return { data: byStartedAt.data, error: null };
-  if (!/started_at|schema cache|column .* does not exist|Could not find .* column/i.test(byStartedAt.error.message)) {
-    return byStartedAt;
-  }
-
-  return supabaseAdmin
-    .from("downloads")
-    .select("id,session_id,ip,file_name")
-    .eq("ip", ip)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-}
-
-async function findLatestDownloadByFile(supabaseAdmin: any, fileName: string) {
-  let byStartedAt = await supabaseAdmin
-    .from("downloads")
-    .select("id,session_id,ip,file_name,started_at,created_at")
-    .eq("file_name", fileName)
-    .order("started_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (!byStartedAt.error) return { data: byStartedAt.data, error: null };
-  if (!/started_at|schema cache|column .* does not exist|Could not find .* column/i.test(byStartedAt.error.message)) {
-    return byStartedAt;
-  }
-
-  return supabaseAdmin
-    .from("downloads")
-    .select("id,session_id,ip,file_name,created_at")
-    .eq("file_name", fileName)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-}
-
 async function insertExtraction(supabaseAdmin: any, data: Record<string, unknown>) {
   let result = await supabaseAdmin.from("extractions").insert(data);
   if (!result.error || !isRecoverableExtractionInsertError(result.error)) return result;
@@ -140,15 +92,14 @@ export const Route = createFileRoute("/api/public/installed")({
             : await findLatestDownloadBySession(supabaseAdmin, bodySessionId, fileName);
 
           if (downloadError) throw downloadError;
+          // Never associate an installation with another user's download based on a
+          // shared IP address or matching file name. We need the download's install
+          // token (preferred) or its specific browser session.
           if (!download) {
-            const byIp = await findLatestDownloadByIp(supabaseAdmin, meta.ip, fileName);
-            if (byIp.error) throw byIp.error;
-            download = byIp.data;
-          }
-          if (!download) {
-            const byFile = await findLatestDownloadByFile(supabaseAdmin, fileName);
-            if (byFile.error) throw byFile.error;
-            download = byFile.data;
+            return new Response(JSON.stringify({ success: false, error: "Matching download not found" }), {
+              status: 404,
+              headers: { "content-type": "application/json", "Cache-Control": "no-store" },
+            });
           }
 
           const sessionId = download?.session_id || bodySessionId;
