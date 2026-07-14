@@ -292,56 +292,54 @@ export const Route = createFileRoute("/api/public/download")({
             }).catch((e) => console.error("initial download progress update failed", e));
           }
 
-          const { readable, writable } = new TransformStream();
+          // Keep download tracking inside the response stream. A detached async task can
+          // be terminated by the host after the route handler returns, leaving a download
+          // stuck at 0% even though the browser received the entire file.
+          const sourceReader = assetResponse.body.getReader();
           const startedAt = Date.now();
-          void (async () => {
-            const reader = assetResponse.body.getReader();
-            const writer = writable.getWriter();
-            let downloadedBytes = 0;
-            let lastProgressUpdateAt = 0;
+          let downloadedBytes = 0;
+          let lastProgressUpdateAt = 0;
+          const trackedBody = new ReadableStream<Uint8Array>({
+            async pull(controller) {
+              try {
+                const { done, value } = await sourceReader.read();
+                if (done) {
+                  if (downloadId) {
+                    await updateDownloadProgress(downloadId, {
+                      downloaded_bytes: downloadedBytes,
+                      total_bytes: contentLength || downloadedBytes,
+                      progress_percent: 100,
+                      elapsed_seconds: Math.max(0, Math.round((Date.now() - startedAt) / 1000)),
+                      completed: true,
+                      completed_at: new Date().toISOString(),
+                    });
+                  }
+                  controller.close();
+                  return;
+                }
 
-            try {
-              while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                if (!value) continue;
-
+                if (!value) return;
                 downloadedBytes += value.length;
-
                 const nowMs = Date.now();
                 if (downloadId && nowMs - lastProgressUpdateAt >= 1000) {
                   lastProgressUpdateAt = nowMs;
-                  const elapsedSeconds = Math.max(0, Math.round((nowMs - startedAt) / 1000));
-                  const progressPercent = contentLength > 0 ? Math.min(99, Math.round((downloadedBytes / contentLength) * 100)) : 0;
                   await updateDownloadProgress(downloadId, {
                     downloaded_bytes: downloadedBytes,
                     total_bytes: contentLength,
-                    progress_percent: progressPercent,
-                    elapsed_seconds: elapsedSeconds,
-                  }).catch((e) => console.error("download progress update failed", e));
+                    progress_percent: contentLength > 0 ? Math.min(99, Math.round((downloadedBytes / contentLength) * 100)) : 0,
+                    elapsed_seconds: Math.max(0, Math.round((nowMs - startedAt) / 1000)),
+                  });
                 }
-
-                await writer.write(value);
+                controller.enqueue(value);
+              } catch (error) {
+                console.error("download stream failed", error);
+                controller.error(error);
               }
-
-              if (downloadId) {
-                const finalServerPercent =
-                  contentLength > 0 ? Math.min(99, Math.round((downloadedBytes / contentLength) * 100)) : 99;
-                await updateDownloadProgress(downloadId, {
-                  downloaded_bytes: downloadedBytes,
-                  total_bytes: contentLength || downloadedBytes,
-                  progress_percent: finalServerPercent,
-                  elapsed_seconds: Math.max(0, Math.round((Date.now() - startedAt) / 1000)),
-                });
-              }
-              await writer.close();
-            } catch (e) {
-              try {
-                await writer.abort(e);
-              } catch {}
-              console.error("download stream failed", e);
-            }
-          })();
+            },
+            async cancel(reason) {
+              await sourceReader.cancel(reason);
+            },
+          });
 
           const headers = new Headers({
             "Content-Type": assetResponse.headers.get("content-type") || "application/vnd.microsoft.portable-executable",
@@ -353,7 +351,7 @@ export const Route = createFileRoute("/api/public/download")({
           const contentLengthHeader = assetResponse.headers.get("content-length");
           headers.set("Content-Length", contentLengthHeader || String(contentLength || KNOWN_PUBLIC_ARCHIVE_SIZE));
 
-          return new Response(readable, {
+          return new Response(trackedBody, {
             status: 200,
             headers,
           });
