@@ -1,5 +1,5 @@
 import { o as __toESM } from "../_runtime.mjs";
-import { n as require_jsx_runtime, r as require_react } from "../_libs/react+tanstack__react-query.mjs";
+import { a as require_react, i as require_jsx_runtime } from "../_libs/@react-three/fiber+[...].mjs";
 import { t as ensureVisitorSession } from "./visitor-session-CAw0UShx.mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/installed-4i2_4MDo.js
 var import_react = /* @__PURE__ */ __toESM(require_react());

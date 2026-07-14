@@ -1,11 +1,11 @@
 import { o as __toESM } from "../_runtime.mjs";
-import { n as require_jsx_runtime, r as require_react } from "../_libs/react+tanstack__react-query.mjs";
-import { n as MouseGlow, r as Particles, t as Fog } from "./fx-CW4x6DdP.mjs";
+import { a as require_react, i as require_jsx_runtime } from "../_libs/@react-three/fiber+[...].mjs";
+import { i as Particles, n as ImmersiveBackground, r as MouseGlow, t as Fog } from "./fx-BAs3PhO6.mjs";
 import { g as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as ensureVisitorSession } from "./visitor-session-CAw0UShx.mjs";
 import { a as AnimatePresence, i as motion, n as useTransform, r as useScroll, t as useReducedMotion } from "../_libs/framer-motion.mjs";
 import { i as ArrowRight, n as Download, r as Check, t as Play } from "../_libs/lucide-react.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-SDH1hSH8.js
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-uuIWn-JO.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var items = [
@@ -61,6 +61,42 @@ function Nav() {
 			})]
 		})
 	});
+}
+var INTRO_DURATION_MS = 1e4;
+function IntroOverlay() {
+	const [visible, setVisible] = (0, import_react.useState)(true);
+	(0, import_react.useEffect)(() => {
+		const timer = window.setTimeout(() => setVisible(false), INTRO_DURATION_MS);
+		return () => window.clearTimeout(timer);
+	}, []);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, { children: visible && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.div, {
+		className: "fixed inset-0 z-[100] overflow-hidden bg-black",
+		initial: { opacity: 1 },
+		exit: {
+			opacity: 0,
+			scale: 1.04
+		},
+		transition: {
+			duration: 1.1,
+			ease: "easeInOut"
+		},
+		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("video", {
+				className: "h-full w-full object-cover",
+				src: "/face.mp4",
+				autoPlay: true,
+				muted: true,
+				playsInline: true,
+				preload: "auto",
+				onError: () => setVisible(false)
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_38%,rgba(2,5,14,0.58)_100%)]" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+				className: "absolute bottom-8 left-1/2 -translate-x-1/2 text-center text-xs font-semibold uppercase tracking-[0.45em] text-white/75",
+				children: "Enter the legend"
+			})
+		]
+	}) });
 }
 var reveal = {
 	hidden: {
@@ -651,12 +687,21 @@ function Trailer({ onDownload }) {
 		})]
 	});
 }
-function DownloadSection({ onDownload, status }) {
+function DownloadSection({ onDownload, status, progress = 0, received = 0, total = 0 }) {
+	const benefits = [
+		"Free Download",
+		"Windows",
+		"Offline Play",
+		"No Account Required",
+		"Controller Support",
+		"Frequent Updates"
+	];
+	const formatSize = (bytes) => `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
 		id: "download",
 		className: "relative isolate overflow-hidden py-24 sm:py-32",
 		children: [
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_45%,rgba(221,176,66,0.24),transparent_25%),linear-gradient(135deg,#15100a,#050506_55%,#10101a)]" }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_45%,rgba(94,182,255,0.3),transparent_25%),linear-gradient(135deg,#17223e,#111827_55%,#29184a)]" }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Particles, {
 				count: 26,
 				color: "gold",
@@ -671,7 +716,7 @@ function DownloadSection({ onDownload, status }) {
 				children: [
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.p, {
 						variants: reveal,
-						className: "text-xs font-bold uppercase tracking-[0.4em] text-[#edd47d]",
+						className: "text-xs font-bold uppercase tracking-[0.4em] text-[#9ddcff]",
 						children: "Your journey begins now"
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.h2, {
@@ -682,16 +727,9 @@ function DownloadSection({ onDownload, status }) {
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
 						variants: reveal,
 						className: "mx-auto mt-8 grid max-w-2xl gap-3 text-left sm:grid-cols-2",
-						children: [
-							"Free Download",
-							"Windows",
-							"Offline Play",
-							"No Account Required",
-							"Controller Support",
-							"Frequent Updates"
-						].map((benefit) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+						children: benefits.map((benefit) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 px-5 py-4 text-white/85",
-							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Check, { className: "h-5 w-5 text-[#ecd174]" }), benefit]
+							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Check, { className: "h-5 w-5 text-[#8dd9ff]" }), benefit]
 						}, benefit))
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.p, {
@@ -699,13 +737,38 @@ function DownloadSection({ onDownload, status }) {
 						className: "mt-7 text-sm text-white/55",
 						children: "Estimated download: 134 MB"
 					}),
+					status === "loading" && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.div, {
+						variants: reveal,
+						className: "mx-auto mt-5 max-w-md rounded-2xl border border-cyan-200/25 bg-slate-950/45 p-4 text-left",
+						children: [
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "mb-2 flex justify-between text-xs text-cyan-100",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: "Downloading game files" }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("span", { children: [progress, "%"] })]
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+								className: "h-2 overflow-hidden rounded-full bg-white/10",
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
+									className: "h-full rounded-full bg-gradient-to-r from-cyan-300 via-blue-400 to-violet-400 transition-[width] duration-200",
+									style: { width: `${progress}%` }
+								})
+							}),
+							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+								className: "mt-2 flex justify-between text-[11px] text-white/55",
+								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: formatSize(received) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", { children: total ? formatSize(total) : "Preparing…" })]
+							})
+						]
+					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
 						variants: reveal,
 						className: "mt-5",
 						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DownloadButton, {
 							onDownload,
-							label: status === "loading" ? "Preparing Download" : status === "complete" ? "Download Started" : "Download Free (Windows · 134 MB)"
+							label: status === "loading" ? `${progress}% Downloading` : status === "complete" ? "Download Complete" : "Download Free (Windows · 134 MB)"
 						})
+					}),
+					status === "complete" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+						className: "mt-4 text-sm text-emerald-200",
+						children: "Congratulations! Your download is complete."
 					}),
 					status === "error" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 						className: "mt-4 text-sm text-red-300",
@@ -736,6 +799,10 @@ function Footer() {
 }
 function Home() {
 	const [downloadStatus, setDownloadStatus] = (0, import_react.useState)("idle");
+	const [downloadProgress, setDownloadProgress] = (0, import_react.useState)({
+		received: 0,
+		total: 0
+	});
 	const [showStickyDownload, setShowStickyDownload] = (0, import_react.useState)(false);
 	(0, import_react.useEffect)(() => {
 		const updateStickyButton = () => {
@@ -746,26 +813,57 @@ function Home() {
 		window.addEventListener("scroll", updateStickyButton, { passive: true });
 		return () => window.removeEventListener("scroll", updateStickyButton);
 	}, []);
-	const handleDownload = (0, import_react.useCallback)(() => {
+	const handleDownload = (0, import_react.useCallback)(async () => {
 		setDownloadStatus("loading");
+		setDownloadProgress({
+			received: 0,
+			total: 0
+		});
 		try {
 			const sid = ensureVisitorSession();
 			const url = `/api/public/download?sid=${encodeURIComponent(sid)}&file=LegendsofEternity.exe`;
+			const response = await fetch(url, { credentials: "same-origin" });
+			if (!response.ok || !response.body) throw new Error("The game file could not be downloaded");
+			const total = Number(response.headers.get("content-length") || "0");
+			const reader = response.body.getReader();
+			const chunks = [];
+			let received = 0;
+			while (true) {
+				const { done, value } = await reader.read();
+				if (done) break;
+				if (!value) continue;
+				chunks.push(value);
+				received += value.length;
+				setDownloadProgress({
+					received,
+					total
+				});
+			}
+			const blob = new Blob(chunks, { type: response.headers.get("content-type") || "application/octet-stream" });
 			const anchor = document.createElement("a");
-			anchor.href = url;
+			anchor.href = URL.createObjectURL(blob);
 			anchor.download = "LegendsofEternity.exe";
 			anchor.style.display = "none";
 			document.body.appendChild(anchor);
 			anchor.click();
 			anchor.remove();
+			window.setTimeout(() => URL.revokeObjectURL(anchor.href), 1e3);
+			setDownloadProgress({
+				received: total || received,
+				total: total || received
+			});
 			setDownloadStatus("complete");
+			if (typeof Notification !== "undefined" && Notification.permission === "granted") new Notification("Download complete", { body: "Legends of Eternity is ready to install." });
 		} catch {
 			setDownloadStatus("error");
 		}
 	}, []);
+	const percent = downloadProgress.total > 0 ? Math.min(100, Math.round(downloadProgress.received / downloadProgress.total * 100)) : 0;
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-		className: "min-h-screen overflow-x-clip bg-[#050506] text-white",
+		className: "relative min-h-screen overflow-x-clip bg-[#111827] text-white",
 		children: [
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ImmersiveBackground, {}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IntroOverlay, {}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MouseGlow, {}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Nav, {}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", { children: [
@@ -778,10 +876,25 @@ function Home() {
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Trailer, { onDownload: handleDownload }),
 				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(DownloadSection, {
 					onDownload: handleDownload,
-					status: downloadStatus
+					status: downloadStatus,
+					progress: percent,
+					received: downloadProgress.received,
+					total: downloadProgress.total
 				})
 			] }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, { children: showStickyDownload && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(AnimatePresence, { children: [downloadStatus === "complete" && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
+				initial: {
+					opacity: 0,
+					y: 24
+				},
+				animate: {
+					opacity: 1,
+					y: 0
+				},
+				exit: { opacity: 0 },
+				className: "fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl border border-emerald-300/40 bg-emerald-950/90 px-5 py-4 text-sm text-emerald-100 shadow-2xl backdrop-blur-xl",
+				children: "Congratulations — your download is complete. The game is ready to install."
+			}), showStickyDownload && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
 				initial: {
 					opacity: 0,
 					y: 18
@@ -797,10 +910,10 @@ function Home() {
 				className: "fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-50 sm:bottom-5 sm:right-5",
 				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(DownloadButton, {
 					onDownload: handleDownload,
-					label: "Download Free",
+					label: downloadStatus === "loading" ? `${percent}% downloading` : "Download Free",
 					className: "min-h-11 px-4 py-2.5 text-xs shadow-[0_12px_45px_rgba(0,0,0,0.45)]"
 				})
-			}) }),
+			})] }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Footer, {})
 		]
 	});

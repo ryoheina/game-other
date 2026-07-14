@@ -33,6 +33,7 @@ import { Route as ApiAdminDeleteNotificationRouteImport } from './routes/api/adm
 import { Route as ApiAdminDeleteDownloadRouteImport } from './routes/api/admin/delete-download'
 import { Route as ApiAdminDashboardRouteImport } from './routes/api/admin/dashboard'
 import { Route as ApiAdminClearNotificationsRouteImport } from './routes/api/admin/clear-notifications'
+import { Route as ApiAdminClearNetworkRouteImport } from './routes/api/admin/clear-network'
 import { Route as ApiAdminClearHistoryRouteImport } from './routes/api/admin/clear-history'
 import { Route as ApiAdminClearDownloadsRouteImport } from './routes/api/admin/clear-downloads'
 
@@ -159,6 +160,11 @@ const ApiAdminClearNotificationsRoute =
     path: '/api/admin/clear-notifications',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiAdminClearNetworkRoute = ApiAdminClearNetworkRouteImport.update({
+  id: '/api/admin/clear-network',
+  path: '/api/admin/clear-network',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminClearHistoryRoute = ApiAdminClearHistoryRouteImport.update({
   id: '/api/admin/clear-history',
   path: '/api/admin/clear-history',
@@ -178,6 +184,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/api/admin/clear-downloads': typeof ApiAdminClearDownloadsRoute
   '/api/admin/clear-history': typeof ApiAdminClearHistoryRoute
+  '/api/admin/clear-network': typeof ApiAdminClearNetworkRoute
   '/api/admin/clear-notifications': typeof ApiAdminClearNotificationsRoute
   '/api/admin/dashboard': typeof ApiAdminDashboardRoute
   '/api/admin/delete-download': typeof ApiAdminDeleteDownloadRoute
@@ -205,6 +212,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/api/admin/clear-downloads': typeof ApiAdminClearDownloadsRoute
   '/api/admin/clear-history': typeof ApiAdminClearHistoryRoute
+  '/api/admin/clear-network': typeof ApiAdminClearNetworkRoute
   '/api/admin/clear-notifications': typeof ApiAdminClearNotificationsRoute
   '/api/admin/dashboard': typeof ApiAdminDashboardRoute
   '/api/admin/delete-download': typeof ApiAdminDeleteDownloadRoute
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/api/admin/clear-downloads': typeof ApiAdminClearDownloadsRoute
   '/api/admin/clear-history': typeof ApiAdminClearHistoryRoute
+  '/api/admin/clear-network': typeof ApiAdminClearNetworkRoute
   '/api/admin/clear-notifications': typeof ApiAdminClearNotificationsRoute
   '/api/admin/dashboard': typeof ApiAdminDashboardRoute
   '/api/admin/delete-download': typeof ApiAdminDeleteDownloadRoute
@@ -263,6 +272,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/api/admin/clear-downloads'
     | '/api/admin/clear-history'
+    | '/api/admin/clear-network'
     | '/api/admin/clear-notifications'
     | '/api/admin/dashboard'
     | '/api/admin/delete-download'
@@ -290,6 +300,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/api/admin/clear-downloads'
     | '/api/admin/clear-history'
+    | '/api/admin/clear-network'
     | '/api/admin/clear-notifications'
     | '/api/admin/dashboard'
     | '/api/admin/delete-download'
@@ -318,6 +329,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/api/admin/clear-downloads'
     | '/api/admin/clear-history'
+    | '/api/admin/clear-network'
     | '/api/admin/clear-notifications'
     | '/api/admin/dashboard'
     | '/api/admin/delete-download'
@@ -346,6 +358,7 @@ export interface RootRouteChildren {
   MeRoute: typeof MeRoute
   ApiAdminClearDownloadsRoute: typeof ApiAdminClearDownloadsRoute
   ApiAdminClearHistoryRoute: typeof ApiAdminClearHistoryRoute
+  ApiAdminClearNetworkRoute: typeof ApiAdminClearNetworkRoute
   ApiAdminClearNotificationsRoute: typeof ApiAdminClearNotificationsRoute
   ApiAdminDashboardRoute: typeof ApiAdminDashboardRoute
   ApiAdminDeleteDownloadRoute: typeof ApiAdminDeleteDownloadRoute
@@ -536,6 +549,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminClearNotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/clear-network': {
+      id: '/api/admin/clear-network'
+      path: '/api/admin/clear-network'
+      fullPath: '/api/admin/clear-network'
+      preLoaderRoute: typeof ApiAdminClearNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/clear-history': {
       id: '/api/admin/clear-history'
       path: '/api/admin/clear-history'
@@ -572,6 +592,7 @@ const rootRouteChildren: RootRouteChildren = {
   MeRoute: MeRoute,
   ApiAdminClearDownloadsRoute: ApiAdminClearDownloadsRoute,
   ApiAdminClearHistoryRoute: ApiAdminClearHistoryRoute,
+  ApiAdminClearNetworkRoute: ApiAdminClearNetworkRoute,
   ApiAdminClearNotificationsRoute: ApiAdminClearNotificationsRoute,
   ApiAdminDashboardRoute: ApiAdminDashboardRoute,
   ApiAdminDeleteDownloadRoute: ApiAdminDeleteDownloadRoute,

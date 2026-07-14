@@ -1,8 +1,82 @@
 import { o as __toESM } from "../_runtime.mjs";
-import { n as require_jsx_runtime, r as require_react } from "../_libs/react+tanstack__react-query.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/fx-CW4x6DdP.js
+import { a as require_react, i as require_jsx_runtime, n as useFrame, t as Canvas } from "../_libs/@react-three/fiber+[...].mjs";
+//#region node_modules/.nitro/vite/services/ssr/assets/fx-BAs3PhO6.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
+function StarField() {
+	const points = (0, import_react.useRef)(null);
+	const positions = (0, import_react.useMemo)(() => {
+		const values = new Float32Array(720 * 3);
+		for (let i = 0; i < values.length; i += 3) {
+			const radius = 3 + Math.random() * 22;
+			const angle = Math.random() * Math.PI * 2;
+			values[i] = Math.cos(angle) * radius;
+			values[i + 1] = (Math.random() - .5) * 12;
+			values[i + 2] = -Math.random() * 32;
+		}
+		return values;
+	}, []);
+	useFrame((_, delta) => {
+		if (!points.current) return;
+		points.current.rotation.y += delta * .018;
+		points.current.position.z += delta * .42;
+		if (points.current.position.z > 4) points.current.position.z = 0;
+	});
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("points", {
+		ref: points,
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("bufferGeometry", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("bufferAttribute", {
+			attach: "attributes-position",
+			args: [positions, 3]
+		}) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("pointsMaterial", {
+			size: .045,
+			color: "#89d7ff",
+			transparent: true,
+			opacity: .72,
+			sizeAttenuation: true
+		})]
+	});
+}
+/** A lightweight WebGL layer used behind the video-driven site. */
+function ImmersiveBackground() {
+	const [ready, setReady] = (0, import_react.useState)(false);
+	(0, import_react.useEffect)(() => setReady(true), []);
+	if (!ready) return null;
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+		"aria-hidden": true,
+		className: "pointer-events-none fixed inset-0 -z-20 overflow-hidden bg-[#111827]",
+		children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(Canvas, {
+			dpr: [1, 1.5],
+			camera: {
+				position: [
+					0,
+					0,
+					7
+				],
+				fov: 58
+			},
+			gl: {
+				alpha: true,
+				antialias: false,
+				powerPreference: "low-power"
+			},
+			children: [
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("fog", {
+					attach: "fog",
+					args: [
+						"#111827",
+						4,
+						28
+					]
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)("ambientLight", {
+					intensity: .8,
+					color: "#7c9dff"
+				}),
+				/* @__PURE__ */ (0, import_jsx_runtime.jsx)(StarField, {})
+			]
+		}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-[radial-gradient(circle_at_70%_15%,rgba(73,175,255,0.23),transparent_32%),radial-gradient(circle_at_15%_75%,rgba(157,89,255,0.18),transparent_28%),linear-gradient(135deg,rgba(14,24,48,0.72),rgba(7,8,18,0.38))]" })]
+	});
+}
 function Particles({ count = 20, color = "arcane", className = "" }) {
 	const [mounted, setMounted] = (0, import_react.useState)(false);
 	const [reducedMotion, setReducedMotion] = (0, import_react.useState)(false);
@@ -86,4 +160,4 @@ function MouseGlow() {
 	});
 }
 //#endregion
-export { MouseGlow as n, Particles as r, Fog as t };
+export { Particles as i, ImmersiveBackground as n, MouseGlow as r, Fog as t };

@@ -1,8 +1,8 @@
 import { o as __toESM } from "../_runtime.mjs";
-import { n as require_jsx_runtime, r as require_react } from "../_libs/react+tanstack__react-query.mjs";
-import { n as MouseGlow } from "./fx-CW4x6DdP.mjs";
+import { a as require_react, i as require_jsx_runtime } from "../_libs/@react-three/fiber+[...].mjs";
+import { r as MouseGlow } from "./fx-BAs3PhO6.mjs";
 import { _ as useNavigate, g as Link } from "../_libs/@tanstack/react-router+[...].mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/admin-BCl84pEa.js
+//#region node_modules/.nitro/vite/services/ssr/assets/admin-CRYNWOf4.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function useAdminNotifications(initial = []) {
@@ -497,7 +497,8 @@ function Admin() {
 							["Visitors", stats?.total_sessions ?? sessions.length],
 							["Online", stats?.online_sessions ?? sessions.filter((s) => s.status === "online").length],
 							["Download users", stats?.download_users ?? new Set(downloads.map((d) => d.session_id || d.ip || d.user_id).filter(Boolean)).size],
-							["Downloads", stats?.total_downloads ?? downloads.length]
+							["Downloads", stats?.total_downloads ?? downloads.length],
+							["Installations", stats?.installed_users ?? downloads.filter((d) => d.installed).length]
 						].map(([label, value]) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 							className: "rounded-2xl glass p-5 text-white",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
@@ -742,12 +743,35 @@ function Admin() {
 												className: "mt-1 max-w-2xl text-xs text-white/50",
 												children: "Groups are based on /24 subnet, ASN when available, country, city when available, and a 1-hour time window. This does not identify a person."
 											})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
-												className: "text-xs uppercase tracking-[0.22em] text-white/40",
-												children: [
-													networkClusters.length,
-													" cluster",
-													networkClusters.length === 1 ? "" : "s"
-												]
+												className: "flex items-center gap-4",
+												children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+													className: "text-xs uppercase tracking-[0.22em] text-white/40",
+													children: [
+														networkClusters.length,
+														" cluster",
+														networkClusters.length === 1 ? "" : "s"
+													]
+												}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
+													onClick: async () => {
+														if (!window.confirm("Delete all network behavior records? Active visitors and download activity will not be deleted.")) return;
+														try {
+															const res = await fetch("/api/admin/clear-network", {
+																method: "POST",
+																credentials: "include"
+															});
+															const body = await res.json().catch(() => null);
+															if (!res.ok) window.alert("Delete all failed: " + (body?.error || res.statusText));
+															else {
+																setNetworkClusters([]);
+																window.alert("Network behavior records deleted");
+															}
+														} catch (error) {
+															window.alert("Delete all failed: " + String(error));
+														}
+													},
+													className: "rounded-full border border-red-400/35 bg-red-950/25 px-3 py-1.5 text-xs text-red-200 hover:bg-red-900/40",
+													children: "Delete all"
+												})]
 											})]
 										}), networkClusters.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 											className: "mt-4 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/50",

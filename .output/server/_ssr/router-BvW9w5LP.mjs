@@ -1,14 +1,15 @@
 import { o as __toESM } from "../_runtime.mjs";
-import { n as require_jsx_runtime, r as require_react, t as QueryClientProvider } from "../_libs/react+tanstack__react-query.mjs";
+import { a as require_react, i as require_jsx_runtime } from "../_libs/@react-three/fiber+[...].mjs";
 import { c as HeadContent, d as createRouter, f as Outlet, g as Link, h as createRootRouteWithContext, j as redirect, l as useLocation, m as createFileRoute, p as lazyRouteComponent, s as Scripts, v as useRouter } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as createClient } from "../_libs/supabase__supabase-js.mjs";
 import { t as createMiddleware } from "./createStart-Dt05N14y.mjs";
 import { f as getRequest, i as TSS_SERVER_FUNCTION, l as createServerFn, m as getServerFnById } from "./esm-B_8KW7ZU.mjs";
 import { t as ensureVisitorSession } from "./visitor-session-CAw0UShx.mjs";
 import { t as QueryClient } from "../_libs/tanstack__query-core.mjs";
+import { t as QueryClientProvider } from "../_libs/tanstack__react-query.mjs";
 import { n as objectType, r as stringType, t as booleanType } from "../_libs/zod.mjs";
 import crypto$1 from "crypto";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-vp77DmbV.js
+//#region node_modules/.nitro/vite/services/ssr/assets/router-BvW9w5LP.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function isNewSupabaseApiKey$1(value) {
@@ -55,7 +56,7 @@ var supabaseAdmin = new Proxy({}, { get(_, prop, receiver) {
 	if (!_supabaseAdmin) _supabaseAdmin = createSupabaseAdminClient();
 	return Reflect.get(_supabaseAdmin, prop, receiver);
 } });
-var styles_default = "/assets/styles-DvNaDs7S.css";
+var styles_default = "/assets/styles-BUQR02ed.css";
 function reportLovableError(error, context = {}) {
 	if (typeof window === "undefined") return;
 	window.__lovableEvents?.captureException?.(error, {
@@ -214,7 +215,7 @@ function ErrorComponent({ error, reset }) {
 		})
 	});
 }
-var Route$26 = createRootRouteWithContext()({
+var Route$27 = createRootRouteWithContext()({
 	head: () => ({
 		meta: [
 			{ charSet: "utf-8" },
@@ -307,7 +308,7 @@ function RootShell({ children }) {
 	});
 }
 function RootComponent() {
-	const { queryClient } = Route$26.useRouteContext();
+	const { queryClient } = Route$27.useRouteContext();
 	useVisitorTracking(useLocation().pathname);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(QueryClientProvider, {
 		client: queryClient,
@@ -315,22 +316,22 @@ function RootComponent() {
 	});
 }
 var $$splitComponentImporter$5 = () => import("./me-fuu5GXiX.mjs");
-var Route$25 = createFileRoute("/me")({ component: lazyRouteComponent($$splitComponentImporter$5, "component") });
+var Route$26 = createFileRoute("/me")({ component: lazyRouteComponent($$splitComponentImporter$5, "component") });
 var $$splitComponentImporter$4 = () => import("./installed-4i2_4MDo.mjs");
-var Route$24 = createFileRoute("/installed")({
+var Route$25 = createFileRoute("/installed")({
 	head: () => ({ meta: [{ title: "Legends of Eternity" }, {
 		name: "robots",
 		content: "noindex,nofollow"
 	}] }),
 	component: lazyRouteComponent($$splitComponentImporter$4, "component")
 });
-var $$splitComponentImporter$3 = () => import("./auth-DzKmRwUX.mjs");
-var Route$23 = createFileRoute("/auth")({
+var $$splitComponentImporter$3 = () => import("./auth-BsXGXFia.mjs");
+var Route$24 = createFileRoute("/auth")({
 	head: () => ({ meta: [{ title: "Studio Admin Access — Legends of Eternity" }] }),
 	component: lazyRouteComponent($$splitComponentImporter$3, "component")
 });
 var $$splitComponentImporter$2 = () => import("./route-Di7iQBCH.mjs");
-var Route$22 = createFileRoute("/_authenticated")({
+var Route$23 = createFileRoute("/_authenticated")({
 	ssr: false,
 	beforeLoad: async () => {
 		if (typeof window === "undefined") throw redirect({ to: "/auth" });
@@ -343,16 +344,16 @@ var Route$22 = createFileRoute("/_authenticated")({
 	},
 	component: lazyRouteComponent($$splitComponentImporter$2, "component")
 });
-var $$splitComponentImporter$1 = () => import("./routes-SDH1hSH8.mjs");
-var Route$21 = createFileRoute("/")({
+var $$splitComponentImporter$1 = () => import("./routes-uuIWn-JO.mjs");
+var Route$22 = createFileRoute("/")({
 	head: () => ({ meta: [{ title: "Legends of Eternity — A cinematic fantasy action RPG" }, {
 		name: "description",
 		content: "Master brutal combat, wield forbidden magic, and begin your legend in Legends of Eternity."
 	}] }),
 	component: lazyRouteComponent($$splitComponentImporter$1, "component")
 });
-var $$splitComponentImporter = () => import("./admin-BCl84pEa.mjs");
-var Route$20 = createFileRoute("/_authenticated/admin")({
+var $$splitComponentImporter = () => import("./admin-CRYNWOf4.mjs");
+var Route$21 = createFileRoute("/_authenticated/admin")({
 	head: () => ({ meta: [{ title: "Studio Dashboard — Legends of Eternity" }] }),
 	component: lazyRouteComponent($$splitComponentImporter, "component")
 });
@@ -607,7 +608,7 @@ async function recordVisit(request, data) {
 	};
 	const country = meta.country ?? (request ? await resolveCountry(request.headers, meta.ip) : null);
 	const networkMeta = getNetworkMeta$1(request, country);
-	const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
+	const { supabaseAdmin } = await import("./client.server-D6IWv6Bt.mjs");
 	const now = (/* @__PURE__ */ new Date()).toISOString();
 	const { data: existing } = await supabaseAdmin.from("sessions").select("session_id,last_active,notified_left").eq("session_id", data.sessionId).maybeSingle();
 	if (existing) {
@@ -786,7 +787,7 @@ function isPublicVisitorPath(path) {
 function hasAdminCookie(request) {
 	return /(?:^|;\s*)admin-auth-token=/.test(request.headers.get("cookie") || "");
 }
-var Route$19 = createFileRoute("/api/public/visit")({ server: { handlers: { POST: async ({ request }) => {
+var Route$20 = createFileRoute("/api/public/visit")({ server: { handlers: { POST: async ({ request }) => {
 	try {
 		const body = await request.json().catch(() => null);
 		const sessionId = typeof body?.sessionId === "string" ? body.sessionId : "";
@@ -895,7 +896,7 @@ async function insertExtraction$1(supabaseAdmin, data) {
 	result = await supabaseAdmin.from("extractions").insert(fallback);
 	return result;
 }
-var Route$18 = createFileRoute("/api/public/mark-extracted")({ server: { handlers: { GET: async ({ request }) => {
+var Route$19 = createFileRoute("/api/public/mark-extracted")({ server: { handlers: { GET: async ({ request }) => {
 	try {
 		const url = new URL(request.url);
 		const requestedFileName = url.searchParams.get("file");
@@ -905,7 +906,7 @@ var Route$18 = createFileRoute("/api/public/mark-extracted")({ server: { handler
 			headers: { "Cache-Control": "no-store" }
 		});
 		const meta = getClientMeta(request);
-		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
+		const { supabaseAdmin } = await import("./client.server-D6IWv6Bt.mjs");
 		const { data: download, error: downloadError } = await findDownloadByInstallToken$1(supabaseAdmin, installToken);
 		if (downloadError) throw downloadError;
 		if (!download) return new Response("", {
@@ -1015,14 +1016,14 @@ async function insertExtraction(supabaseAdmin, data) {
 	result = await supabaseAdmin.from("extractions").insert(fallback);
 	return result;
 }
-var Route$17 = createFileRoute("/api/public/installed")({ server: { handlers: { POST: async ({ request }) => {
+var Route$18 = createFileRoute("/api/public/installed")({ server: { handlers: { POST: async ({ request }) => {
 	try {
 		const body = await request.json().catch(() => null);
 		const fileName = typeof body?.file === "string" && body.file.trim() ? body.file.trim().slice(0, 200) : "LegendsofEternity.exe";
 		const bodySessionId = typeof body?.sessionId === "string" && body.sessionId.length >= 8 && body.sessionId.length <= 64 ? body.sessionId : null;
 		const meta = getClientMeta(request);
 		const installToken = getInstallTokenFromRequest(request, body?.token);
-		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
+		const { supabaseAdmin } = await import("./client.server-D6IWv6Bt.mjs");
 		let { data: download, error: downloadError } = installToken ? await findDownloadByInstallToken(supabaseAdmin, installToken) : await findLatestDownloadBySession(supabaseAdmin, bodySessionId, fileName);
 		if (downloadError) throw downloadError;
 		if (!download) return new Response(JSON.stringify({
@@ -1175,7 +1176,7 @@ async function insertFallbackDownload(request, sessionId, data) {
 	});
 	return id;
 }
-var Route$16 = createFileRoute("/api/public/download-progress")({ server: { handlers: { POST: async ({ request }) => {
+var Route$17 = createFileRoute("/api/public/download-progress")({ server: { handlers: { POST: async ({ request }) => {
 	try {
 		const body = await request.json().catch(() => null);
 		const downloadId = typeof body?.downloadId === "string" && body.downloadId ? body.downloadId : null;
@@ -1283,7 +1284,7 @@ async function updateDownloadProgress(downloadId, data) {
 		updateData = nextData;
 	}
 }
-var Route$15 = createFileRoute("/api/public/download")({ server: { handlers: { GET: async ({ request }) => {
+var Route$16 = createFileRoute("/api/public/download")({ server: { handlers: { GET: async ({ request }) => {
 	const meta = getClientMeta(request);
 	const country = meta.country ?? await resolveCountry(request.headers, meta.ip);
 	const networkMeta = getNetworkMeta(request, country);
@@ -1582,7 +1583,7 @@ function getTokenFromRequest(request) {
 	for (const p of parts) if (p.startsWith("me_admin=")) return p.substring(9);
 	return null;
 }
-var Route$14 = createFileRoute("/api/me/stats")({ server: { handlers: { GET: async ({ request }) => {
+var Route$15 = createFileRoute("/api/me/stats")({ server: { handlers: { GET: async ({ request }) => {
 	if (!verifyAuthToken(getTokenFromRequest(request), process.env.ADMIN_PASSWORD || "")) return new Response(JSON.stringify({
 		ok: false,
 		error: "Unauthorized"
@@ -1603,7 +1604,7 @@ var Route$14 = createFileRoute("/api/me/stats")({ server: { handlers: { GET: asy
 				headers: { "Content-Type": "application/json" }
 			});
 		}
-		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
+		const { supabaseAdmin } = await import("./client.server-D6IWv6Bt.mjs");
 		(/* @__PURE__ */ new Date(Date.now() - 24 * 36e5)).toISOString();
 		const since5m = (/* @__PURE__ */ new Date(Date.now() - 5 * 6e4)).toISOString();
 		const sinceToday = new Date((/* @__PURE__ */ new Date()).setHours(0, 0, 0, 0)).toISOString();
@@ -1671,7 +1672,7 @@ var Route$14 = createFileRoute("/api/me/stats")({ server: { handlers: { GET: asy
 		});
 	}
 } } } });
-var Route$13 = createFileRoute("/api/me/logout")({ server: { handlers: { POST: async () => {
+var Route$14 = createFileRoute("/api/me/logout")({ server: { handlers: { POST: async () => {
 	const header = buildClearCookie();
 	return new Response(JSON.stringify({ ok: true }), {
 		status: 200,
@@ -1681,7 +1682,7 @@ var Route$13 = createFileRoute("/api/me/logout")({ server: { handlers: { POST: a
 		}
 	});
 } } } });
-var Route$12 = createFileRoute("/api/me/login")({ server: { handlers: { POST: async ({ request }) => {
+var Route$13 = createFileRoute("/api/me/login")({ server: { handlers: { POST: async ({ request }) => {
 	const body = await request.json().catch(() => ({}));
 	const password = typeof body.password === "string" ? body.password : null;
 	const adminPassword = process.env.ADMIN_PASSWORD || process.env.STUDIO_ADMIN_PASSWORD || null;
@@ -1759,7 +1760,7 @@ function createErrorPayload$8(error) {
 		error: error instanceof Error ? error.message : String(error)
 	};
 }
-var Route$11 = createFileRoute("/api/admin/mark-notification-read")({ server: { handlers: { POST: async ({ request }) => {
+var Route$12 = createFileRoute("/api/admin/mark-notification-read")({ server: { handlers: { POST: async ({ request }) => {
 	const headers = { "content-type": "application/json" };
 	try {
 		if (!await isAdminAuthorized(request)) return new Response(JSON.stringify({
@@ -1777,7 +1778,7 @@ var Route$11 = createFileRoute("/api/admin/mark-notification-read")({ server: { 
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
+		const { supabaseAdmin } = await import("./client.server-D6IWv6Bt.mjs");
 		const res = await supabaseAdmin.from("notifications").update({ read: true }).eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$8(res.error)), {
 			status: 500,
@@ -1795,7 +1796,7 @@ var Route$11 = createFileRoute("/api/admin/mark-notification-read")({ server: { 
 		});
 	}
 } } } });
-var Route$10 = createFileRoute("/api/admin/logout")({ server: { handlers: { POST: async () => {
+var Route$11 = createFileRoute("/api/admin/logout")({ server: { handlers: { POST: async () => {
 	return new Response(JSON.stringify({ ok: true }), {
 		status: 200,
 		headers: {
@@ -1864,7 +1865,7 @@ function isRateLimited(key) {
 function clearRateLimit(key) {
 	loginAttempts.delete(key);
 }
-var Route$9 = createFileRoute("/api/admin/login")({ server: { handlers: { POST: async ({ request }) => {
+var Route$10 = createFileRoute("/api/admin/login")({ server: { handlers: { POST: async ({ request }) => {
 	const clientKey = getClientKey(request);
 	console.error("[Admin login] Request started", {
 		route: "/api/admin/login",
@@ -1915,7 +1916,7 @@ var Route$9 = createFileRoute("/api/admin/login")({ server: { handlers: { POST: 
 		});
 	}
 } } } });
-var Route$8 = createFileRoute("/api/admin/log-notification")({ server: { handlers: { POST: async ({ request }) => {
+var Route$9 = createFileRoute("/api/admin/log-notification")({ server: { handlers: { POST: async ({ request }) => {
 	console.log("[Log Notification] Request started");
 	try {
 		if (!await isAdminAuthorized(request)) {
@@ -2004,7 +2005,7 @@ function createErrorPayload$6(error) {
 		error: error instanceof Error ? error.message : String(error)
 	};
 }
-var Route$7 = createFileRoute("/api/admin/delete-user")({ server: { handlers: { POST: async ({ request }) => {
+var Route$8 = createFileRoute("/api/admin/delete-user")({ server: { handlers: { POST: async ({ request }) => {
 	const headers = { "content-type": "application/json" };
 	try {
 		if (!await isAdminAuthorized(request)) return new Response(JSON.stringify({
@@ -2024,7 +2025,7 @@ var Route$7 = createFileRoute("/api/admin/delete-user")({ server: { handlers: { 
 		});
 		let supabaseAdmin;
 		try {
-			supabaseAdmin = (await import("./client.server-Co2SvHgp.mjs")).supabaseAdmin;
+			supabaseAdmin = (await import("./client.server-D6IWv6Bt.mjs")).supabaseAdmin;
 			if (!supabaseAdmin) throw new Error("Supabase admin client unavailable");
 		} catch (err) {
 			console.error("[Delete user] Supabase admin client load failed", err);
@@ -2081,7 +2082,7 @@ function createErrorPayload$5(error) {
 		error: error instanceof Error ? error.message : String(error)
 	};
 }
-var Route$6 = createFileRoute("/api/admin/delete-session")({ server: { handlers: { POST: async ({ request }) => {
+var Route$7 = createFileRoute("/api/admin/delete-session")({ server: { handlers: { POST: async ({ request }) => {
 	const headers = { "content-type": "application/json" };
 	try {
 		if (!await isAdminAuthorized(request)) return new Response(JSON.stringify({
@@ -2099,7 +2100,7 @@ var Route$6 = createFileRoute("/api/admin/delete-session")({ server: { handlers:
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
+		const { supabaseAdmin } = await import("./client.server-D6IWv6Bt.mjs");
 		await supabaseAdmin.from("visits").delete().eq("session_id", id);
 		await supabaseAdmin.from("downloads").delete().eq("session_id", id);
 		await supabaseAdmin.from("extractions").delete().eq("session_id", id);
@@ -2127,7 +2128,7 @@ function createErrorPayload$4(error) {
 		error: error instanceof Error ? error.message : String(error)
 	};
 }
-var Route$5 = createFileRoute("/api/admin/delete-notification")({ server: { handlers: { POST: async ({ request }) => {
+var Route$6 = createFileRoute("/api/admin/delete-notification")({ server: { handlers: { POST: async ({ request }) => {
 	const headers = { "content-type": "application/json" };
 	try {
 		if (!await isAdminAuthorized(request)) return new Response(JSON.stringify({
@@ -2145,7 +2146,7 @@ var Route$5 = createFileRoute("/api/admin/delete-notification")({ server: { hand
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
+		const { supabaseAdmin } = await import("./client.server-D6IWv6Bt.mjs");
 		const res = await supabaseAdmin.from("notifications").delete().eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$4(res.error)), {
 			status: 500,
@@ -2169,7 +2170,7 @@ function createErrorPayload$3(error) {
 		error: error instanceof Error ? error.message : String(error)
 	};
 }
-var Route$4 = createFileRoute("/api/admin/delete-download")({ server: { handlers: { POST: async ({ request }) => {
+var Route$5 = createFileRoute("/api/admin/delete-download")({ server: { handlers: { POST: async ({ request }) => {
 	const headers = { "content-type": "application/json" };
 	try {
 		if (!await isAdminAuthorized(request)) return new Response(JSON.stringify({
@@ -2187,7 +2188,7 @@ var Route$4 = createFileRoute("/api/admin/delete-download")({ server: { handlers
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
+		const { supabaseAdmin } = await import("./client.server-D6IWv6Bt.mjs");
 		const res = await supabaseAdmin.from("downloads").delete().eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$3(res.error)), {
 			status: 500,
@@ -2458,7 +2459,7 @@ async function verifyDatabaseConnectivity(supabaseAdmin) {
 	console.log("[Dashboard] Database connectivity verified");
 	return { ok: true };
 }
-var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GET: async ({ request }) => {
+var Route$4 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GET: async ({ request }) => {
 	const responseHeaders = {
 		"content-type": "application/json",
 		"Cache-Control": "no-store"
@@ -2510,7 +2511,7 @@ var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 		let supabaseAdmin;
 		try {
 			console.log("[Dashboard] Importing Supabase admin client");
-			supabaseAdmin = (await import("./client.server-Co2SvHgp.mjs")).supabaseAdmin;
+			supabaseAdmin = (await import("./client.server-D6IWv6Bt.mjs")).supabaseAdmin;
 			if (!supabaseAdmin) throw new Error("Supabase admin client import returned undefined");
 		} catch (importError) {
 			const message = importError instanceof Error ? importError.message : String(importError);
@@ -2626,10 +2627,7 @@ var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 			});
 		}
 		const visits = visitsRes.data ?? [];
-		const networkClusters = buildNetworkClusters([...visits, ...sessions.map((session) => ({
-			...session,
-			created_at: session.first_visit
-		}))]);
+		const networkClusters = buildNetworkClusters(visits);
 		console.log(`[Dashboard] Network clusters built: ${networkClusters.length}`);
 		const installedSessionIds = /* @__PURE__ */ new Set([
 			...downloads.filter((download) => download.extracted === true).map((download) => download.session_id).filter(Boolean),
@@ -2662,9 +2660,6 @@ var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 				const matchingDownload = downloads.find((download) => download.id === extraction.download_id);
 				if (matchingDownload?.session_id) installedSessionIds.add(matchingDownload.session_id);
 			}
-			if (!extraction.session_id && extraction.ip) {
-				for (const session of sessions) if (session.ip === extraction.ip) installedSessionIds.add(session.session_id);
-			}
 		}
 		const onlineSessions = sessions.map((session) => {
 			const statusInfo = getStatusInfo(session);
@@ -2693,6 +2688,7 @@ var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 		}));
 		const downloadUsers = new Set(enhancedDownloads.map((download) => download.session_id || download.ip || download.user_id).filter(Boolean)).size;
 		const completedDownloads = enhancedDownloads.filter((download) => download.completed).length;
+		const installedUsers = new Set(enhancedDownloads.filter((download) => download.installed).map((download) => download.session_id || download.id).filter(Boolean)).size;
 		const unreadNotifications = notifications.filter(notificationIsUnread);
 		try {
 			const pendingOffline = sessions.filter((session) => session.last_active < (/* @__PURE__ */ new Date(Date.now() - OFFLINE_NOTIFICATION_WINDOW_MS)).toISOString() && !session.notified_left);
@@ -2733,6 +2729,7 @@ var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 				total_downloads: enhancedDownloads.length,
 				download_users: downloadUsers,
 				completed_downloads: completedDownloads,
+				installed_users: installedUsers,
 				pending_notifications: unreadNotifications.length
 			}
 		};
@@ -2763,7 +2760,7 @@ function createErrorPayload$2(error) {
 		error: error instanceof Error ? error.message : String(error)
 	};
 }
-var Route$2 = createFileRoute("/api/admin/clear-notifications")({ server: { handlers: { POST: async ({ request }) => {
+var Route$3 = createFileRoute("/api/admin/clear-notifications")({ server: { handlers: { POST: async ({ request }) => {
 	const headers = { "content-type": "application/json" };
 	try {
 		if (!await isAdminAuthorized(request)) return new Response(JSON.stringify({
@@ -2773,7 +2770,7 @@ var Route$2 = createFileRoute("/api/admin/clear-notifications")({ server: { hand
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
+		const { supabaseAdmin } = await import("./client.server-D6IWv6Bt.mjs");
 		const res = await supabaseAdmin.from("notifications").delete().not("id", "is", null);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$2(res.error)), {
 			status: 500,
@@ -2786,6 +2783,34 @@ var Route$2 = createFileRoute("/api/admin/clear-notifications")({ server: { hand
 	} catch (error) {
 		console.error("[Clear notifications]", error);
 		return new Response(JSON.stringify(createErrorPayload$2(error)), {
+			status: 500,
+			headers
+		});
+	}
+} } } });
+var Route$2 = createFileRoute("/api/admin/clear-network")({ server: { handlers: { POST: async ({ request }) => {
+	const headers = { "content-type": "application/json" };
+	try {
+		if (!await isAdminAuthorized(request)) return new Response(JSON.stringify({
+			success: false,
+			error: "Unauthorized"
+		}), {
+			status: 401,
+			headers
+		});
+		const { supabaseAdmin } = await import("./client.server-D6IWv6Bt.mjs");
+		const { error } = await supabaseAdmin.from("visits").delete().not("id", "is", null);
+		if (error) throw error;
+		return new Response(JSON.stringify({ success: true }), {
+			status: 200,
+			headers
+		});
+	} catch (error) {
+		console.error("[Clear network]", error);
+		return new Response(JSON.stringify({
+			success: false,
+			error: error instanceof Error ? error.message : String(error)
+		}), {
 			status: 500,
 			headers
 		});
@@ -2811,7 +2836,7 @@ var Route$1 = createFileRoute("/api/admin/clear-history")({ server: { handlers: 
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
+		const { supabaseAdmin } = await import("./client.server-D6IWv6Bt.mjs");
 		await clearTable(supabaseAdmin, "notifications");
 		await clearTable(supabaseAdmin, "downloads");
 		await clearTable(supabaseAdmin, "extractions");
@@ -2846,7 +2871,7 @@ var Route = createFileRoute("/api/admin/clear-downloads")({ server: { handlers: 
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
+		const { supabaseAdmin } = await import("./client.server-D6IWv6Bt.mjs");
 		const res = await supabaseAdmin.from("downloads").delete().not("id", "is", null);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload(res.error)), {
 			status: 500,
@@ -2864,134 +2889,139 @@ var Route = createFileRoute("/api/admin/clear-downloads")({ server: { handlers: 
 		});
 	}
 } } } });
-var MeRoute = Route$25.update({
+var MeRoute = Route$26.update({
 	id: "/me",
 	path: "/me",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var InstalledRoute = Route$24.update({
+var InstalledRoute = Route$25.update({
 	id: "/installed",
 	path: "/installed",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var AuthRoute = Route$23.update({
+var AuthRoute = Route$24.update({
 	id: "/auth",
 	path: "/auth",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var AuthenticatedRouteRoute = Route$22.update({
+var AuthenticatedRouteRoute = Route$23.update({
 	id: "/_authenticated",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var IndexRoute = Route$21.update({
+var IndexRoute = Route$22.update({
 	id: "/",
 	path: "/",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var AuthenticatedAdminRoute = Route$20.update({
+var AuthenticatedAdminRoute = Route$21.update({
 	id: "/admin",
 	path: "/admin",
 	getParentRoute: () => AuthenticatedRouteRoute
 });
-var ApiPublicVisitRoute = Route$19.update({
+var ApiPublicVisitRoute = Route$20.update({
 	id: "/api/public/visit",
 	path: "/api/public/visit",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiPublicMarkExtractedRoute = Route$18.update({
+var ApiPublicMarkExtractedRoute = Route$19.update({
 	id: "/api/public/mark-extracted",
 	path: "/api/public/mark-extracted",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiPublicInstalledRoute = Route$17.update({
+var ApiPublicInstalledRoute = Route$18.update({
 	id: "/api/public/installed",
 	path: "/api/public/installed",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiPublicDownloadProgressRoute = Route$16.update({
+var ApiPublicDownloadProgressRoute = Route$17.update({
 	id: "/api/public/download-progress",
 	path: "/api/public/download-progress",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiPublicDownloadRoute = Route$15.update({
+var ApiPublicDownloadRoute = Route$16.update({
 	id: "/api/public/download",
 	path: "/api/public/download",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiMeStatsRoute = Route$14.update({
+var ApiMeStatsRoute = Route$15.update({
 	id: "/api/me/stats",
 	path: "/api/me/stats",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiMeLogoutRoute = Route$13.update({
+var ApiMeLogoutRoute = Route$14.update({
 	id: "/api/me/logout",
 	path: "/api/me/logout",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiMeLoginRoute = Route$12.update({
+var ApiMeLoginRoute = Route$13.update({
 	id: "/api/me/login",
 	path: "/api/me/login",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiAdminMarkNotificationReadRoute = Route$11.update({
+var ApiAdminMarkNotificationReadRoute = Route$12.update({
 	id: "/api/admin/mark-notification-read",
 	path: "/api/admin/mark-notification-read",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiAdminLogoutRoute = Route$10.update({
+var ApiAdminLogoutRoute = Route$11.update({
 	id: "/api/admin/logout",
 	path: "/api/admin/logout",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiAdminLoginRoute = Route$9.update({
+var ApiAdminLoginRoute = Route$10.update({
 	id: "/api/admin/login",
 	path: "/api/admin/login",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiAdminLogNotificationRoute = Route$8.update({
+var ApiAdminLogNotificationRoute = Route$9.update({
 	id: "/api/admin/log-notification",
 	path: "/api/admin/log-notification",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiAdminDeleteUserRoute = Route$7.update({
+var ApiAdminDeleteUserRoute = Route$8.update({
 	id: "/api/admin/delete-user",
 	path: "/api/admin/delete-user",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiAdminDeleteSessionRoute = Route$6.update({
+var ApiAdminDeleteSessionRoute = Route$7.update({
 	id: "/api/admin/delete-session",
 	path: "/api/admin/delete-session",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiAdminDeleteNotificationRoute = Route$5.update({
+var ApiAdminDeleteNotificationRoute = Route$6.update({
 	id: "/api/admin/delete-notification",
 	path: "/api/admin/delete-notification",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiAdminDeleteDownloadRoute = Route$4.update({
+var ApiAdminDeleteDownloadRoute = Route$5.update({
 	id: "/api/admin/delete-download",
 	path: "/api/admin/delete-download",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiAdminDashboardRoute = Route$3.update({
+var ApiAdminDashboardRoute = Route$4.update({
 	id: "/api/admin/dashboard",
 	path: "/api/admin/dashboard",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
-var ApiAdminClearNotificationsRoute = Route$2.update({
+var ApiAdminClearNotificationsRoute = Route$3.update({
 	id: "/api/admin/clear-notifications",
 	path: "/api/admin/clear-notifications",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
+});
+var ApiAdminClearNetworkRoute = Route$2.update({
+	id: "/api/admin/clear-network",
+	path: "/api/admin/clear-network",
+	getParentRoute: () => Route$27
 });
 var ApiAdminClearHistoryRoute = Route$1.update({
 	id: "/api/admin/clear-history",
 	path: "/api/admin/clear-history",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
 var ApiAdminClearDownloadsRoute = Route.update({
 	id: "/api/admin/clear-downloads",
 	path: "/api/admin/clear-downloads",
-	getParentRoute: () => Route$26
+	getParentRoute: () => Route$27
 });
 var AuthenticatedRouteRouteChildren = { AuthenticatedAdminRoute };
 var rootRouteChildren = {
@@ -3002,6 +3032,7 @@ var rootRouteChildren = {
 	MeRoute,
 	ApiAdminClearDownloadsRoute,
 	ApiAdminClearHistoryRoute,
+	ApiAdminClearNetworkRoute,
 	ApiAdminClearNotificationsRoute,
 	ApiAdminDashboardRoute,
 	ApiAdminDeleteDownloadRoute,
@@ -3021,7 +3052,7 @@ var rootRouteChildren = {
 	ApiPublicMarkExtractedRoute,
 	ApiPublicVisitRoute
 };
-var routeTree = Route$26._addFileChildren(rootRouteChildren)._addFileTypes();
+var routeTree = Route$27._addFileChildren(rootRouteChildren)._addFileTypes();
 var getRouter = () => {
 	return createRouter({
 		routeTree,

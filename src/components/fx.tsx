@@ -1,4 +1,38 @@
+import { Canvas, useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
+import * as THREE from "three";
+
+function StarField() {
+  const points = useRef<THREE.Points>(null);
+  const positions = useMemo(() => {
+    const values = new Float32Array(720 * 3);
+    for (let i = 0; i < values.length; i += 3) {
+      const radius = 3 + Math.random() * 22;
+      const angle = Math.random() * Math.PI * 2;
+      values[i] = Math.cos(angle) * radius;
+      values[i + 1] = (Math.random() - 0.5) * 12;
+      values[i + 2] = -Math.random() * 32;
+    }
+    return values;
+  }, []);
+
+  useFrame((_, delta) => {
+    if (!points.current) return;
+    points.current.rotation.y += delta * 0.018;
+    points.current.position.z += delta * 0.42;
+    if (points.current.position.z > 4) points.current.position.z = 0;
+  });
+
+  return <points ref={points}><bufferGeometry><bufferAttribute attach="attributes-position" args={[positions, 3]} /></bufferGeometry><pointsMaterial size={0.045} color="#89d7ff" transparent opacity={0.72} sizeAttenuation /></points>;
+}
+
+/** A lightweight WebGL layer used behind the video-driven site. */
+export function ImmersiveBackground() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
+  if (!ready) return null;
+  return <div aria-hidden className="pointer-events-none fixed inset-0 -z-20 overflow-hidden bg-[#111827]"><Canvas dpr={[1, 1.5]} camera={{ position: [0, 0, 7], fov: 58 }} gl={{ alpha: true, antialias: false, powerPreference: "low-power" }}><fog attach="fog" args={["#111827", 4, 28]} /><ambientLight intensity={0.8} color="#7c9dff" /><StarField /></Canvas><div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_15%,rgba(73,175,255,0.23),transparent_32%),radial-gradient(circle_at_15%_75%,rgba(157,89,255,0.18),transparent_28%),linear-gradient(135deg,rgba(14,24,48,0.72),rgba(7,8,18,0.38))]" /></div>;
+}
 
 export function Particles({ count = 20, color = "arcane", className = "" }: { count?: number; color?: "arcane" | "ember" | "gold"; className?: string }) {
   const [mounted, setMounted] = useState(false);

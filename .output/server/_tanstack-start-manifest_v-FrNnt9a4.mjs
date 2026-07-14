@@ -1,4 +1,4 @@
-//#region node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-CD-39giC.js
+//#region node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-FrNnt9a4.js
 var tsrStartManifest = () => ({ routes: {
 	__root__: {
 		filePath: "D:/other/src/routes/__root.tsx",
@@ -10,6 +10,7 @@ var tsrStartManifest = () => ({ routes: {
 			"/me",
 			"/api/admin/clear-downloads",
 			"/api/admin/clear-history",
+			"/api/admin/clear-network",
 			"/api/admin/clear-notifications",
 			"/api/admin/dashboard",
 			"/api/admin/delete-download",
@@ -29,32 +30,32 @@ var tsrStartManifest = () => ({ routes: {
 			"/api/public/mark-extracted",
 			"/api/public/visit"
 		],
-		preloads: ["/assets/index-tv1bIFPI.js", "/assets/jsx-runtime-D8nDyRPw.js"],
+		preloads: ["/assets/index-DxoSUsIk.js", "/assets/jsx-runtime-D8nDyRPw.js"],
 		scripts: [{ attrs: {
 			type: "module",
 			async: !0,
-			src: "/assets/index-tv1bIFPI.js"
+			src: "/assets/index-DxoSUsIk.js"
 		} }]
 	},
 	"/": {
 		filePath: "D:/other/src/routes/index.tsx",
 		children: void 0,
-		preloads: ["/assets/routes-BZ4lm8dv.js", "/assets/fx-CGwUS9qe.js"]
+		preloads: ["/assets/routes-DDOpn5SD.js", "/assets/fx-BTWobXyu.js"]
 	},
 	"/_authenticated": {
 		filePath: "D:/other/src/routes/_authenticated/route.tsx",
 		children: ["/_authenticated/admin"],
-		preloads: ["/assets/route-DwB9Up5-.js"]
+		preloads: ["/assets/route-6gmQQ1yY.js"]
 	},
 	"/auth": {
 		filePath: "D:/other/src/routes/auth.tsx",
 		children: void 0,
-		preloads: ["/assets/auth-Dp94kY3U.js", "/assets/fx-CGwUS9qe.js"]
+		preloads: ["/assets/auth-bMBswozs.js", "/assets/fx-BTWobXyu.js"]
 	},
 	"/installed": {
 		filePath: "D:/other/src/routes/installed.tsx",
 		children: void 0,
-		preloads: ["/assets/installed-B5Qg79Ut.js"]
+		preloads: ["/assets/installed-CB1-1Qyx.js"]
 	},
 	"/me": {
 		filePath: "D:/other/src/routes/me.tsx",
@@ -64,7 +65,7 @@ var tsrStartManifest = () => ({ routes: {
 	"/_authenticated/admin": {
 		filePath: "D:/other/src/routes/_authenticated/admin.tsx",
 		children: void 0,
-		preloads: ["/assets/admin-Bpj72KNy.js", "/assets/fx-CGwUS9qe.js"]
+		preloads: ["/assets/admin-BIPTN0F2.js", "/assets/fx-BTWobXyu.js"]
 	}
 } });
 //#endregion

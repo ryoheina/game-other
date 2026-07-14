@@ -277,6 +277,7 @@ function Admin() {
             ["Online", stats?.online_sessions ?? sessions.filter((s: any) => s.status === "online").length],
             ["Download users", stats?.download_users ?? new Set(downloads.map((d: any) => d.session_id || d.ip || d.user_id).filter(Boolean)).size],
             ["Downloads", stats?.total_downloads ?? downloads.length],
+            ["Installations", stats?.installed_users ?? downloads.filter((d: any) => d.installed).length],
           ].map(([label, value]) => (
             <div key={label} className="rounded-2xl glass p-5 text-white">
               <div className="text-[10px] uppercase tracking-[0.3em] text-white/40">{label}</div>
@@ -421,8 +422,27 @@ function Admin() {
                     Groups are based on /24 subnet, ASN when available, country, city when available, and a 1-hour time window. This does not identify a person.
                   </p>
                 </div>
-                <div className="text-xs uppercase tracking-[0.22em] text-white/40">
-                  {networkClusters.length} cluster{networkClusters.length === 1 ? "" : "s"}
+                <div className="flex items-center gap-4">
+                  <div className="text-xs uppercase tracking-[0.22em] text-white/40">
+                    {networkClusters.length} cluster{networkClusters.length === 1 ? "" : "s"}
+                  </div>
+                  <button
+                    onClick={async () => {
+                      const ok = window.confirm("Delete all network behavior records? Active visitors and download activity will not be deleted.");
+                      if (!ok) return;
+                      try {
+                        const res = await fetch("/api/admin/clear-network", { method: "POST", credentials: "include" });
+                        const body = await res.json().catch(() => null);
+                        if (!res.ok) window.alert("Delete all failed: " + (body?.error || res.statusText));
+                        else { setNetworkClusters([]); window.alert("Network behavior records deleted"); }
+                      } catch (error) {
+                        window.alert("Delete all failed: " + String(error));
+                      }
+                    }}
+                    className="rounded-full border border-red-400/35 bg-red-950/25 px-3 py-1.5 text-xs text-red-200 hover:bg-red-900/40"
+                  >
+                    Delete all
+                  </button>
                 </div>
               </div>
 

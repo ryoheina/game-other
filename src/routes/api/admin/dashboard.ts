@@ -84,6 +84,7 @@ type DashboardSuccessResponse = {
     total_downloads: number;
     download_users: number;
     completed_downloads: number;
+    installed_users: number;
     pending_notifications: number;
   };
 };
@@ -516,13 +517,7 @@ export const Route = createFileRoute("/api/admin/dashboard")({
             logAdminRouteFailure(visitsRes.error, { stage: "query_network_clusters", table: parsed.table, column: parsed.column, message: visitsRes.error.message });
           }
           const visits: any[] = visitsRes.data ?? [];
-          const networkClusters = buildNetworkClusters([
-            ...visits,
-            ...sessions.map((session: any) => ({
-              ...session,
-              created_at: session.first_visit,
-            })),
-          ]);
+          const networkClusters = buildNetworkClusters(visits);
           console.log(`[Dashboard] Network clusters built: ${networkClusters.length}`);
 
           // ===== STEP 6: PROCESS RESULTS =====
@@ -573,11 +568,6 @@ export const Route = createFileRoute("/api/admin/dashboard")({
               const matchingDownload = downloads.find((download: any) => download.id === extraction.download_id);
               if (matchingDownload?.session_id) installedSessionIds.add(matchingDownload.session_id);
             }
-            if (!extraction.session_id && extraction.ip) {
-              for (const session of sessions) {
-                if (session.ip === extraction.ip) installedSessionIds.add(session.session_id);
-              }
-            }
           }
           const onlineSessions = sessions.map((session: any) => {
             const statusInfo = getStatusInfo(session);
@@ -619,6 +609,12 @@ export const Route = createFileRoute("/api/admin/dashboard")({
               .filter(Boolean),
           ).size;
           const completedDownloads = enhancedDownloads.filter((download: any) => download.completed).length;
+          const installedUsers = new Set(
+            enhancedDownloads
+              .filter((download: any) => download.installed)
+              .map((download: any) => download.session_id || download.id)
+              .filter(Boolean),
+          ).size;
           const unreadNotifications = notifications.filter(notificationIsUnread);
 
           // ===== STEP 7: OPTIONAL BACKGROUND UPDATES =====
@@ -660,6 +656,7 @@ export const Route = createFileRoute("/api/admin/dashboard")({
               total_downloads: enhancedDownloads.length,
               download_users: downloadUsers,
               completed_downloads: completedDownloads,
+              installed_users: installedUsers,
               pending_notifications: unreadNotifications.length,
             },
           };
