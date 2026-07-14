@@ -15,6 +15,8 @@ export default defineConfig({
         "game-other.onrender.com",
         "regendofwar.publicvm.com",
         "www.regendofwar.publicvm.com",
+        "legendofeternity.publicvm.com",
+        "www.legendofeternity.publicvm.com",
       ],
     },
     build: {
