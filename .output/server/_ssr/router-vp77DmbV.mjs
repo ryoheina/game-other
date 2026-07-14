@@ -1,4 +1,4 @@
-import { a as __toESM } from "../_runtime.mjs";
+import { o as __toESM } from "../_runtime.mjs";
 import { n as require_jsx_runtime, r as require_react, t as QueryClientProvider } from "../_libs/react+tanstack__react-query.mjs";
 import { c as HeadContent, d as createRouter, f as Outlet, g as Link, h as createRootRouteWithContext, j as redirect, l as useLocation, m as createFileRoute, p as lazyRouteComponent, s as Scripts, v as useRouter } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as createClient } from "../_libs/supabase__supabase-js.mjs";
@@ -7,10 +7,8 @@ import { f as getRequest, i as TSS_SERVER_FUNCTION, l as createServerFn, m as ge
 import { t as ensureVisitorSession } from "./visitor-session-CAw0UShx.mjs";
 import { t as QueryClient } from "../_libs/tanstack__query-core.mjs";
 import { n as objectType, r as stringType, t as booleanType } from "../_libs/zod.mjs";
-import processModule from "node:process";
-import { Buffer } from "node:buffer";
-import crypto$1 from "node:crypto";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-Dd4QqOij.js
+import crypto$1 from "crypto";
+//#region node_modules/.nitro/vite/services/ssr/assets/router-vp77DmbV.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function isNewSupabaseApiKey$1(value) {
@@ -36,8 +34,8 @@ function createSupabaseFetch$1(supabaseKey) {
 	};
 }
 function createSupabaseAdminClient() {
-	const SUPABASE_URL = processModule.env.SUPABASE_URL;
-	const SUPABASE_SERVICE_ROLE_KEY = processModule.env.SUPABASE_SERVICE_ROLE_KEY;
+	const SUPABASE_URL = process.env.SUPABASE_URL;
+	const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 	if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 		const message = `[Supabase] Missing critical environment variable(s): ${[...!SUPABASE_URL ? ["SUPABASE_URL"] : [], ...!SUPABASE_SERVICE_ROLE_KEY ? ["SUPABASE_SERVICE_ROLE_KEY"] : []].join(", ")}. Check Vercel Environment Variables or .env.local`;
 		console.error(message);
@@ -386,8 +384,8 @@ function createSupabaseFetch(supabaseKey) {
 	};
 }
 var requireSupabaseAuth = createMiddleware({ type: "function" }).server(async ({ next }) => {
-	const SUPABASE_URL = processModule.env.SUPABASE_URL;
-	const SUPABASE_PUBLISHABLE_KEY = processModule.env.SUPABASE_PUBLISHABLE_KEY;
+	const SUPABASE_URL = process.env.SUPABASE_URL;
+	const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
 	if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
 		const message = `Missing Supabase environment variable(s): ${[...!SUPABASE_URL ? ["SUPABASE_URL"] : [], ...!SUPABASE_PUBLISHABLE_KEY ? ["SUPABASE_PUBLISHABLE_KEY"] : []].join(", ")}. Connect Supabase in Lovable Cloud.`;
 		console.error(`[Supabase] ${message}`);
@@ -609,7 +607,7 @@ async function recordVisit(request, data) {
 	};
 	const country = meta.country ?? (request ? await resolveCountry(request.headers, meta.ip) : null);
 	const networkMeta = getNetworkMeta$1(request, country);
-	const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
+	const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
 	const now = (/* @__PURE__ */ new Date()).toISOString();
 	const { data: existing } = await supabaseAdmin.from("sessions").select("session_id,last_active,notified_left").eq("session_id", data.sessionId).maybeSingle();
 	if (existing) {
@@ -907,7 +905,7 @@ var Route$18 = createFileRoute("/api/public/mark-extracted")({ server: { handler
 			headers: { "Cache-Control": "no-store" }
 		});
 		const meta = getClientMeta(request);
-		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
+		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
 		const { data: download, error: downloadError } = await findDownloadByInstallToken$1(supabaseAdmin, installToken);
 		if (downloadError) throw downloadError;
 		if (!download) return new Response("", {
@@ -1024,7 +1022,7 @@ var Route$17 = createFileRoute("/api/public/installed")({ server: { handlers: { 
 		const bodySessionId = typeof body?.sessionId === "string" && body.sessionId.length >= 8 && body.sessionId.length <= 64 ? body.sessionId : null;
 		const meta = getClientMeta(request);
 		const installToken = getInstallTokenFromRequest(request, body?.token);
-		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
+		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
 		let { data: download, error: downloadError } = installToken ? await findDownloadByInstallToken(supabaseAdmin, installToken) : await findLatestDownloadBySession(supabaseAdmin, bodySessionId, fileName);
 		if (downloadError) throw downloadError;
 		if (!download) return new Response(JSON.stringify({
@@ -1231,7 +1229,7 @@ function isUuid(value) {
 async function getPublicArchiveSize() {
 	try {
 		const [{ stat }, path] = await Promise.all([import("node:fs/promises"), import("node:path")]);
-		const candidates = [path.join(processModule.cwd(), "public", PUBLIC_ARCHIVE_NAME), path.join(processModule.cwd(), ".output", "public", PUBLIC_ARCHIVE_NAME)];
+		const candidates = [path.join(process.cwd(), "public", PUBLIC_ARCHIVE_NAME), path.join(process.cwd(), ".output", "public", PUBLIC_ARCHIVE_NAME)];
 		for (const candidate of candidates) try {
 			const file = await stat(candidate);
 			if (file.isFile() && file.size > 0) return file.size;
@@ -1585,7 +1583,7 @@ function getTokenFromRequest(request) {
 	return null;
 }
 var Route$14 = createFileRoute("/api/me/stats")({ server: { handlers: { GET: async ({ request }) => {
-	if (!verifyAuthToken(getTokenFromRequest(request), processModule.env.ADMIN_PASSWORD || "")) return new Response(JSON.stringify({
+	if (!verifyAuthToken(getTokenFromRequest(request), process.env.ADMIN_PASSWORD || "")) return new Response(JSON.stringify({
 		ok: false,
 		error: "Unauthorized"
 	}), {
@@ -1593,7 +1591,7 @@ var Route$14 = createFileRoute("/api/me/stats")({ server: { handlers: { GET: asy
 		headers: { "Content-Type": "application/json" }
 	});
 	try {
-		const missingEnv = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"].filter((name) => !processModule.env[name]);
+		const missingEnv = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"].filter((name) => !process.env[name]);
 		if (missingEnv.length > 0) {
 			const message = `Missing environment variables: ${missingEnv.join(", ")}`;
 			console.error("me/stats env error", message);
@@ -1605,7 +1603,7 @@ var Route$14 = createFileRoute("/api/me/stats")({ server: { handlers: { GET: asy
 				headers: { "Content-Type": "application/json" }
 			});
 		}
-		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
+		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
 		(/* @__PURE__ */ new Date(Date.now() - 24 * 36e5)).toISOString();
 		const since5m = (/* @__PURE__ */ new Date(Date.now() - 5 * 6e4)).toISOString();
 		const sinceToday = new Date((/* @__PURE__ */ new Date()).setHours(0, 0, 0, 0)).toISOString();
@@ -1686,7 +1684,7 @@ var Route$13 = createFileRoute("/api/me/logout")({ server: { handlers: { POST: a
 var Route$12 = createFileRoute("/api/me/login")({ server: { handlers: { POST: async ({ request }) => {
 	const body = await request.json().catch(() => ({}));
 	const password = typeof body.password === "string" ? body.password : null;
-	const adminPassword = processModule.env.ADMIN_PASSWORD || processModule.env.STUDIO_ADMIN_PASSWORD || null;
+	const adminPassword = process.env.ADMIN_PASSWORD || process.env.STUDIO_ADMIN_PASSWORD || null;
 	if (!adminPassword) return new Response(JSON.stringify({
 		ok: false,
 		error: "ADMIN_PASSWORD not configured"
@@ -1710,7 +1708,7 @@ var Route$12 = createFileRoute("/api/me/login")({ server: { handlers: { POST: as
 		}
 	});
 } } } });
-var ADMIN_PASSWORD$1 = processModule.env.ADMIN_PASSWORD || processModule.env.STUDIO_ADMIN_PASSWORD;
+var ADMIN_PASSWORD$1 = process.env.ADMIN_PASSWORD || process.env.STUDIO_ADMIN_PASSWORD;
 var ADMIN_COOKIE_NAME = "admin-auth-token";
 var ADMIN_SESSION_MAX_AGE_SECONDS = 3600 * 8;
 function getAdminPassword() {
@@ -1779,7 +1777,7 @@ var Route$11 = createFileRoute("/api/admin/mark-notification-read")({ server: { 
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
+		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
 		const res = await supabaseAdmin.from("notifications").update({ read: true }).eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$8(res.error)), {
 			status: 500,
@@ -1806,16 +1804,16 @@ var Route$10 = createFileRoute("/api/admin/logout")({ server: { handlers: { POST
 		}
 	});
 } } } });
-var ADMIN_PASSWORD = processModule.env.ADMIN_PASSWORD || processModule.env.STUDIO_ADMIN_PASSWORD;
+var ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || process.env.STUDIO_ADMIN_PASSWORD;
 var loginAttempts = /* @__PURE__ */ new Map();
 var MAX_LOGIN_ATTEMPTS = 6;
 var LOGIN_WINDOW_MS = 600 * 1e3;
 function getEnvPresence$1() {
 	return {
-		ADMIN_PASSWORD: Boolean(processModule.env.ADMIN_PASSWORD || processModule.env.STUDIO_ADMIN_PASSWORD),
-		SUPABASE_URL: Boolean(processModule.env.SUPABASE_URL),
-		SUPABASE_SERVICE_ROLE_KEY: Boolean(processModule.env.SUPABASE_SERVICE_ROLE_KEY),
-		SUPABASE_PUBLISHABLE_KEY: Boolean(processModule.env.SUPABASE_PUBLISHABLE_KEY)
+		ADMIN_PASSWORD: Boolean(process.env.ADMIN_PASSWORD || process.env.STUDIO_ADMIN_PASSWORD),
+		SUPABASE_URL: Boolean(process.env.SUPABASE_URL),
+		SUPABASE_SERVICE_ROLE_KEY: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+		SUPABASE_PUBLISHABLE_KEY: Boolean(process.env.SUPABASE_PUBLISHABLE_KEY)
 	};
 }
 function logAdminRouteFailure$1(error, context = {}) {
@@ -1823,7 +1821,7 @@ function logAdminRouteFailure$1(error, context = {}) {
 		route: "/api/admin/login",
 		env: getEnvPresence$1(),
 		nodeEnv: "production",
-		vercelEnv: processModule.env.VERCEL_ENV ?? "undefined",
+		vercelEnv: process.env.VERCEL_ENV ?? "undefined",
 		...context
 	};
 	if (error instanceof Error) {
@@ -1872,7 +1870,7 @@ var Route$9 = createFileRoute("/api/admin/login")({ server: { handlers: { POST: 
 		route: "/api/admin/login",
 		env: getEnvPresence$1(),
 		nodeEnv: "production",
-		vercelEnv: processModule.env.VERCEL_ENV ?? "undefined"
+		vercelEnv: process.env.VERCEL_ENV ?? "undefined"
 	});
 	try {
 		const password = (await request.json().catch(() => null))?.password;
@@ -2026,7 +2024,7 @@ var Route$7 = createFileRoute("/api/admin/delete-user")({ server: { handlers: { 
 		});
 		let supabaseAdmin;
 		try {
-			supabaseAdmin = (await import("./client.server-BMV8BJf7.mjs")).supabaseAdmin;
+			supabaseAdmin = (await import("./client.server-Co2SvHgp.mjs")).supabaseAdmin;
 			if (!supabaseAdmin) throw new Error("Supabase admin client unavailable");
 		} catch (err) {
 			console.error("[Delete user] Supabase admin client load failed", err);
@@ -2101,7 +2099,7 @@ var Route$6 = createFileRoute("/api/admin/delete-session")({ server: { handlers:
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
+		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
 		await supabaseAdmin.from("visits").delete().eq("session_id", id);
 		await supabaseAdmin.from("downloads").delete().eq("session_id", id);
 		await supabaseAdmin.from("extractions").delete().eq("session_id", id);
@@ -2147,7 +2145,7 @@ var Route$5 = createFileRoute("/api/admin/delete-notification")({ server: { hand
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
+		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
 		const res = await supabaseAdmin.from("notifications").delete().eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$4(res.error)), {
 			status: 500,
@@ -2189,7 +2187,7 @@ var Route$4 = createFileRoute("/api/admin/delete-download")({ server: { handlers
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
+		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
 		const res = await supabaseAdmin.from("downloads").delete().eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$3(res.error)), {
 			status: 500,
@@ -2211,10 +2209,10 @@ var ONLINE_WINDOW_MS = 1800 * 1e3;
 var OFFLINE_NOTIFICATION_WINDOW_MS = 1800 * 1e3;
 function getEnvPresence() {
 	return {
-		ADMIN_PASSWORD: Boolean(processModule.env.ADMIN_PASSWORD || processModule.env.STUDIO_ADMIN_PASSWORD),
-		SUPABASE_URL: Boolean(processModule.env.SUPABASE_URL),
-		SUPABASE_SERVICE_ROLE_KEY: Boolean(processModule.env.SUPABASE_SERVICE_ROLE_KEY),
-		SUPABASE_PUBLISHABLE_KEY: Boolean(processModule.env.SUPABASE_PUBLISHABLE_KEY)
+		ADMIN_PASSWORD: Boolean(process.env.ADMIN_PASSWORD || process.env.STUDIO_ADMIN_PASSWORD),
+		SUPABASE_URL: Boolean(process.env.SUPABASE_URL),
+		SUPABASE_SERVICE_ROLE_KEY: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+		SUPABASE_PUBLISHABLE_KEY: Boolean(process.env.SUPABASE_PUBLISHABLE_KEY)
 	};
 }
 function logAdminRouteFailure(error, context = {}) {
@@ -2222,7 +2220,7 @@ function logAdminRouteFailure(error, context = {}) {
 		route: "/api/admin/dashboard",
 		env: getEnvPresence(),
 		nodeEnv: "production",
-		vercelEnv: processModule.env.VERCEL_ENV ?? "undefined",
+		vercelEnv: process.env.VERCEL_ENV ?? "undefined",
 		...context
 	};
 	if (error instanceof Error) {
@@ -2266,7 +2264,7 @@ var requiredEnvVars = [
 	"SUPABASE_SERVICE_ROLE_KEY"
 ];
 function logEnvStatus() {
-	const status = requiredEnvVars.map((name) => `${name}=${processModule.env[name] ? "set" : "missing"}`).join(", ");
+	const status = requiredEnvVars.map((name) => `${name}=${process.env[name] ? "set" : "missing"}`).join(", ");
 	console.log(`[Dashboard] Required env vars: ${status}`);
 }
 function createFailureResponse(message, step, error, details, table, column) {
@@ -2470,11 +2468,11 @@ var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 		route: "/api/admin/dashboard",
 		env: getEnvPresence(),
 		nodeEnv: "production",
-		vercelEnv: processModule.env.VERCEL_ENV ?? "undefined",
+		vercelEnv: process.env.VERCEL_ENV ?? "undefined",
 		requestUrl: request.url
 	});
 	try {
-		const missingEnv = requiredEnvVars.filter((name) => !processModule.env[name]);
+		const missingEnv = requiredEnvVars.filter((name) => !process.env[name]);
 		if (missingEnv.length > 0) {
 			const message = `Missing required environment variables: ${missingEnv.join(", ")}`;
 			console.error("[Dashboard]", message);
@@ -2512,7 +2510,7 @@ var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 		let supabaseAdmin;
 		try {
 			console.log("[Dashboard] Importing Supabase admin client");
-			supabaseAdmin = (await import("./client.server-BMV8BJf7.mjs")).supabaseAdmin;
+			supabaseAdmin = (await import("./client.server-Co2SvHgp.mjs")).supabaseAdmin;
 			if (!supabaseAdmin) throw new Error("Supabase admin client import returned undefined");
 		} catch (importError) {
 			const message = importError instanceof Error ? importError.message : String(importError);
@@ -2775,7 +2773,7 @@ var Route$2 = createFileRoute("/api/admin/clear-notifications")({ server: { hand
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
+		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
 		const res = await supabaseAdmin.from("notifications").delete().not("id", "is", null);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$2(res.error)), {
 			status: 500,
@@ -2813,7 +2811,7 @@ var Route$1 = createFileRoute("/api/admin/clear-history")({ server: { handlers: 
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
+		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
 		await clearTable(supabaseAdmin, "notifications");
 		await clearTable(supabaseAdmin, "downloads");
 		await clearTable(supabaseAdmin, "extractions");
@@ -2848,7 +2846,7 @@ var Route = createFileRoute("/api/admin/clear-downloads")({ server: { handlers: 
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-BMV8BJf7.mjs");
+		const { supabaseAdmin } = await import("./client.server-Co2SvHgp.mjs");
 		const res = await supabaseAdmin.from("downloads").delete().not("id", "is", null);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload(res.error)), {
 			status: 500,

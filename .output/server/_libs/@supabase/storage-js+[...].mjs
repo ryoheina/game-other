@@ -1,4 +1,3 @@
-import { Buffer } from "node:buffer";
 //#region node_modules/iceberg-js/dist/index.mjs
 var IcebergError = class extends Error {
 	constructor(message, opts) {

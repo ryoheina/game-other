@@ -1,9 +1,8 @@
-import { t as RealtimeClient } from "./supabase__realtime-js+unenv.mjs";
-import { t as AuthClient } from "./supabase__auth-js+tslib.mjs";
 import { t as FunctionsClient } from "./supabase__functions-js.mjs";
 import { t as PostgrestClient } from "./supabase__postgrest-js.mjs";
+import { t as RealtimeClient } from "./supabase__realtime-js.mjs";
 import { t as StorageClient } from "./@supabase/storage-js+[...].mjs";
-import processModule from "node:process";
+import { t as AuthClient } from "./supabase__auth-js.mjs";
 //#region node_modules/@supabase/supabase-js/dist/index.mjs
 var version = "2.110.0";
 var JS_ENV = "";
@@ -17,7 +16,7 @@ else if (typeof navigator !== "undefined" && navigator.product === "ReactNative"
 else {
 	var _process$version;
 	JS_ENV = "node";
-	JS_RUNTIME_VERSION = typeof processModule !== "undefined" ? (_process$version = processModule.version) === null || _process$version === void 0 ? void 0 : _process$version.replace(/^v/, "") : void 0;
+	JS_RUNTIME_VERSION = typeof process !== "undefined" ? (_process$version = process.version) === null || _process$version === void 0 ? void 0 : _process$version.replace(/^v/, "") : void 0;
 }
 var _runtimeMeta = [`runtime=${JS_ENV}`];
 if (JS_RUNTIME_VERSION) _runtimeMeta.push(`runtime-version=${JS_RUNTIME_VERSION}`);
