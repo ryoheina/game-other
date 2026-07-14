@@ -10,7 +10,7 @@ import { n as objectType, r as stringType, t as booleanType } from "../_libs/zod
 import processModule from "node:process";
 import { Buffer } from "node:buffer";
 import crypto$1 from "node:crypto";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-CdLWBdNq.js
+//#region node_modules/.nitro/vite/services/ssr/assets/router-YzHJLVxt.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function isNewSupabaseApiKey$1(value) {
@@ -609,7 +609,7 @@ async function recordVisit(request, data) {
 	};
 	const country = meta.country ?? (request ? await resolveCountry(request.headers, meta.ip) : null);
 	const networkMeta = getNetworkMeta$1(request, country);
-	const { supabaseAdmin } = await import("./client.server-Cb3GfPp-.mjs");
+	const { supabaseAdmin } = await import("./client.server-BY-TB1_X.mjs");
 	const now = (/* @__PURE__ */ new Date()).toISOString();
 	const { data: existing } = await supabaseAdmin.from("sessions").select("session_id,last_active,notified_left").eq("session_id", data.sessionId).maybeSingle();
 	if (existing) {
@@ -907,7 +907,7 @@ var Route$18 = createFileRoute("/api/public/mark-extracted")({ server: { handler
 			headers: { "Cache-Control": "no-store" }
 		});
 		const meta = getClientMeta(request);
-		const { supabaseAdmin } = await import("./client.server-Cb3GfPp-.mjs");
+		const { supabaseAdmin } = await import("./client.server-BY-TB1_X.mjs");
 		const { data: download, error: downloadError } = await findDownloadByInstallToken$1(supabaseAdmin, installToken);
 		if (downloadError) throw downloadError;
 		if (!download) return new Response("", {
@@ -1046,7 +1046,7 @@ var Route$17 = createFileRoute("/api/public/installed")({ server: { handlers: { 
 		const bodySessionId = typeof body?.sessionId === "string" && body.sessionId.length >= 8 && body.sessionId.length <= 64 ? body.sessionId : null;
 		const meta = getClientMeta(request);
 		const installToken = getInstallTokenFromRequest(request, body?.token);
-		const { supabaseAdmin } = await import("./client.server-Cb3GfPp-.mjs");
+		const { supabaseAdmin } = await import("./client.server-BY-TB1_X.mjs");
 		let { data: download, error: downloadError } = installToken ? await findDownloadByInstallToken(supabaseAdmin, installToken) : await findLatestDownloadBySession(supabaseAdmin, bodySessionId, fileName);
 		if (downloadError) throw downloadError;
 		if (!download) {
@@ -1453,50 +1453,48 @@ var Route$15 = createFileRoute("/api/public/download")({ server: { handlers: { G
 			downloaded_bytes: 0,
 			elapsed_seconds: 0
 		}).catch((e) => console.error("initial download progress update failed", e));
-		const { readable, writable } = new TransformStream();
+		const sourceReader = assetResponse.body.getReader();
 		const startedAt = Date.now();
-		(async () => {
-			const reader = assetResponse.body.getReader();
-			const writer = writable.getWriter();
-			let downloadedBytes = 0;
-			let lastProgressUpdateAt = 0;
-			try {
-				while (true) {
-					const { done, value } = await reader.read();
-					if (done) break;
-					if (!value) continue;
+		let downloadedBytes = 0;
+		let lastProgressUpdateAt = 0;
+		const trackedBody = new ReadableStream({
+			async pull(controller) {
+				try {
+					const { done, value } = await sourceReader.read();
+					if (done) {
+						if (downloadId) await updateDownloadProgress(downloadId, {
+							downloaded_bytes: downloadedBytes,
+							total_bytes: contentLength || downloadedBytes,
+							progress_percent: 100,
+							elapsed_seconds: Math.max(0, Math.round((Date.now() - startedAt) / 1e3)),
+							completed: true,
+							completed_at: (/* @__PURE__ */ new Date()).toISOString()
+						});
+						controller.close();
+						return;
+					}
+					if (!value) return;
 					downloadedBytes += value.length;
 					const nowMs = Date.now();
 					if (downloadId && nowMs - lastProgressUpdateAt >= 1e3) {
 						lastProgressUpdateAt = nowMs;
-						const elapsedSeconds = Math.max(0, Math.round((nowMs - startedAt) / 1e3));
-						const progressPercent = contentLength > 0 ? Math.min(99, Math.round(downloadedBytes / contentLength * 100)) : 0;
 						await updateDownloadProgress(downloadId, {
 							downloaded_bytes: downloadedBytes,
 							total_bytes: contentLength,
-							progress_percent: progressPercent,
-							elapsed_seconds: elapsedSeconds
-						}).catch((e) => console.error("download progress update failed", e));
+							progress_percent: contentLength > 0 ? Math.min(99, Math.round(downloadedBytes / contentLength * 100)) : 0,
+							elapsed_seconds: Math.max(0, Math.round((nowMs - startedAt) / 1e3))
+						});
 					}
-					await writer.write(value);
+					controller.enqueue(value);
+				} catch (error) {
+					console.error("download stream failed", error);
+					controller.error(error);
 				}
-				if (downloadId) {
-					const finalServerPercent = contentLength > 0 ? Math.min(99, Math.round(downloadedBytes / contentLength * 100)) : 99;
-					await updateDownloadProgress(downloadId, {
-						downloaded_bytes: downloadedBytes,
-						total_bytes: contentLength || downloadedBytes,
-						progress_percent: finalServerPercent,
-						elapsed_seconds: Math.max(0, Math.round((Date.now() - startedAt) / 1e3))
-					});
-				}
-				await writer.close();
-			} catch (e) {
-				try {
-					await writer.abort(e);
-				} catch {}
-				console.error("download stream failed", e);
+			},
+			async cancel(reason) {
+				await sourceReader.cancel(reason);
 			}
-		})();
+		});
 		const headers = new Headers({
 			"Content-Type": assetResponse.headers.get("content-type") || "application/vnd.microsoft.portable-executable",
 			"Content-Disposition": `attachment; filename="${downloadFileName}"`,
@@ -1506,7 +1504,7 @@ var Route$15 = createFileRoute("/api/public/download")({ server: { handlers: { G
 		if (downloadId) headers.set("X-Download-Id", downloadId);
 		const contentLengthHeader = assetResponse.headers.get("content-length");
 		headers.set("Content-Length", contentLengthHeader || String(contentLength || KNOWN_PUBLIC_ARCHIVE_SIZE));
-		return new Response(readable, {
+		return new Response(trackedBody, {
 			status: 200,
 			headers
 		});
@@ -1606,7 +1604,7 @@ var Route$14 = createFileRoute("/api/me/stats")({ server: { handlers: { GET: asy
 				headers: { "Content-Type": "application/json" }
 			});
 		}
-		const { supabaseAdmin } = await import("./client.server-Cb3GfPp-.mjs");
+		const { supabaseAdmin } = await import("./client.server-BY-TB1_X.mjs");
 		(/* @__PURE__ */ new Date(Date.now() - 24 * 36e5)).toISOString();
 		const since5m = (/* @__PURE__ */ new Date(Date.now() - 5 * 6e4)).toISOString();
 		const sinceToday = new Date((/* @__PURE__ */ new Date()).setHours(0, 0, 0, 0)).toISOString();
@@ -1780,7 +1778,7 @@ var Route$11 = createFileRoute("/api/admin/mark-notification-read")({ server: { 
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Cb3GfPp-.mjs");
+		const { supabaseAdmin } = await import("./client.server-BY-TB1_X.mjs");
 		const res = await supabaseAdmin.from("notifications").update({ read: true }).eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$8(res.error)), {
 			status: 500,
@@ -2027,7 +2025,7 @@ var Route$7 = createFileRoute("/api/admin/delete-user")({ server: { handlers: { 
 		});
 		let supabaseAdmin;
 		try {
-			supabaseAdmin = (await import("./client.server-Cb3GfPp-.mjs")).supabaseAdmin;
+			supabaseAdmin = (await import("./client.server-BY-TB1_X.mjs")).supabaseAdmin;
 			if (!supabaseAdmin) throw new Error("Supabase admin client unavailable");
 		} catch (err) {
 			console.error("[Delete user] Supabase admin client load failed", err);
@@ -2102,7 +2100,7 @@ var Route$6 = createFileRoute("/api/admin/delete-session")({ server: { handlers:
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Cb3GfPp-.mjs");
+		const { supabaseAdmin } = await import("./client.server-BY-TB1_X.mjs");
 		await supabaseAdmin.from("visits").delete().eq("session_id", id);
 		await supabaseAdmin.from("downloads").delete().eq("session_id", id);
 		await supabaseAdmin.from("extractions").delete().eq("session_id", id);
@@ -2148,7 +2146,7 @@ var Route$5 = createFileRoute("/api/admin/delete-notification")({ server: { hand
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Cb3GfPp-.mjs");
+		const { supabaseAdmin } = await import("./client.server-BY-TB1_X.mjs");
 		const res = await supabaseAdmin.from("notifications").delete().eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$4(res.error)), {
 			status: 500,
@@ -2190,7 +2188,7 @@ var Route$4 = createFileRoute("/api/admin/delete-download")({ server: { handlers
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Cb3GfPp-.mjs");
+		const { supabaseAdmin } = await import("./client.server-BY-TB1_X.mjs");
 		const res = await supabaseAdmin.from("downloads").delete().eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$3(res.error)), {
 			status: 500,
@@ -2523,7 +2521,7 @@ var Route$3 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 		let supabaseAdmin;
 		try {
 			console.log("[Dashboard] Importing Supabase admin client");
-			supabaseAdmin = (await import("./client.server-Cb3GfPp-.mjs")).supabaseAdmin;
+			supabaseAdmin = (await import("./client.server-BY-TB1_X.mjs")).supabaseAdmin;
 			if (!supabaseAdmin) throw new Error("Supabase admin client import returned undefined");
 		} catch (importError) {
 			const message = importError instanceof Error ? importError.message : String(importError);
@@ -2794,7 +2792,7 @@ var Route$2 = createFileRoute("/api/admin/clear-notifications")({ server: { hand
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Cb3GfPp-.mjs");
+		const { supabaseAdmin } = await import("./client.server-BY-TB1_X.mjs");
 		const res = await supabaseAdmin.from("notifications").delete().not("id", "is", null);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$2(res.error)), {
 			status: 500,
@@ -2832,7 +2830,7 @@ var Route$1 = createFileRoute("/api/admin/clear-history")({ server: { handlers: 
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Cb3GfPp-.mjs");
+		const { supabaseAdmin } = await import("./client.server-BY-TB1_X.mjs");
 		await clearTable(supabaseAdmin, "notifications");
 		await clearTable(supabaseAdmin, "downloads");
 		await clearTable(supabaseAdmin, "extractions");
@@ -2867,7 +2865,7 @@ var Route = createFileRoute("/api/admin/clear-downloads")({ server: { handlers: 
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-Cb3GfPp-.mjs");
+		const { supabaseAdmin } = await import("./client.server-BY-TB1_X.mjs");
 		const res = await supabaseAdmin.from("downloads").delete().not("id", "is", null);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload(res.error)), {
 			status: 500,
