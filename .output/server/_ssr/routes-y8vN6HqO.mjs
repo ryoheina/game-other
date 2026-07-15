@@ -5,7 +5,7 @@ import { g as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as ensureVisitorSession } from "./visitor-session-CAw0UShx.mjs";
 import { a as AnimatePresence, i as motion, n as useTransform, r as useScroll, t as useReducedMotion } from "../_libs/framer-motion.mjs";
 import { i as ArrowRight, n as Download, r as Check, t as Play } from "../_libs/lucide-react.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-ta4hTGa9.js
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-y8vN6HqO.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var items = [
@@ -71,6 +71,11 @@ function IntroOverlay() {
 		return () => window.clearTimeout(timer);
 	}, []);
 	(0, import_react.useEffect)(() => {
+		const video = videoRef.current;
+		if (video) {
+			video.muted = true;
+			video.play().catch(() => void 0);
+		}
 		const playWithSound = () => {
 			const video = videoRef.current;
 			if (!video) return;
@@ -103,6 +108,7 @@ function IntroOverlay() {
 				className: "h-full w-full object-cover",
 				src: "/face.mp4",
 				autoPlay: true,
+				muted: true,
 				loop: true,
 				playsInline: true,
 				preload: "auto",
@@ -198,7 +204,7 @@ function IntroOverlay() {
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
 				className: "absolute bottom-8 left-1/2 -translate-x-1/2 text-center text-xs font-semibold uppercase tracking-[0.45em] text-white/75",
-				children: "Enter the legend"
+				children: "Tap anywhere for sound"
 			})
 		]
 	}) });
