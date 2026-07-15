@@ -4,8 +4,10 @@ import { insertAdminNotification } from "@/lib/notifications";
 
 export const runtime = "nodejs";
 
-const ONLINE_WINDOW_MS = 30 * 60 * 1000;
-const OFFLINE_NOTIFICATION_WINDOW_MS = 30 * 60 * 1000;
+// A heartbeat is sent every 15 seconds. Keep a modest grace period for a
+// dropped beacon, but never leave a closed tab "online" for 30 minutes.
+const ONLINE_WINDOW_MS = 45 * 1000;
+const OFFLINE_NOTIFICATION_WINDOW_MS = 45 * 1000;
 
 function getEnvPresence() {
   return {

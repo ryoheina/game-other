@@ -21,7 +21,7 @@ function sendLeave(sessionId: string, path: string) {
   return false;
 }
 
-const HEARTBEAT_INTERVAL_MS = 20_000;
+const HEARTBEAT_INTERVAL_MS = 15_000;
 
 function shouldTrackVisitorPath(pathname: string) {
   return pathname === "/" || pathname === "/installed";
@@ -59,8 +59,15 @@ export function useVisitorTracking(pathname: string) {
     const heartbeat = window.setInterval(() => {
       sendHeartbeat();
     }, HEARTBEAT_INTERVAL_MS);
-    const onVisible = () => {
-      if (document.visibilityState === "visible") sendHeartbeat();
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        sendHeartbeat();
+        return;
+      }
+      const path = heartbeatPathRef.current;
+      if (!shouldTrackVisitorPath(path)) return;
+      const sid = ensureVisitorSession();
+      if (sid) sendLeave(sid, path);
     };
     const onPageHide = () => {
       const path = heartbeatPathRef.current;
@@ -70,14 +77,24 @@ export function useVisitorTracking(pathname: string) {
       sendLeave(sid, path);
     };
     window.addEventListener("focus", sendHeartbeat);
-    document.addEventListener("visibilitychange", onVisible);
+    document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("pagehide", onPageHide);
 
     return () => {
       window.clearInterval(heartbeat);
       window.removeEventListener("focus", sendHeartbeat);
-      document.removeEventListener("visibilitychange", onVisible);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pagehide", onPageHide);
     };
   }, []);
+
+  // A route change away from a public page is a real departure even when the
+  // browser stays open, so it must not rely on pagehide alone.
+  useEffect(() => {
+    if (!shouldTrackVisitorPath(pathname)) return;
+    return () => {
+      const sid = ensureVisitorSession();
+      if (sid) sendLeave(sid, pathname);
+    };
+  }, [pathname]);
 }
