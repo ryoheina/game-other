@@ -35,8 +35,8 @@ function Admin() {
   const [latestAlert, setLatestAlert] = useState<any>(null);
   const { notifications, setNotifications, markRead, remove, clearAll } = useAdminNotifications([]);
   const desktopNotifState = useDesktopNotifications();
-  const lastSnapshotRef = useRef<string | null>(null);
   const shownInPageNotificationIdsRef = useRef<Set<string>>(new Set());
+  const notificationsLoadedRef = useRef(false);
 
   useEffect(() => {
     let mounted = true;
@@ -98,6 +98,12 @@ function Admin() {
         const nextNotifications = data.notifications || [];
         setNotifications(nextNotifications);
 
+        // Existing unread rows are history, not new live alerts. Only show the
+        // in-page notification for events that arrive after this dashboard loads.
+        if (!notificationsLoadedRef.current) {
+          nextNotifications.forEach((note: any) => shownInPageNotificationIdsRef.current.add(String(note.id)));
+          notificationsLoadedRef.current = true;
+        }
         const newestUnread = nextNotifications.find((note: any) => note.read !== true && !shownInPageNotificationIdsRef.current.has(String(note.id)));
         if (newestUnread) {
           shownInPageNotificationIdsRef.current.add(String(newestUnread.id));
@@ -107,20 +113,6 @@ function Admin() {
           }, 8000);
         }
 
-        const snap = JSON.stringify((data.sessions || []).map((item: any) => ({ id: item.session_id, last_active: item.last_active })));
-        if (lastSnapshotRef.current && lastSnapshotRef.current !== snap) {
-          const prev = JSON.parse(lastSnapshotRef.current);
-          const prevMap = new Map(prev.map((p: any) => [p.id, p.last_active]));
-          (data.sessions || []).forEach((item: any) => {
-            const prevVal = prevMap.get(item.session_id);
-            if (prevVal && prevVal !== item.last_active && typeof Notification !== "undefined" && Notification.permission === "granted") {
-              new Notification("Visitor activity", {
-                body: `${item.ip ?? "unknown"} — ${item.device ?? item.os} — ${item.status}`,
-              });
-            }
-          });
-        }
-        lastSnapshotRef.current = snap;
         return true;
       } catch (e) {
         console.error("Dashboard poll error:", e);

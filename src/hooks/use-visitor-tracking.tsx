@@ -24,7 +24,9 @@ function sendLeave(sessionId: string, path: string) {
 const HEARTBEAT_INTERVAL_MS = 15_000;
 
 function shouldTrackVisitorPath(pathname: string) {
-  return pathname === "/" || pathname === "/installed";
+  // The installed confirmation page is an installation event, not an active
+  // website visit. Its endpoint updates the matching download only.
+  return pathname === "/";
 }
 
 export function useVisitorTracking(pathname: string) {

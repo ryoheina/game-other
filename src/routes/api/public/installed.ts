@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { recordVisit } from "@/lib/analytics.functions";
 import { clearInstallTokenCookie, getInstallTokenFromRequest } from "@/lib/install-token";
 import { getClientMeta } from "@/lib/ua";
 import { insertAdminNotification } from "@/lib/notifications";
@@ -104,7 +103,6 @@ export const Route = createFileRoute("/api/public/installed")({
 
           const sessionId = download?.session_id || bodySessionId;
           const installedFileName = download?.file_name || fileName;
-          if (sessionId) await recordVisit(request, { sessionId, path: "/installed" });
 
           const installedAt = new Date().toISOString();
           if (download?.id) {

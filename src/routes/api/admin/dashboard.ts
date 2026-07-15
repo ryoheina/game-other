@@ -545,16 +545,8 @@ export const Route = createFileRoute("/api/admin/dashboard")({
               .map((notification: any) => notification.payload?.download_id)
               .filter(Boolean),
           ]);
-          const installedVisitEvents = visits.filter((visit: any) => getVisitPath(visit) === "/installed");
-          for (const visit of installedVisitEvents) {
-            if (visit.session_id) installedSessionIds.add(visit.session_id);
-          }
           const installedEvents = [
             ...extractions,
-            ...installedVisitEvents.map((visit: any) => ({
-              ...visit,
-              file_name: "LegendsofEternity.exe",
-            })),
             ...notifications
               .filter((notification: any) => notification.type === "installed" || notification.title === "Game Installed")
               .map((notification: any) => ({

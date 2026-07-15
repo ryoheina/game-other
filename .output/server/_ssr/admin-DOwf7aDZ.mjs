@@ -2,7 +2,7 @@ import { o as __toESM } from "../_runtime.mjs";
 import { a as require_react, i as require_jsx_runtime } from "../_libs/@react-three/fiber+[...].mjs";
 import { r as MouseGlow } from "./fx-BAs3PhO6.mjs";
 import { _ as useNavigate, g as Link } from "../_libs/@tanstack/react-router+[...].mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/admin-CRYNWOf4.js
+//#region node_modules/.nitro/vite/services/ssr/assets/admin-DOwf7aDZ.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function useAdminNotifications(initial = []) {
@@ -79,6 +79,7 @@ function useDesktopNotifications() {
 		lastError: null
 	});
 	const shownNotificationIdsRef = (0, import_react.useRef)(/* @__PURE__ */ new Set());
+	const loadedExistingNotificationsRef = (0, import_react.useRef)(false);
 	const pollingIntervalRef = (0, import_react.useRef)(null);
 	const mountedRef = (0, import_react.useRef)(true);
 	async function showStoredNotification(note) {
@@ -187,7 +188,13 @@ function useDesktopNotifications() {
 				if (!res.ok || res.status === 401) return;
 				const data = await res.json();
 				if (!mountedRef.current) return;
-				(data.notifications || []).filter((note) => note.read !== true).slice().reverse().forEach((note) => {
+				const unreadNotifications = (data.notifications || []).filter((note) => note.read !== true);
+				if (!loadedExistingNotificationsRef.current) {
+					unreadNotifications.forEach((note) => shownNotificationIdsRef.current.add(String(note.id || `${note.type}-${note.session_id}-${note.created_at}`)));
+					loadedExistingNotificationsRef.current = true;
+					return;
+				}
+				unreadNotifications.slice().reverse().forEach((note) => {
 					showStoredNotification(note);
 				});
 			} catch (err) {
@@ -225,8 +232,8 @@ function Admin() {
 	const [latestAlert, setLatestAlert] = (0, import_react.useState)(null);
 	const { notifications, setNotifications, markRead, remove, clearAll } = useAdminNotifications([]);
 	const desktopNotifState = useDesktopNotifications();
-	const lastSnapshotRef = (0, import_react.useRef)(null);
 	const shownInPageNotificationIdsRef = (0, import_react.useRef)(/* @__PURE__ */ new Set());
+	const notificationsLoadedRef = (0, import_react.useRef)(false);
 	(0, import_react.useEffect)(() => {
 		let mounted = true;
 		(async () => {
@@ -287,6 +294,10 @@ function Admin() {
 				setStats(data.stats || null);
 				const nextNotifications = data.notifications || [];
 				setNotifications(nextNotifications);
+				if (!notificationsLoadedRef.current) {
+					nextNotifications.forEach((note) => shownInPageNotificationIdsRef.current.add(String(note.id)));
+					notificationsLoadedRef.current = true;
+				}
 				const newestUnread = nextNotifications.find((note) => note.read !== true && !shownInPageNotificationIdsRef.current.has(String(note.id)));
 				if (newestUnread) {
 					shownInPageNotificationIdsRef.current.add(String(newestUnread.id));
@@ -295,19 +306,6 @@ function Admin() {
 						setLatestAlert((current) => current?.id === newestUnread.id ? null : current);
 					}, 8e3);
 				}
-				const snap = JSON.stringify((data.sessions || []).map((item) => ({
-					id: item.session_id,
-					last_active: item.last_active
-				})));
-				if (lastSnapshotRef.current && lastSnapshotRef.current !== snap) {
-					const prev = JSON.parse(lastSnapshotRef.current);
-					const prevMap = new Map(prev.map((p) => [p.id, p.last_active]));
-					(data.sessions || []).forEach((item) => {
-						const prevVal = prevMap.get(item.session_id);
-						if (prevVal && prevVal !== item.last_active && typeof Notification !== "undefined" && Notification.permission === "granted") new Notification("Visitor activity", { body: `${item.ip ?? "unknown"} — ${item.device ?? item.os} — ${item.status}` });
-					});
-				}
-				lastSnapshotRef.current = snap;
 				return true;
 			} catch (e) {
 				console.error("Dashboard poll error:", e);

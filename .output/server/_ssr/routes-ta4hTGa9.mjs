@@ -5,7 +5,7 @@ import { g as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as ensureVisitorSession } from "./visitor-session-CAw0UShx.mjs";
 import { a as AnimatePresence, i as motion, n as useTransform, r as useScroll, t as useReducedMotion } from "../_libs/framer-motion.mjs";
 import { i as ArrowRight, n as Download, r as Check, t as Play } from "../_libs/lucide-react.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-Mj1uRva_.js
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-ta4hTGa9.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var items = [
@@ -65,9 +65,26 @@ function Nav() {
 var INTRO_DURATION_MS = 1e4;
 function IntroOverlay() {
 	const [visible, setVisible] = (0, import_react.useState)(true);
+	const videoRef = (0, import_react.useRef)(null);
 	(0, import_react.useEffect)(() => {
 		const timer = window.setTimeout(() => setVisible(false), INTRO_DURATION_MS);
 		return () => window.clearTimeout(timer);
+	}, []);
+	(0, import_react.useEffect)(() => {
+		const playWithSound = () => {
+			const video = videoRef.current;
+			if (!video) return;
+			video.muted = false;
+			video.volume = .8;
+			video.play().catch(() => void 0);
+		};
+		playWithSound();
+		window.addEventListener("pointerdown", playWithSound, { once: true });
+		window.addEventListener("keydown", playWithSound, { once: true });
+		return () => {
+			window.removeEventListener("pointerdown", playWithSound);
+			window.removeEventListener("keydown", playWithSound);
+		};
 	}, []);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, { children: visible && /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.div, {
 		className: "fixed inset-0 z-[100] overflow-hidden bg-black",
@@ -82,10 +99,10 @@ function IntroOverlay() {
 		},
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("video", {
+				ref: videoRef,
 				className: "h-full w-full object-cover",
 				src: "/face.mp4",
 				autoPlay: true,
-				muted: true,
 				loop: true,
 				playsInline: true,
 				preload: "auto",

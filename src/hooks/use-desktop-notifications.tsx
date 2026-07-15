@@ -21,6 +21,7 @@ export function useDesktopNotifications() {
   });
 
   const shownNotificationIdsRef = useRef<Set<string>>(new Set());
+  const loadedExistingNotificationsRef = useRef(false);
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const mountedRef = useRef(true);
 
@@ -154,6 +155,14 @@ export function useDesktopNotifications() {
         if (!mountedRef.current) return;
 
         const unreadNotifications = (data.notifications || []).filter((note: any) => note.read !== true);
+
+        // Do not replay old alerts as desktop popups when the admin opens the
+        // dashboard. Future rows are still delivered immediately.
+        if (!loadedExistingNotificationsRef.current) {
+          unreadNotifications.forEach((note: any) => shownNotificationIdsRef.current.add(String(note.id || `${note.type}-${note.session_id}-${note.created_at}`)));
+          loadedExistingNotificationsRef.current = true;
+          return;
+        }
 
         unreadNotifications
           .slice()

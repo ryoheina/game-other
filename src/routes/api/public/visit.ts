@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 function isPublicVisitorPath(path: string) {
   try {
     const pathname = path.startsWith("http") ? new URL(path).pathname : path;
-    return pathname === "/" || pathname === "/installed";
+    return pathname === "/";
   } catch {
     return false;
   }
