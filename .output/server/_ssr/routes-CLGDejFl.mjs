@@ -5,7 +5,7 @@ import { g as Link } from "../_libs/@tanstack/react-router+[...].mjs";
 import { t as ensureVisitorSession } from "./visitor-session-CAw0UShx.mjs";
 import { a as AnimatePresence, i as motion, n as useTransform, r as useScroll, t as useReducedMotion } from "../_libs/framer-motion.mjs";
 import { i as ArrowRight, n as Download, r as Check, t as Play } from "../_libs/lucide-react.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-y8vN6HqO.js
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-CLGDejFl.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 var items = [
@@ -63,13 +63,16 @@ function Nav() {
 	});
 }
 var INTRO_DURATION_MS = 1e4;
-function IntroOverlay() {
+function IntroOverlay({ onComplete }) {
 	const [visible, setVisible] = (0, import_react.useState)(true);
 	const videoRef = (0, import_react.useRef)(null);
 	(0, import_react.useEffect)(() => {
-		const timer = window.setTimeout(() => setVisible(false), INTRO_DURATION_MS);
+		const timer = window.setTimeout(() => {
+			setVisible(false);
+			onComplete?.();
+		}, INTRO_DURATION_MS);
 		return () => window.clearTimeout(timer);
-	}, []);
+	}, [onComplete]);
 	(0, import_react.useEffect)(() => {
 		const video = videoRef.current;
 		if (video) {
@@ -208,6 +211,30 @@ function IntroOverlay() {
 			})
 		]
 	}) });
+}
+var MUSIC_SRC = "/Echoes%20of%20the%20Ancient%20Kingdom.mp3";
+function SiteMusic({ start }) {
+	const audioRef = (0, import_react.useRef)(null);
+	(0, import_react.useEffect)(() => {
+		const audio = audioRef.current;
+		if (!audio || !start) return;
+		audio.volume = .45;
+		const play = () => void audio.play().catch(() => void 0);
+		play();
+		window.addEventListener("pointerdown", play, { once: true });
+		window.addEventListener("keydown", play, { once: true });
+		return () => {
+			window.removeEventListener("pointerdown", play);
+			window.removeEventListener("keydown", play);
+		};
+	}, [start]);
+	return /* @__PURE__ */ (0, import_jsx_runtime.jsx)("audio", {
+		ref: audioRef,
+		src: MUSIC_SRC,
+		loop: true,
+		preload: "auto",
+		"aria-hidden": "true"
+	});
 }
 var reveal = {
 	hidden: {
@@ -910,6 +937,7 @@ function Footer() {
 }
 function Home() {
 	const [downloadStatus, setDownloadStatus] = (0, import_react.useState)("idle");
+	const [introComplete, setIntroComplete] = (0, import_react.useState)(false);
 	const [downloadProgress, setDownloadProgress] = (0, import_react.useState)({
 		received: 0,
 		total: 0
@@ -974,7 +1002,8 @@ function Home() {
 		className: "relative min-h-screen overflow-x-clip bg-[#111827] text-white",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(ImmersiveBackground, {}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IntroOverlay, {}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(IntroOverlay, { onComplete: () => setIntroComplete(true) }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(SiteMusic, { start: introComplete }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(MouseGlow, {}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Nav, {}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", { children: [

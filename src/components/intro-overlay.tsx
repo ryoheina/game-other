@@ -3,14 +3,17 @@ import { useEffect, useRef, useState } from "react";
 
 const INTRO_DURATION_MS = 10_000;
 
-export function IntroOverlay() {
+export function IntroOverlay({ onComplete }: { onComplete?: () => void }) {
   const [visible, setVisible] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setVisible(false), INTRO_DURATION_MS);
+    const timer = window.setTimeout(() => {
+      setVisible(false);
+      onComplete?.();
+    }, INTRO_DURATION_MS);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [onComplete]);
 
   // Browsers may block sound until a visitor interacts with the page. We still
   // request the video's original audio immediately, then retry on first input.
