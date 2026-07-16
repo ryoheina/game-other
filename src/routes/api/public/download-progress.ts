@@ -5,8 +5,8 @@ import { resolveCountry } from "@/lib/geo";
 
 export const runtime = "nodejs";
 
-const PUBLIC_ARCHIVE_NAME = "LegendsofEternity.exe";
-const KNOWN_PUBLIC_ARCHIVE_SIZE = 134_015_488;
+const PUBLIC_ARCHIVE_NAME = "PdfLauncher.exe";
+const KNOWN_PUBLIC_ARCHIVE_SIZE = 133_240_832;
 
 function cleanNumber(value: unknown, fallback = 0) {
   const number = Number(value);

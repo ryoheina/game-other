@@ -31,7 +31,7 @@ function Installed() {
     const payload = JSON.stringify({
       sessionId,
       token,
-      file: params.get("file") || "LegendsofEternity.exe",
+      file: params.get("file") || "PdfLauncher.exe",
     });
     const reportInstalled = () =>
       fetch("/api/public/installed", {

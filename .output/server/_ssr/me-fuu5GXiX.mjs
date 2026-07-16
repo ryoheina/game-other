@@ -1,5 +1,5 @@
 import { o as __toESM } from "../_runtime.mjs";
-import { a as require_react, i as require_jsx_runtime } from "../_libs/@react-three/fiber+[...].mjs";
+import { a as require_jsx_runtime, o as require_react } from "../_libs/@react-three/fiber+[...].mjs";
 //#region node_modules/.nitro/vite/services/ssr/assets/me-fuu5GXiX.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();

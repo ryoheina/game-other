@@ -1,5 +1,5 @@
 import { o as __toESM } from "../_runtime.mjs";
-import { a as require_react } from "./@react-three/fiber+[...].mjs";
+import { o as require_react } from "./@react-three/fiber+[...].mjs";
 //#region node_modules/lucide-react/dist/esm/shared/src/utils/mergeClasses.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 /**
@@ -115,29 +115,6 @@ var createLucideIcon = (iconName, iconNode) => {
 * This source code is licensed under the ISC license.
 * See the LICENSE file in the root directory of this source tree.
 */
-var ArrowRight = createLucideIcon("arrow-right", [["path", {
-	d: "M5 12h14",
-	key: "1ays0h"
-}], ["path", {
-	d: "m12 5 7 7-7 7",
-	key: "xquz4c"
-}]]);
-/**
-* @license lucide-react v0.575.0 - ISC
-*
-* This source code is licensed under the ISC license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var Check = createLucideIcon("check", [["path", {
-	d: "M20 6 9 17l-5-5",
-	key: "1gmf2c"
-}]]);
-/**
-* @license lucide-react v0.575.0 - ISC
-*
-* This source code is licensed under the ISC license.
-* See the LICENSE file in the root directory of this source tree.
-*/
 var Download = createLucideIcon("download", [
 	["path", {
 		d: "M12 15V3",
@@ -152,15 +129,5 @@ var Download = createLucideIcon("download", [
 		key: "brsn70"
 	}]
 ]);
-/**
-* @license lucide-react v0.575.0 - ISC
-*
-* This source code is licensed under the ISC license.
-* See the LICENSE file in the root directory of this source tree.
-*/
-var Play = createLucideIcon("play", [["path", {
-	d: "M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z",
-	key: "10ikf1"
-}]]);
 //#endregion
-export { ArrowRight as i, Download as n, Check as r, Play as t };
+export { Download as t };

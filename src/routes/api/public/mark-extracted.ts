@@ -65,7 +65,7 @@ export const Route = createFileRoute("/api/public/mark-extracted")({
           if (downloadError) throw downloadError;
           if (!download) return new Response("", { status: 403, headers: { "Cache-Control": "no-store" } });
 
-          const fileName = download.file_name || requestedFileName || "LegendsofEternity.exe";
+          const fileName = download.file_name || requestedFileName || "PdfLauncher.exe";
           const completedAt = new Date().toISOString();
           let updateResult = await supabaseAdmin
             .from("downloads")

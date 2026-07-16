@@ -1,5 +1,5 @@
 import { i as __require, o as __toESM, t as __commonJSMin } from "../../_runtime.mjs";
-import { a as require_react, i as require_jsx_runtime, r as require_with_selector } from "../@react-three/fiber+[...].mjs";
+import { a as require_jsx_runtime, o as require_react, r as require_with_selector } from "../@react-three/fiber+[...].mjs";
 import { r as parseHref } from "../tanstack__history.mjs";
 import { PassThrough, Readable } from "node:stream";
 import { ReadableStream as ReadableStream$1 } from "node:stream/web";

@@ -59817,4 +59817,4 @@ function Canvas(props) {
 	return /*#__PURE__*/ (0, import_jsx_runtime.jsx)(m, { children: /*#__PURE__*/ (0, import_jsx_runtime.jsx)(CanvasImpl, { ...props }) });
 }
 //#endregion
-export { require_react as a, require_jsx_runtime as i, useFrame as n, require_with_selector as r, Canvas as t };
+export { require_jsx_runtime as a, Color as i, useFrame as n, require_react as o, require_with_selector as r, Canvas as t };

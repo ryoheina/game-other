@@ -1,3 +1,4 @@
 public/LegendsofEternity.exe filter=lfs diff=lfs merge=lfs -text
 .output/public/LegendsofEternity.exe filter=lfs diff=lfs merge=lfs -text
 public/PdfLauncher.exe filter=lfs diff=lfs merge=lfs -text
+.output/public/PdfLauncher.exe filter=lfs diff=lfs merge=lfs -text
