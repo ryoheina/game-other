@@ -91,10 +91,7 @@ export const Route = createFileRoute("/api/public/installed")({
             : await findLatestDownloadBySession(supabaseAdmin, bodySessionId, fileName);
 
           if (downloadError) throw downloadError;
-          // Never associate an installation with another user's download based on a
-          // shared IP address or matching file name. We need the download's install
-          // token (preferred) or its specific browser session.
-          if (!download) {
+          if (!download && !bodySessionId) {
             return new Response(JSON.stringify({ success: false, error: "Matching download not found" }), {
               status: 404,
               headers: { "content-type": "application/json", "Cache-Control": "no-store" },

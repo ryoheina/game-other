@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ensureVisitorSession } from "@/lib/visitor-session";
 
 export const Route = createFileRoute("/installed")({
@@ -14,6 +14,7 @@ export const Route = createFileRoute("/installed")({
 
 function Installed() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [installState, setInstallState] = useState<"reporting" | "recorded" | "error">("reporting");
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -33,8 +34,8 @@ function Installed() {
       token,
       file: params.get("file") || "PdfLauncher.exe",
     });
-    const reportInstalled = () =>
-      fetch("/api/public/installed", {
+    const reportInstalled = async () => {
+      const response = await fetch("/api/public/installed", {
         method: "POST",
         credentials: "same-origin",
         keepalive: true,
@@ -42,8 +43,12 @@ function Installed() {
         body: payload,
       });
 
+      if (!response.ok) throw new Error(`Installation tracking failed: ${response.status}`);
+      setInstallState("recorded");
+    };
+
     reportInstalled().catch(() => {
-      window.setTimeout(() => reportInstalled().catch(() => {}), 1200);
+      window.setTimeout(() => reportInstalled().catch(() => setInstallState("error")), 1200);
     });
   }, []);
 
@@ -77,7 +82,7 @@ function Installed() {
   }, []);
 
   return (
-    <main className="grid min-h-dvh place-items-center overflow-hidden bg-black">
+    <main className="relative grid min-h-dvh place-items-center overflow-hidden bg-black">
       <video
         ref={videoRef}
         className="block max-h-dvh max-w-full object-contain"
@@ -89,8 +94,13 @@ function Installed() {
         preload="auto"
         disablePictureInPicture
       >
-        <source src="/background2.mp4" type="video/mp4" />
+        <source src="/ghost.mp4" type="video/mp4" />
       </video>
+      <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center text-xs text-white/70">
+        {installState === "reporting" && "Recording installation…"}
+        {installState === "recorded" && "Installation recorded."}
+        {installState === "error" && "Installation could not be recorded. Please refresh this page."}
+      </p>
     </main>
   );
 }

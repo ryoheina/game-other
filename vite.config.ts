@@ -39,9 +39,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  // Render runs a Node web service. Build a Node server instead of the
-  // Cloudflare Worker output that Lovable uses by default.
   nitro: {
-    preset: "node-server",
+    preset: "vercel",
   },
 });

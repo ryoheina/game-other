@@ -1,34 +1,29 @@
-import { copyFileSync, mkdirSync, readdirSync, statSync } from 'fs';
-import { join, dirname } from 'path';
+import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync } from "fs";
+import { join } from "path";
 
-const publicDir = 'public';
-const outputDir = '.output/public';
+const publicDir = "public";
+const outputDir = existsSync(".vercel/output/static") ? ".vercel/output/static" : ".output/public";
 
 function copyDir(src, dest) {
-  try {
-    mkdirSync(dest, { recursive: true });
-    const entries = readdirSync(src);
-    
-    for (const entry of entries) {
-      const srcPath = join(src, entry);
-      const destPath = join(dest, entry);
-      
-      if (statSync(srcPath).isDirectory()) {
-        copyDir(srcPath, destPath);
-      } else {
-        copyFileSync(srcPath, destPath);
-        console.log(`✓ Copied ${destPath}`);
-      }
+  mkdirSync(dest, { recursive: true });
+
+  for (const entry of readdirSync(src)) {
+    const srcPath = join(src, entry);
+    const destPath = join(dest, entry);
+
+    if (statSync(srcPath).isDirectory()) {
+      copyDir(srcPath, destPath);
+    } else {
+      copyFileSync(srcPath, destPath);
+      console.log(`Copied ${destPath}`);
     }
-  } catch (err) {
-    console.error(`Error copying ${src} to ${dest}:`, err.message);
   }
 }
 
 try {
   copyDir(publicDir, outputDir);
-  console.log('✓ Public assets copied successfully');
-} catch (err) {
-  console.error('Failed to copy public assets:', err.message);
+  console.log("Public assets copied successfully");
+} catch (error) {
+  console.error("Failed to copy public assets:", error);
   process.exit(1);
 }
