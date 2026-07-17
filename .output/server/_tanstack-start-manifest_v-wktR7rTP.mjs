@@ -1,4 +1,4 @@
-//#region node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-CPWJbtLS.js
+//#region node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-wktR7rTP.js
 var tsrStartManifest = () => ({ routes: {
 	__root__: {
 		filePath: "D:/other/src/routes/__root.tsx",
@@ -30,32 +30,32 @@ var tsrStartManifest = () => ({ routes: {
 			"/api/public/mark-extracted",
 			"/api/public/visit"
 		],
-		preloads: ["/assets/index-x_IyTODq.js", "/assets/jsx-runtime-D8nDyRPw.js"],
+		preloads: ["/assets/index-Bjo4Kwi4.js", "/assets/jsx-runtime-D8nDyRPw.js"],
 		scripts: [{ attrs: {
 			type: "module",
 			async: !0,
-			src: "/assets/index-x_IyTODq.js"
+			src: "/assets/index-Bjo4Kwi4.js"
 		} }]
 	},
 	"/": {
 		filePath: "D:/other/src/routes/index.tsx",
 		children: void 0,
-		preloads: ["/assets/routes-DTlE_NtZ.js", "/assets/react-three-fiber.esm-c5BT5wuB.js"]
+		preloads: ["/assets/routes-CI1NZLPf.js", "/assets/react-three-fiber.esm-CH4ejNmv.js"]
 	},
 	"/_authenticated": {
 		filePath: "D:/other/src/routes/_authenticated/route.tsx",
 		children: ["/_authenticated/admin"],
-		preloads: ["/assets/route-DwXv_iCm.js"]
+		preloads: ["/assets/route-D3klbzLC.js"]
 	},
 	"/auth": {
 		filePath: "D:/other/src/routes/auth.tsx",
 		children: void 0,
-		preloads: ["/assets/auth-Dz_yo2TU.js", "/assets/fx-Bj92YA5I.js"]
+		preloads: ["/assets/auth-CQjZbSoI.js", "/assets/fx-Bj92YA5I.js"]
 	},
 	"/installed": {
 		filePath: "D:/other/src/routes/installed.tsx",
 		children: void 0,
-		preloads: ["/assets/installed-ELy9PmD0.js", "/assets/client-BI0jBuhH.js"]
+		preloads: ["/assets/installed-pqtPsd72.js", "/assets/client-B7OvxFJN.js"]
 	},
 	"/me": {
 		filePath: "D:/other/src/routes/me.tsx",
@@ -65,7 +65,7 @@ var tsrStartManifest = () => ({ routes: {
 	"/_authenticated/admin": {
 		filePath: "D:/other/src/routes/_authenticated/admin.tsx",
 		children: void 0,
-		preloads: ["/assets/admin-BtuEn-4I.js", "/assets/fx-Bj92YA5I.js"]
+		preloads: ["/assets/admin-Dmx1_83M.js", "/assets/fx-Bj92YA5I.js"]
 	}
 } });
 //#endregion

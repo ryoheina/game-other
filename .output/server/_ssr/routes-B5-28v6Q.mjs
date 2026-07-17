@@ -4,7 +4,7 @@ import { t as ensureVisitorSession } from "./visitor-session-CAw0UShx.mjs";
 import { a as AnimatePresence, i as motion, n as useTransform, r as useMotionValue, t as useSpring } from "../_libs/framer-motion.mjs";
 import { t as Download } from "../_libs/lucide-react.mjs";
 import { t as gsapWithCSS } from "../_libs/gsap.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-Bqaz_LVM.js
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-B5-28v6Q.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function CameraBreath() {
@@ -735,7 +735,7 @@ function Home() {
 							transition: { duration: 1.4 },
 							className: "relative overflow-hidden border border-white/10 bg-black shadow-[0_40px_100px_rgba(0,0,0,.6)]",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-								src: "/image_0.png",
+								src: "/image_0%20(1).png",
 								alt: "A ghost in an abandoned room",
 								className: "aspect-[16/9] w-full object-cover opacity-90"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-gradient-to-t from-black/70 via-transparent" })]
