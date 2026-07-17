@@ -62,6 +62,24 @@ async function findLatestDownloadBySession(supabaseAdmin: any, sessionId: string
     .maybeSingle();
 }
 
+async function findUniqueRecentUnlinkedDownload(supabaseAdmin: any, ip: string | null, fileName: string) {
+  if (!ip) return { data: null, error: null };
+
+  const { data, error } = await supabaseAdmin
+    .from("downloads")
+    .select("id,session_id,ip,file_name")
+    .eq("ip", ip)
+    .eq("file_name", fileName)
+    .is("session_id", null)
+    .eq("extracted", false)
+    .gte("created_at", new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+    .order("created_at", { ascending: false })
+    .limit(2);
+
+  if (error) return { data: null, error };
+  return { data: data?.length === 1 ? data[0] : null, error: null };
+}
+
 async function insertExtraction(supabaseAdmin: any, data: Record<string, unknown>) {
   let result = await supabaseAdmin.from("extractions").insert(data);
   if (!result.error || !isRecoverableExtractionInsertError(result.error)) return result;
@@ -89,6 +107,12 @@ export const Route = createFileRoute("/api/public/installed")({
           let { data: download, error: downloadError } = installToken
             ? await findDownloadByInstallToken(supabaseAdmin, installToken)
             : await findLatestDownloadBySession(supabaseAdmin, bodySessionId, fileName);
+
+          if (!download && !downloadError) {
+            const fallback = await findUniqueRecentUnlinkedDownload(supabaseAdmin, meta.ip, fileName);
+            download = fallback.data;
+            downloadError = fallback.error;
+          }
 
           if (downloadError) throw downloadError;
           if (!download && !bodySessionId) {

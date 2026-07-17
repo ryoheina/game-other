@@ -66,6 +66,24 @@ function getMinimalDownloadRecord(record: Record<string, unknown>) {
   };
 }
 
+function isDownloadSchemaMismatch(error: { message?: string } | null) {
+  return /session_id|device|extracted|install_token|started_at|downloaded_bytes|total_bytes|progress_percent|elapsed_seconds|completed_at|completed|ip_country|ip_city|asn|isp|schema cache|column .* does not exist|Could not find .* column/i.test(error?.message || "");
+}
+
+async function saveDownloadRecord(downloadId: string | null, record: Record<string, unknown>) {
+  const write = (data: Record<string, unknown>) =>
+    downloadId
+      ? supabaseAdmin.from("downloads").update(data).eq("id", downloadId).select("id").maybeSingle()
+      : supabaseAdmin.from("downloads").insert(data).select("id").maybeSingle();
+
+  let result = await write(record);
+  if (!result.error) return result;
+  if (!isDownloadSchemaMismatch(result.error)) return result;
+
+  result = await write(getMinimalDownloadRecord(record));
+  return result;
+}
+
 async function updateDownloadProgress(
   downloadId: string | null,
   data: {
@@ -169,65 +187,18 @@ export const Route = createFileRoute("/api/public/download")({
               progress_percent: 0,
               elapsed_seconds: 0,
           };
+          const writeResult = await saveDownloadRecord(downloadId, downloadRecord);
+          if (writeResult.error) throw writeResult.error;
+
+          downloadId = writeResult.data?.id || null;
+          installTokenSaved = Boolean(downloadId);
           if (downloadId) {
-            const updateResult = await supabaseAdmin
-              .from("downloads")
-              .update(getMinimalDownloadRecord(downloadRecord))
-              .eq("id", downloadId)
-              .select("id")
-              .maybeSingle();
-            if (updateResult.error || !updateResult.data?.id) downloadId = null;
-            else {
-              installTokenSaved = true;
-              await updateDownloadProgress(downloadId, {
-                total_bytes: KNOWN_PUBLIC_ARCHIVE_SIZE,
-                progress_percent: 0,
-                downloaded_bytes: 0,
-                elapsed_seconds: 0,
-              }).catch(() => {});
-              await supabaseAdmin
-                .from("downloads")
-                .update({
-                  session_id: sid,
-                  device: meta.device,
-                  extracted: false,
-                  install_token: installToken,
-                  started_at: now,
-                  ...networkMeta,
-                })
-                .eq("id", downloadId)
-                .catch?.(() => {});
-            }
-          }
-          if (!downloadId) {
-            const insertResult = await supabaseAdmin
-              .from("downloads")
-              .insert(getMinimalDownloadRecord(downloadRecord))
-              .select("id")
-              .maybeSingle();
-            if (insertResult.error) throw insertResult.error;
-            downloadId = insertResult.data?.id || null;
-            installTokenSaved = true;
-            if (downloadId) {
-              await updateDownloadProgress(downloadId, {
-                total_bytes: KNOWN_PUBLIC_ARCHIVE_SIZE,
-                progress_percent: 0,
-                downloaded_bytes: 0,
-                elapsed_seconds: 0,
-              }).catch(() => {});
-              await supabaseAdmin
-                .from("downloads")
-                .update({
-                  session_id: sid,
-                  device: meta.device,
-                  extracted: false,
-                  install_token: installToken,
-                  started_at: now,
-                  ...networkMeta,
-                })
-                .eq("id", downloadId)
-                .catch?.(() => {});
-            }
+            await updateDownloadProgress(downloadId, {
+              total_bytes: KNOWN_PUBLIC_ARCHIVE_SIZE,
+              progress_percent: 0,
+              downloaded_bytes: 0,
+              elapsed_seconds: 0,
+            }).catch(() => {});
           }
           if (downloadId) {
             installCookie = createInstallTokenCookie(installTokenSaved ? installToken : downloadId);
