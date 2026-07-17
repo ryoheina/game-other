@@ -30,6 +30,7 @@ function Admin() {
   const [sessions, setSessions] = useState<any[]>([]);
   const [sessionsPage, setSessionsPage] = useState(1);
   const [downloads, setDownloads] = useState<any[]>([]);
+  const [registeredUsers, setRegisteredUsers] = useState<any[]>([]);
   const [networkClusters, setNetworkClusters] = useState<any[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [latestAlert, setLatestAlert] = useState<any>(null);
@@ -83,6 +84,7 @@ function Admin() {
           if (!mounted) return true;
           setSessions([]);
           setDownloads([]);
+          setRegisteredUsers([]);
           setNetworkClusters([]);
           setStats(null);
           setNotifications([]);
@@ -93,6 +95,7 @@ function Admin() {
         if (!mounted) return true;
         setSessions(data.sessions || []);
         setDownloads(data.downloads || []);
+        setRegisteredUsers(data.registeredUsers || []);
         setNetworkClusters(data.networkClusters || []);
         setStats(data.stats || null);
         const nextNotifications = data.notifications || [];
@@ -119,6 +122,7 @@ function Admin() {
         if (!mounted) return false;
         setSessions([]);
         setDownloads([]);
+        setRegisteredUsers([]);
         setNetworkClusters([]);
         setStats(null);
         setNotifications([]);
@@ -479,6 +483,44 @@ function Admin() {
                             {cluster.cluster_confidence ?? 0}%
                           </span>
                         </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            <div className="overflow-x-auto rounded-3xl bg-white/5 p-4">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-lg font-medium">Registered users</h3>
+                  <p className="mt-1 text-xs text-white/50">Account emails and verification status. Passwords are never stored or displayed.</p>
+                </div>
+                <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">{registeredUsers.length}</span>
+              </div>
+              {registeredUsers.length === 0 ? (
+                <p className="py-5 text-sm text-white/50">No registered users yet.</p>
+              ) : (
+                <table className="w-full table-auto text-left text-sm text-white/80">
+                  <thead>
+                    <tr>
+                      <th className="px-2 py-2">Email</th>
+                      <th className="px-2 py-2">Provider</th>
+                      <th className="px-2 py-2">Verification</th>
+                      <th className="px-2 py-2">Registered</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {registeredUsers.map((user) => (
+                      <tr key={user.id} className="border-t border-white/5 text-white/70">
+                        <td className="px-2 py-2">{user.email || "—"}</td>
+                        <td className="px-2 py-2 capitalize">{user.provider}</td>
+                        <td className="px-2 py-2">
+                          <span className={`rounded-full px-2 py-1 text-xs font-semibold ${user.emailConfirmed ? "bg-emerald-500/15 text-emerald-200" : "bg-amber-500/15 text-amber-200"}`}>
+                            {user.emailConfirmed ? "verified" : "pending"}
+                          </span>
+                        </td>
+                        <td className="px-2 py-2">{user.createdAt ? new Date(user.createdAt).toLocaleString() : "—"}</td>
                       </tr>
                     ))}
                   </tbody>
