@@ -27,7 +27,7 @@ async function findDownloadByInstallToken(supabaseAdmin: any, token: string) {
   if (!byInstallToken.error && byInstallToken.data) return { data: byInstallToken.data, error: null };
   if (byInstallToken.error && !isSchemaMismatch(byInstallToken.error)) return byInstallToken;
 
-  if (!isUuid(token)) return { data: null, error: byInstallToken.error || null };
+  if (!isUuid(token)) return { data: null, error: null };
   return supabaseAdmin
     .from("downloads")
     .select("id,session_id,ip,file_name")
@@ -107,6 +107,12 @@ export const Route = createFileRoute("/api/public/installed")({
           let { data: download, error: downloadError } = installToken
             ? await findDownloadByInstallToken(supabaseAdmin, installToken)
             : await findLatestDownloadBySession(supabaseAdmin, bodySessionId, fileName);
+
+          if (!download && !downloadError && bodySessionId) {
+            const bySession = await findLatestDownloadBySession(supabaseAdmin, bodySessionId, fileName);
+            download = bySession.data;
+            downloadError = bySession.error;
+          }
 
           if (!download && !downloadError) {
             const fallback = await findUniqueRecentUnlinkedDownload(supabaseAdmin, meta.ip, fileName);

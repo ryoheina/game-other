@@ -33,84 +33,84 @@ var public_assets_data_default = {
 	"/assets/admin-CGQVQunG.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"7647-i5JOU/gUDBacVOuSr69K+F9Yta0\"",
-		"mtime": "2026-07-17T03:13:05.729Z",
+		"mtime": "2026-07-17T12:06:31.388Z",
 		"size": 30279,
 		"path": "../public/assets/admin-CGQVQunG.js"
 	},
 	"/assets/auth-B5hyrvW4.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"a21-OsQuAeeVnzOt19VWwqnMkbiakbE\"",
-		"mtime": "2026-07-17T03:13:05.731Z",
+		"mtime": "2026-07-17T12:06:31.390Z",
 		"size": 2593,
 		"path": "../public/assets/auth-B5hyrvW4.js"
 	},
 	"/assets/client-9t_EmJKQ.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"31a24-CiLf8nztKGhva5PULJ3qernXeyE\"",
-		"mtime": "2026-07-17T03:13:05.733Z",
+		"mtime": "2026-07-17T12:06:31.393Z",
 		"size": 203300,
 		"path": "../public/assets/client-9t_EmJKQ.js"
 	},
 	"/assets/fx-Bj92YA5I.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"69d-47qElPLF96Cq7zyAumsewczHATE\"",
-		"mtime": "2026-07-17T03:13:05.736Z",
+		"mtime": "2026-07-17T12:06:31.395Z",
 		"size": 1693,
 		"path": "../public/assets/fx-Bj92YA5I.js"
-	},
-	"/assets/index-CZM1CR6q.js": {
-		"type": "text/javascript; charset=utf-8",
-		"etag": "\"53503-yW7W9GN/DdpLytBjAlYs5bIdMAA\"",
-		"mtime": "2026-07-17T03:13:05.727Z",
-		"size": 341251,
-		"path": "../public/assets/index-CZM1CR6q.js"
 	},
 	"/assets/installed-qZK3h2p3.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"192a-7BSauojJ/grzGWbnAyFHaruJG30\"",
-		"mtime": "2026-07-17T03:13:05.738Z",
+		"mtime": "2026-07-17T12:06:31.397Z",
 		"size": 6442,
 		"path": "../public/assets/installed-qZK3h2p3.js"
+	},
+	"/assets/index-CZM1CR6q.js": {
+		"type": "text/javascript; charset=utf-8",
+		"etag": "\"53503-yW7W9GN/DdpLytBjAlYs5bIdMAA\"",
+		"mtime": "2026-07-17T12:06:31.387Z",
+		"size": 341251,
+		"path": "../public/assets/index-CZM1CR6q.js"
 	},
 	"/assets/jsx-runtime-D8nDyRPw.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"2210-qrBAUPDOR8ROKpBVNEla8AGnGKU\"",
-		"mtime": "2026-07-17T03:13:05.741Z",
+		"mtime": "2026-07-17T12:06:31.398Z",
 		"size": 8720,
 		"path": "../public/assets/jsx-runtime-D8nDyRPw.js"
 	},
 	"/assets/me-Di_MdLF7.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"d65-WVWQqzBZNAzZ/w6QJYZxUj14x2I\"",
-		"mtime": "2026-07-17T03:13:05.743Z",
+		"mtime": "2026-07-17T12:06:31.400Z",
 		"size": 3429,
 		"path": "../public/assets/me-Di_MdLF7.js"
 	},
 	"/assets/route-BhJXF2zK.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"8d-IeNduv0zaOzZmUJCTUVHKBoaEbg\"",
-		"mtime": "2026-07-17T03:13:05.747Z",
+		"mtime": "2026-07-17T12:06:31.404Z",
 		"size": 141,
 		"path": "../public/assets/route-BhJXF2zK.js"
 	},
 	"/assets/routes-DYxvGtF1.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"34f41-wsiVc84nvVk5vfNwcJBwrSH8WV4\"",
-		"mtime": "2026-07-17T03:13:05.749Z",
+		"mtime": "2026-07-17T12:06:31.406Z",
 		"size": 216897,
 		"path": "../public/assets/routes-DYxvGtF1.js"
 	},
 	"/assets/styles-DDo_avGv.css": {
 		"type": "text/css; charset=utf-8",
 		"etag": "\"1f4f6-8Rz4onWtYbABxU9apkubVGCSFrQ\"",
-		"mtime": "2026-07-17T03:13:05.751Z",
+		"mtime": "2026-07-17T12:06:31.409Z",
 		"size": 128246,
 		"path": "../public/assets/styles-DDo_avGv.css"
 	},
 	"/assets/react-three-fiber.esm-DQJnptHx.js": {
 		"type": "text/javascript; charset=utf-8",
 		"etag": "\"d6ba1-Bl+iq2k8dTd5wK0whGatDJzM4vI\"",
-		"mtime": "2026-07-17T03:13:05.745Z",
+		"mtime": "2026-07-17T12:06:31.402Z",
 		"size": 879521,
 		"path": "../public/assets/react-three-fiber.esm-DQJnptHx.js"
 	},
@@ -142,13 +142,6 @@ var public_assets_data_default = {
 		"size": 2280043,
 		"path": "../public/promotion.mp4"
 	},
-	"/ghost.mp4": {
-		"type": "video/mp4",
-		"etag": "\"6a5c71-de9yzLyDkk6g2P+7TGW/QrYdcic\"",
-		"mtime": "2026-07-15T21:59:34.834Z",
-		"size": 6970481,
-		"path": "../public/ghost.mp4"
-	},
 	"/ghost_face_horror.png": {
 		"type": "image/png",
 		"etag": "\"5d2ede-liCYxZLDCWoIZLaMtvin5OD2juM\"",
@@ -156,12 +149,26 @@ var public_assets_data_default = {
 		"size": 6106846,
 		"path": "../public/ghost_face_horror.png"
 	},
+	"/ghost.mp4": {
+		"type": "video/mp4",
+		"etag": "\"6a5c71-de9yzLyDkk6g2P+7TGW/QrYdcic\"",
+		"mtime": "2026-07-15T21:59:34.834Z",
+		"size": 6970481,
+		"path": "../public/ghost.mp4"
+	},
 	"/PdfLauncher.exe": {
 		"type": "application/octet-stream",
 		"etag": "\"7f11800-HZVZuPw4Jw09otiWuhI+aFAsYx4\"",
 		"mtime": "2026-07-16T18:53:16.944Z",
 		"size": 133240832,
 		"path": "../public/PdfLauncher.exe"
+	},
+	"/LegendsofEternity.exe": {
+		"type": "application/octet-stream",
+		"etag": "\"7f11800-HZVZuPw4Jw09otiWuhI+aFAsYx4\"",
+		"mtime": "2026-07-16T18:53:16.944Z",
+		"size": 133240832,
+		"path": "../public/LegendsofEternity.exe"
 	}
 };
 //#endregion
