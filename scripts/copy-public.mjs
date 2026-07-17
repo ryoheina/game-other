@@ -2,7 +2,7 @@ import { copyFileSync, existsSync, mkdirSync, readdirSync, statSync } from "fs";
 import { join } from "path";
 
 const publicDir = "public";
-const outputDir = existsSync(".vercel/output/static") ? ".vercel/output/static" : ".output/public";
+const outputDir = existsSync(".output/server") ? ".output/public" : ".vercel/output/static";
 
 function copyDir(src, dest) {
   mkdirSync(dest, { recursive: true });
