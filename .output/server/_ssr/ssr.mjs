@@ -53,7 +53,7 @@ function renderErrorPage() {
 }
 var serverEntryPromise;
 async function getServerEntry() {
-	if (!serverEntryPromise) serverEntryPromise = import("./server-BEPr5R2r.mjs").then((m) => m.default ?? m);
+	if (!serverEntryPromise) serverEntryPromise = import("./server-DuzN9fbD.mjs").then((m) => m.default ?? m);
 	return serverEntryPromise;
 }
 async function normalizeCatastrophicSsrResponse(response) {
@@ -91,7 +91,7 @@ function secureResponse(response, request) {
 	headers.set("Cross-Origin-Resource-Policy", "same-origin");
 	headers.set("Content-Security-Policy", [
 		"default-src 'self'",
-		"script-src 'self' 'unsafe-inline'",
+		"script-src 'self' 'unsafe-inline' https://js-eu1.hs-scripts.com",
 		"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
 		"font-src 'self' https://fonts.gstatic.com data:",
 		"img-src 'self' data: blob: https:",

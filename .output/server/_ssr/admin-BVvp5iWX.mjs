@@ -2,7 +2,7 @@ import { o as __toESM } from "../_runtime.mjs";
 import { a as require_jsx_runtime, o as require_react } from "../_libs/@react-three/fiber+[...].mjs";
 import { t as MouseGlow } from "./fx-DFw-su68.mjs";
 import { _ as useNavigate, g as Link } from "../_libs/@tanstack/react-router+[...].mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/admin-vNXl8IHw.js
+//#region node_modules/.nitro/vite/services/ssr/assets/admin-BVvp5iWX.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function useAdminNotifications(initial = []) {
@@ -227,6 +227,7 @@ function Admin() {
 	const [sessions, setSessions] = (0, import_react.useState)([]);
 	const [sessionsPage, setSessionsPage] = (0, import_react.useState)(1);
 	const [downloads, setDownloads] = (0, import_react.useState)([]);
+	const [registeredUsers, setRegisteredUsers] = (0, import_react.useState)([]);
 	const [networkClusters, setNetworkClusters] = (0, import_react.useState)([]);
 	const [stats, setStats] = (0, import_react.useState)(null);
 	const [latestAlert, setLatestAlert] = (0, import_react.useState)(null);
@@ -281,6 +282,7 @@ function Admin() {
 					if (!mounted) return true;
 					setSessions([]);
 					setDownloads([]);
+					setRegisteredUsers([]);
 					setNetworkClusters([]);
 					setStats(null);
 					setNotifications([]);
@@ -290,6 +292,7 @@ function Admin() {
 				if (!mounted) return true;
 				setSessions(data.sessions || []);
 				setDownloads(data.downloads || []);
+				setRegisteredUsers(data.registeredUsers || []);
 				setNetworkClusters(data.networkClusters || []);
 				setStats(data.stats || null);
 				const nextNotifications = data.notifications || [];
@@ -312,6 +315,7 @@ function Admin() {
 				if (!mounted) return false;
 				setSessions([]);
 				setDownloads([]);
+				setRegisteredUsers([]);
 				setNetworkClusters([]);
 				setStats(null);
 				setNotifications([]);
@@ -856,6 +860,68 @@ function Admin() {
 													})
 												]
 											}, cluster.network_cluster_id)) })]
+										})]
+									}),
+									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+										className: "overflow-x-auto rounded-3xl bg-white/5 p-4",
+										children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+											className: "mb-4 flex items-center justify-between gap-3",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h3", {
+												className: "text-lg font-medium",
+												children: "Registered users"
+											}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+												className: "mt-1 text-xs text-white/50",
+												children: "Account emails and verification status. Passwords are never stored or displayed."
+											})] }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+												className: "rounded-full bg-white/10 px-3 py-1 text-xs text-white/70",
+												children: registeredUsers.length
+											})]
+										}), registeredUsers.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+											className: "py-5 text-sm text-white/50",
+											children: "No registered users yet."
+										}) : /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("table", {
+											className: "w-full table-auto text-left text-sm text-white/80",
+											children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("thead", { children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", { children: [
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+													className: "px-2 py-2",
+													children: "Email"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+													className: "px-2 py-2",
+													children: "Provider"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+													className: "px-2 py-2",
+													children: "Verification"
+												}),
+												/* @__PURE__ */ (0, import_jsx_runtime.jsx)("th", {
+													className: "px-2 py-2",
+													children: "Registered"
+												})
+											] }) }), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("tbody", { children: registeredUsers.map((user) => /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("tr", {
+												className: "border-t border-white/5 text-white/70",
+												children: [
+													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+														className: "px-2 py-2",
+														children: user.email || "—"
+													}),
+													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+														className: "px-2 py-2 capitalize",
+														children: user.provider
+													}),
+													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+														className: "px-2 py-2",
+														children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
+															className: `rounded-full px-2 py-1 text-xs font-semibold ${user.emailConfirmed ? "bg-emerald-500/15 text-emerald-200" : "bg-amber-500/15 text-amber-200"}`,
+															children: user.emailConfirmed ? "verified" : "pending"
+														})
+													}),
+													/* @__PURE__ */ (0, import_jsx_runtime.jsx)("td", {
+														className: "px-2 py-2",
+														children: user.createdAt ? new Date(user.createdAt).toLocaleString() : "—"
+													})
+												]
+											}, user.id)) })]
 										})]
 									}),
 									/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {

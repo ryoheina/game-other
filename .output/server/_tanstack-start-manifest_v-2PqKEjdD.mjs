@@ -1,4 +1,4 @@
-//#region node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-flJlXCx9.js
+//#region node_modules/.nitro/vite/services/ssr/assets/_tanstack-start-manifest_v-2PqKEjdD.js
 var tsrStartManifest = () => ({ routes: {
 	__root__: {
 		filePath: "D:/other/src/routes/__root.tsx",
@@ -30,32 +30,32 @@ var tsrStartManifest = () => ({ routes: {
 			"/api/public/mark-extracted",
 			"/api/public/visit"
 		],
-		preloads: ["/assets/index-D5bgje55.js", "/assets/jsx-runtime-D8nDyRPw.js"],
+		preloads: ["/assets/index-CZM1CR6q.js", "/assets/jsx-runtime-D8nDyRPw.js"],
 		scripts: [{ attrs: {
 			type: "module",
 			async: !0,
-			src: "/assets/index-D5bgje55.js"
+			src: "/assets/index-CZM1CR6q.js"
 		} }]
 	},
 	"/": {
 		filePath: "D:/other/src/routes/index.tsx",
 		children: void 0,
-		preloads: ["/assets/routes-BzLrPUBx.js", "/assets/react-three-fiber.esm-DvU-8U1p.js"]
+		preloads: ["/assets/routes-DYxvGtF1.js", "/assets/react-three-fiber.esm-DQJnptHx.js"]
 	},
 	"/_authenticated": {
 		filePath: "D:/other/src/routes/_authenticated/route.tsx",
 		children: ["/_authenticated/admin"],
-		preloads: ["/assets/route-yHMVVdif.js"]
+		preloads: ["/assets/route-BhJXF2zK.js"]
 	},
 	"/auth": {
 		filePath: "D:/other/src/routes/auth.tsx",
 		children: void 0,
-		preloads: ["/assets/auth-Btiaz-fS.js", "/assets/fx-Bj92YA5I.js"]
+		preloads: ["/assets/auth-B5hyrvW4.js", "/assets/fx-Bj92YA5I.js"]
 	},
 	"/installed": {
 		filePath: "D:/other/src/routes/installed.tsx",
 		children: void 0,
-		preloads: ["/assets/installed-BN8iVJvy.js"]
+		preloads: ["/assets/installed-qZK3h2p3.js", "/assets/client-9t_EmJKQ.js"]
 	},
 	"/me": {
 		filePath: "D:/other/src/routes/me.tsx",
@@ -65,7 +65,7 @@ var tsrStartManifest = () => ({ routes: {
 	"/_authenticated/admin": {
 		filePath: "D:/other/src/routes/_authenticated/admin.tsx",
 		children: void 0,
-		preloads: ["/assets/admin-CZks8J2w.js", "/assets/fx-Bj92YA5I.js"]
+		preloads: ["/assets/admin-CGQVQunG.js", "/assets/fx-Bj92YA5I.js"]
 	}
 } });
 //#endregion
