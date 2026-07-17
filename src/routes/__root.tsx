@@ -77,6 +77,24 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
+      { title: "Legend of Eternity" },
+      { name: "description", content: "A cinematic psychological horror experience. Enter if you dare." },
+      { property: "og:title", content: "Legend of Eternity" },
+      { property: "og:description", content: "A cinematic psychological horror experience. Enter if you dare." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://legendofeternity.publicvm.com/" },
+      { property: "og:site_name", content: "Legend of Eternity" },
+      { property: "og:image", content: "https://legendofeternity.publicvm.com/og-image.jpg" },
+      { property: "og:image:secure_url", content: "https://legendofeternity.publicvm.com/og-image.jpg" },
+      { property: "og:image:type", content: "image/jpeg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "Legend of Eternity - a hooded ghost with glowing blue eyes" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Legend of Eternity" },
+      { name: "twitter:description", content: "A cinematic psychological horror experience. Enter if you dare." },
+      { name: "twitter:image", content: "https://legendofeternity.publicvm.com/og-image.jpg" },
+      { name: "twitter:image:alt", content: "Legend of Eternity - a hooded ghost with glowing blue eyes" },
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Legends of Eternity — A next-gen 3D multiplayer fantasy RPG" },
@@ -92,6 +110,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Y1u1o4AgdxbFhe5JKWYiW3novtk1/social-images/social-1783268023900-ELYSIA.webp" },
     ],
     links: [
+      { rel: "canonical", href: "https://legendofeternity.publicvm.com/" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;500;600;700&display=swap" },

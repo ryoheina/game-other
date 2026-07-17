@@ -9,7 +9,7 @@ import { t as QueryClient } from "../_libs/tanstack__query-core.mjs";
 import { t as QueryClientProvider } from "../_libs/tanstack__react-query.mjs";
 import { n as objectType, r as stringType, t as booleanType } from "../_libs/zod.mjs";
 import crypto$1 from "crypto";
-//#region node_modules/.nitro/vite/services/ssr/assets/router-rafHnojM.js
+//#region node_modules/.nitro/vite/services/ssr/assets/router-tEQuQ6h2.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function isNewSupabaseApiKey$1(value) {
@@ -232,6 +232,75 @@ function ErrorComponent({ error, reset }) {
 var Route$27 = createRootRouteWithContext()({
 	head: () => ({
 		meta: [
+			{ title: "Legend of Eternity" },
+			{
+				name: "description",
+				content: "A cinematic psychological horror experience. Enter if you dare."
+			},
+			{
+				property: "og:title",
+				content: "Legend of Eternity"
+			},
+			{
+				property: "og:description",
+				content: "A cinematic psychological horror experience. Enter if you dare."
+			},
+			{
+				property: "og:type",
+				content: "website"
+			},
+			{
+				property: "og:url",
+				content: "https://legendofeternity.publicvm.com/"
+			},
+			{
+				property: "og:site_name",
+				content: "Legend of Eternity"
+			},
+			{
+				property: "og:image",
+				content: "https://legendofeternity.publicvm.com/og-image.jpg"
+			},
+			{
+				property: "og:image:secure_url",
+				content: "https://legendofeternity.publicvm.com/og-image.jpg"
+			},
+			{
+				property: "og:image:type",
+				content: "image/jpeg"
+			},
+			{
+				property: "og:image:width",
+				content: "1200"
+			},
+			{
+				property: "og:image:height",
+				content: "630"
+			},
+			{
+				property: "og:image:alt",
+				content: "Legend of Eternity - a hooded ghost with glowing blue eyes"
+			},
+			{
+				name: "twitter:card",
+				content: "summary_large_image"
+			},
+			{
+				name: "twitter:title",
+				content: "Legend of Eternity"
+			},
+			{
+				name: "twitter:description",
+				content: "A cinematic psychological horror experience. Enter if you dare."
+			},
+			{
+				name: "twitter:image",
+				content: "https://legendofeternity.publicvm.com/og-image.jpg"
+			},
+			{
+				name: "twitter:image:alt",
+				content: "Legend of Eternity - a hooded ghost with glowing blue eyes"
+			},
 			{ charSet: "utf-8" },
 			{
 				name: "viewport",
@@ -280,6 +349,10 @@ var Route$27 = createRootRouteWithContext()({
 			}
 		],
 		links: [
+			{
+				rel: "canonical",
+				href: "https://legendofeternity.publicvm.com/"
+			},
 			{
 				rel: "preconnect",
 				href: "https://fonts.googleapis.com"
@@ -622,7 +695,7 @@ async function recordVisit(request, data) {
 	};
 	const country = meta.country ?? (request ? await resolveCountry(request.headers, meta.ip) : null);
 	const networkMeta = getNetworkMeta$1(request, country);
-	const { supabaseAdmin } = await import("./client.server-CghLhZja.mjs");
+	const { supabaseAdmin } = await import("./client.server-CNROEcTG.mjs");
 	const now = (/* @__PURE__ */ new Date()).toISOString();
 	const { data: existing } = await supabaseAdmin.from("sessions").select("session_id,last_active,notified_left").eq("session_id", data.sessionId).maybeSingle();
 	if (existing) {
@@ -919,7 +992,7 @@ var Route$19 = createFileRoute("/api/public/mark-extracted")({ server: { handler
 			headers: { "Cache-Control": "no-store" }
 		});
 		const meta = getClientMeta(request);
-		const { supabaseAdmin } = await import("./client.server-CghLhZja.mjs");
+		const { supabaseAdmin } = await import("./client.server-CNROEcTG.mjs");
 		const { data: download, error: downloadError } = await findDownloadByInstallToken$1(supabaseAdmin, installToken);
 		if (downloadError) throw downloadError;
 		if (!download) return new Response("", {
@@ -1051,7 +1124,7 @@ var Route$18 = createFileRoute("/api/public/installed")({ server: { handlers: { 
 		const bodySessionId = typeof body?.sessionId === "string" && body.sessionId.length >= 8 && body.sessionId.length <= 64 ? body.sessionId : null;
 		const meta = getClientMeta(request);
 		const installToken = getInstallTokenFromRequest(request, body?.token);
-		const { supabaseAdmin } = await import("./client.server-CghLhZja.mjs");
+		const { supabaseAdmin } = await import("./client.server-CNROEcTG.mjs");
 		let { data: download, error: downloadError } = installToken ? await findDownloadByInstallToken(supabaseAdmin, installToken) : await findLatestDownloadBySession(supabaseAdmin, bodySessionId, fileName);
 		if (!download && !downloadError && bodySessionId) {
 			const bySession = await findLatestDownloadBySession(supabaseAdmin, bodySessionId, fileName);
@@ -1616,7 +1689,7 @@ var Route$15 = createFileRoute("/api/me/stats")({ server: { handlers: { GET: asy
 				headers: { "Content-Type": "application/json" }
 			});
 		}
-		const { supabaseAdmin } = await import("./client.server-CghLhZja.mjs");
+		const { supabaseAdmin } = await import("./client.server-CNROEcTG.mjs");
 		(/* @__PURE__ */ new Date(Date.now() - 24 * 36e5)).toISOString();
 		const since5m = (/* @__PURE__ */ new Date(Date.now() - 5 * 6e4)).toISOString();
 		const sinceToday = new Date((/* @__PURE__ */ new Date()).setHours(0, 0, 0, 0)).toISOString();
@@ -1790,7 +1863,7 @@ var Route$12 = createFileRoute("/api/admin/mark-notification-read")({ server: { 
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-CghLhZja.mjs");
+		const { supabaseAdmin } = await import("./client.server-CNROEcTG.mjs");
 		const res = await supabaseAdmin.from("notifications").update({ read: true }).eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$8(res.error)), {
 			status: 500,
@@ -2037,7 +2110,7 @@ var Route$8 = createFileRoute("/api/admin/delete-user")({ server: { handlers: { 
 		});
 		let supabaseAdmin;
 		try {
-			supabaseAdmin = (await import("./client.server-CghLhZja.mjs")).supabaseAdmin;
+			supabaseAdmin = (await import("./client.server-CNROEcTG.mjs")).supabaseAdmin;
 			if (!supabaseAdmin) throw new Error("Supabase admin client unavailable");
 		} catch (err) {
 			console.error("[Delete user] Supabase admin client load failed", err);
@@ -2112,7 +2185,7 @@ var Route$7 = createFileRoute("/api/admin/delete-session")({ server: { handlers:
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-CghLhZja.mjs");
+		const { supabaseAdmin } = await import("./client.server-CNROEcTG.mjs");
 		await supabaseAdmin.from("visits").delete().eq("session_id", id);
 		await supabaseAdmin.from("downloads").delete().eq("session_id", id);
 		await supabaseAdmin.from("extractions").delete().eq("session_id", id);
@@ -2158,7 +2231,7 @@ var Route$6 = createFileRoute("/api/admin/delete-notification")({ server: { hand
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-CghLhZja.mjs");
+		const { supabaseAdmin } = await import("./client.server-CNROEcTG.mjs");
 		const res = await supabaseAdmin.from("notifications").delete().eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$4(res.error)), {
 			status: 500,
@@ -2200,7 +2273,7 @@ var Route$5 = createFileRoute("/api/admin/delete-download")({ server: { handlers
 			status: 400,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-CghLhZja.mjs");
+		const { supabaseAdmin } = await import("./client.server-CNROEcTG.mjs");
 		const res = await supabaseAdmin.from("downloads").delete().eq("id", id);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$3(res.error)), {
 			status: 500,
@@ -2514,7 +2587,7 @@ var Route$4 = createFileRoute("/api/admin/dashboard")({ server: { handlers: { GE
 		let supabaseAdmin;
 		try {
 			console.log("[Dashboard] Importing Supabase admin client");
-			supabaseAdmin = (await import("./client.server-CghLhZja.mjs")).supabaseAdmin;
+			supabaseAdmin = (await import("./client.server-CNROEcTG.mjs")).supabaseAdmin;
 			if (!supabaseAdmin) throw new Error("Supabase admin client import returned undefined");
 		} catch (importError) {
 			const message = importError instanceof Error ? importError.message : String(importError);
@@ -2782,7 +2855,7 @@ var Route$3 = createFileRoute("/api/admin/clear-notifications")({ server: { hand
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-CghLhZja.mjs");
+		const { supabaseAdmin } = await import("./client.server-CNROEcTG.mjs");
 		const res = await supabaseAdmin.from("notifications").delete().not("id", "is", null);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload$2(res.error)), {
 			status: 500,
@@ -2810,7 +2883,7 @@ var Route$2 = createFileRoute("/api/admin/clear-network")({ server: { handlers: 
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-CghLhZja.mjs");
+		const { supabaseAdmin } = await import("./client.server-CNROEcTG.mjs");
 		const { error } = await supabaseAdmin.from("visits").delete().not("id", "is", null);
 		if (error) throw error;
 		return new Response(JSON.stringify({ success: true }), {
@@ -2848,7 +2921,7 @@ var Route$1 = createFileRoute("/api/admin/clear-history")({ server: { handlers: 
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-CghLhZja.mjs");
+		const { supabaseAdmin } = await import("./client.server-CNROEcTG.mjs");
 		await clearTable(supabaseAdmin, "notifications");
 		await clearTable(supabaseAdmin, "downloads");
 		await clearTable(supabaseAdmin, "extractions");
@@ -2883,7 +2956,7 @@ var Route = createFileRoute("/api/admin/clear-downloads")({ server: { handlers: 
 			status: 401,
 			headers
 		});
-		const { supabaseAdmin } = await import("./client.server-CghLhZja.mjs");
+		const { supabaseAdmin } = await import("./client.server-CNROEcTG.mjs");
 		const res = await supabaseAdmin.from("downloads").delete().not("id", "is", null);
 		if (res.error) return new Response(JSON.stringify(createErrorPayload(res.error)), {
 			status: 500,
