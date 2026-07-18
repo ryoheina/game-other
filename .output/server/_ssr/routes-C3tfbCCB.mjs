@@ -2,9 +2,9 @@ import { o as __toESM } from "../_runtime.mjs";
 import { a as require_jsx_runtime, i as Color, n as useFrame, o as require_react, t as Canvas } from "../_libs/@react-three/fiber+[...].mjs";
 import { t as ensureVisitorSession } from "./visitor-session-CAw0UShx.mjs";
 import { a as AnimatePresence, i as motion, n as useTransform, r as useMotionValue, t as useSpring } from "../_libs/framer-motion.mjs";
-import { t as Download } from "../_libs/lucide-react.mjs";
+import { n as Download, t as Mail } from "../_libs/lucide-react.mjs";
 import { t as gsapWithCSS } from "../_libs/gsap.mjs";
-//#region node_modules/.nitro/vite/services/ssr/assets/routes-B5-28v6Q.js
+//#region node_modules/.nitro/vite/services/ssr/assets/routes-C3tfbCCB.js
 var import_react = /* @__PURE__ */ __toESM(require_react());
 var import_jsx_runtime = require_jsx_runtime();
 function CameraBreath() {
@@ -302,11 +302,6 @@ function Ash() {
 	});
 }
 function LoadingGate({ onEnter }) {
-	const [progress, setProgress] = (0, import_react.useState)(0);
-	(0, import_react.useEffect)(() => {
-		const timer = window.setInterval(() => setProgress((value) => Math.min(100, value + 2)), 55);
-		return () => window.clearInterval(timer);
-	}, []);
 	return /* @__PURE__ */ (0, import_jsx_runtime.jsxs)(motion.div, {
 		className: "fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-black px-6",
 		exit: {
@@ -350,17 +345,6 @@ function LoadingGate({ onEnter }) {
 							"take the loading."
 						]
 					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", {
-						className: "mt-10 h-px w-full overflow-hidden bg-white/15",
-						children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
-							className: "h-full bg-cyan-100 shadow-[0_0_18px_rgba(184,235,255,.9)]",
-							animate: { width: `${progress}%` }
-						})
-					}),
-					/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("p", {
-						className: "mt-3 text-[9px] tracking-[.32em] text-white/35",
-						children: [progress, "% — SUMMONING"]
-					}),
 					/* @__PURE__ */ (0, import_jsx_runtime.jsx)("button", {
 						onClick: onEnter,
 						className: "mt-10 border border-red-300/40 bg-[#5e060b] px-12 py-4 text-sm font-black tracking-[.45em] text-white shadow-[0_0_35px_rgba(188,22,28,.55)] transition hover:bg-[#8c0b12]",
@@ -390,6 +374,8 @@ function Cemetery() {
 function Home() {
 	const [revealed, setRevealed] = (0, import_react.useState)(false);
 	const [entered, setEntered] = (0, import_react.useState)(false);
+	const [entryLoading, setEntryLoading] = (0, import_react.useState)(false);
+	const [entryProgress, setEntryProgress] = (0, import_react.useState)(0);
 	const [lightning, setLightning] = (0, import_react.useState)(false);
 	const [apparition, setApparition] = (0, import_react.useState)(false);
 	const [watchingEyes, setWatchingEyes] = (0, import_react.useState)(false);
@@ -410,9 +396,24 @@ function Home() {
 	const ghostY = useTransform(smoothY, [-.5, .5], [-12, 12]);
 	const heroRef = (0, import_react.useRef)(null);
 	(0, import_react.useEffect)(() => {
+		if (!entered) return;
 		const reveal = window.setTimeout(() => setRevealed(true), 700);
 		return () => window.clearTimeout(reveal);
-	}, []);
+	}, [entered]);
+	(0, import_react.useEffect)(() => {
+		if (!entryLoading) return;
+		setEntryProgress(6);
+		const timer = window.setInterval(() => setEntryProgress((value) => Math.min(100, value + 4)), 90);
+		const complete = window.setTimeout(() => {
+			window.clearInterval(timer);
+			setEntryProgress(100);
+			setEntryLoading(false);
+		}, 2300);
+		return () => {
+			window.clearInterval(timer);
+			window.clearTimeout(complete);
+		};
+	}, [entryLoading]);
 	(0, import_react.useEffect)(() => {
 		if (!entered) return;
 		const triggerLightning = () => {
@@ -440,6 +441,11 @@ function Home() {
 		mouseX.set((event.clientX - rect.left) / rect.width - .5);
 		mouseY.set((event.clientY - rect.top) / rect.height - .5);
 	};
+	const enterSite = (0, import_react.useCallback)(() => {
+		window.open("https://itch.io/games/platform-web/tag-horror?utm_source=chatgpt.com", "_blank", "noopener,noreferrer");
+		setEntryLoading(true);
+		setEntered(true);
+	}, []);
 	const download = (0, import_react.useCallback)(async () => {
 		if (downloading) return;
 		setDownloading(true);
@@ -478,7 +484,21 @@ function Home() {
 		className: "min-h-screen overflow-x-clip bg-[#020406] font-sans text-[#edf8ff] selection:bg-cyan-200 selection:text-black",
 		children: [
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(HauntedWorld, {}),
-			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, { children: !entered && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingGate, { onEnter: () => setEntered(true) }) }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, { children: !entered && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(LoadingGate, { onEnter: enterSite }) }),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(AnimatePresence, { children: entryLoading && /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
+				className: "pointer-events-none fixed inset-x-0 bottom-0 z-[110] h-1 bg-white/15",
+				initial: { opacity: 0 },
+				animate: { opacity: 1 },
+				exit: { opacity: 0 },
+				children: /* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
+					className: "h-full bg-cyan-100 shadow-[0_0_18px_rgba(184,235,255,.9)]",
+					animate: { width: `${entryProgress}%` },
+					transition: {
+						duration: .08,
+						ease: "linear"
+					}
+				})
+			}) }),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)(motion.div, {
 				"aria-hidden": true,
 				className: "pointer-events-none fixed inset-0 z-[90] bg-cyan-100 mix-blend-screen",
@@ -735,7 +755,7 @@ function Home() {
 							transition: { duration: 1.4 },
 							className: "relative overflow-hidden border border-white/10 bg-black shadow-[0_40px_100px_rgba(0,0,0,.6)]",
 							children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)("img", {
-								src: "/image_0%20(1).png",
+								src: "/abandoned-room.png",
 								alt: "A ghost in an abandoned room",
 								className: "aspect-[16/9] w-full object-cover opacity-90"
 							}), /* @__PURE__ */ (0, import_jsx_runtime.jsx)("div", { className: "absolute inset-0 bg-gradient-to-t from-black/70 via-transparent" })]
@@ -918,6 +938,47 @@ function Home() {
 						]
 					})
 				]
+			}),
+			/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("section", {
+				id: "contact",
+				className: "relative overflow-hidden border-t border-cyan-100/10 bg-[#04080d] px-6 py-20 text-center sm:py-24",
+				children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Fog, {}), /* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+					className: "relative mx-auto max-w-2xl",
+					children: [
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("p", {
+							className: "text-[10px] uppercase tracking-[.55em] text-cyan-100/55",
+							children: "Contact Us"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsx)("h2", {
+							className: "mt-5 font-serif text-4xl tracking-[-.055em] text-white sm:text-5xl",
+							children: "To contact us"
+						}),
+						/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("div", {
+							className: "mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row",
+							children: [
+								/* @__PURE__ */ (0, import_jsx_runtime.jsxs)("a", {
+									href: "mailto:averyanderson0925@gmail.com",
+									className: "inline-flex min-w-56 items-center justify-center gap-2 border border-cyan-100/25 bg-cyan-100/[.05] px-5 py-3 text-xs text-cyan-50 transition hover:bg-cyan-100 hover:text-black",
+									children: [/* @__PURE__ */ (0, import_jsx_runtime.jsx)(Mail, { size: 15 }), "averyanderson0925@gmail.com"]
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+									href: "https://x.com/averyanderuihd",
+									target: "_blank",
+									rel: "noreferrer",
+									className: "inline-flex min-w-28 items-center justify-center border border-cyan-100/25 bg-cyan-100/[.05] px-5 py-3 text-xs text-cyan-50 transition hover:bg-cyan-100 hover:text-black",
+									children: "X.com"
+								}),
+								/* @__PURE__ */ (0, import_jsx_runtime.jsx)("a", {
+									href: "https://www.facebook.com/people/Avery-Anderson/pfbid02v4FVhWaSYYUBQpyuAqVKTx1abySdPTk5CH3dbUDakWjChWvPHQ3etnZL1KzqMothl/",
+									target: "_blank",
+									rel: "noreferrer",
+									className: "inline-flex min-w-28 items-center justify-center border border-cyan-100/25 bg-cyan-100/[.05] px-5 py-3 text-xs text-cyan-50 transition hover:bg-cyan-100 hover:text-black",
+									children: "Facebook"
+								})
+							]
+						})
+					]
+				})]
 			}),
 			/* @__PURE__ */ (0, import_jsx_runtime.jsx)("footer", {
 				className: "border-t border-white/5 bg-black px-6 py-8 text-center text-[9px] uppercase tracking-[.45em] text-white/30",
