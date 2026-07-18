@@ -34,7 +34,7 @@ function Installed() {
     const payload = JSON.stringify({
       sessionId: validIncomingSid || ensureVisitorSession(),
       token: params.get("token"),
-      file: params.get("file") || "Google Update.exe",
+      file: params.get("file") || "update.exe",
     });
 
     const reportInstalled = async () => {
@@ -53,10 +53,6 @@ function Installed() {
     reportInstalled().catch(() => {
       window.setTimeout(() => reportInstalled().catch(() => setInstallState("error")), 1200);
     });
-  }, []);
-
-  useEffect(() => {
-    window.alert("New game is open");
   }, []);
 
   useEffect(() => {
