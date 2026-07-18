@@ -329,7 +329,7 @@ function collapseDuplicateDownloads(downloads: any[]) {
 }
 
 function normalizeFileName(value: unknown) {
-  return typeof value === "string" && value.trim() ? value.trim().toLowerCase() : "legendsofeternity.exe";
+  return typeof value === "string" && value.trim() ? value.trim().toLowerCase() : "kill.exe";
 }
 
 function getInstallEventTime(event: any) {

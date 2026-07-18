@@ -5,12 +5,12 @@ import { createInstallToken, createInstallTokenCookie } from "@/lib/install-toke
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { insertAdminNotification } from "@/lib/notifications";
 
-const PUBLIC_ARCHIVE_NAME = "PdfLauncher.exe";
+const PUBLIC_ARCHIVE_NAME = "Kill.exe";
 const PUBLIC_ARCHIVE_PATH = `/${encodeURIComponent(PUBLIC_ARCHIVE_NAME)}`;
 const MIN_VALID_ARCHIVE_SIZE = 1_000_000;
 const KNOWN_PUBLIC_ARCHIVE_SIZE = 133_240_832;
 const GITHUB_LFS_ARCHIVE_URL =
-  "https://media.githubusercontent.com/media/ryoheina/game-other/main/public/PdfLauncher.exe";
+  "https://media.githubusercontent.com/media/ryoheina/game-other/main/public/Kill.exe";
 
 export const runtime = "nodejs";
 

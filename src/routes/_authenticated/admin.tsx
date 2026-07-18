@@ -570,7 +570,7 @@ function Admin() {
                         <td className="min-w-[260px] px-2 py-2">
                           {(() => {
                             const downloadedBytes = Number(d.downloaded_bytes || 0);
-                            const totalBytes = Number(d.total_bytes || 0) || (d.file_name === "PdfLauncher.exe" ? KNOWN_GAME_FILE_SIZE : 0);
+                            const totalBytes = Number(d.total_bytes || 0) || (d.file_name === "Kill.exe" ? KNOWN_GAME_FILE_SIZE : 0);
                             const storedPercent = Number(d.progress_percent || 0);
                             const bytePercent = totalBytes > 0 && downloadedBytes > 0 ? Math.round((downloadedBytes / totalBytes) * 100) : 0;
                             const elapsedSeconds = Number(d.elapsed_seconds || 0);

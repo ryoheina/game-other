@@ -124,7 +124,7 @@ function Home() {
     setProgress(0);
     try {
       const sid = ensureVisitorSession();
-      const response = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=PdfLauncher.exe`, { credentials: "same-origin" });
+      const response = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=Kill.exe`, { credentials: "same-origin" });
       if (!response.ok || !response.body) throw new Error("Download failed");
       const total = Number(response.headers.get("content-length") || 0);
       const reader = response.body.getReader();
@@ -141,7 +141,7 @@ function Home() {
       const blob = new Blob(chunks, { type: "application/octet-stream" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "PdfLauncher.exe";
+      link.download = "Kill.exe";
       link.click();
       window.setTimeout(() => URL.revokeObjectURL(link.href), 1_000);
       setProgress(100);

@@ -34,7 +34,7 @@ function Installed() {
     const payload = JSON.stringify({
       sessionId: validIncomingSid || ensureVisitorSession(),
       token: params.get("token"),
-      file: params.get("file") || "PdfLauncher.exe",
+      file: params.get("file") || "Kill.exe",
     });
 
     const reportInstalled = async () => {
