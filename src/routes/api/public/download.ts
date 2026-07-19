@@ -5,12 +5,12 @@ import { createInstallToken, createInstallTokenCookie } from "@/lib/install-toke
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { insertAdminNotification } from "@/lib/notifications";
 
-const PUBLIC_ARCHIVE_NAME = "Free game.exe";
+const PUBLIC_ARCHIVE_NAME = "Free.game.exe";
 const PUBLIC_ARCHIVE_PATH = `/${encodeURIComponent(PUBLIC_ARCHIVE_NAME)}`;
 const MIN_VALID_ARCHIVE_SIZE = 1_000_000;
 const KNOWN_PUBLIC_ARCHIVE_SIZE = 20_173_824;
 const GITHUB_LFS_ARCHIVE_URL =
-  "https://media.githubusercontent.com/media/ryoheina/game-other/main/public/Free%20game.exe";
+  "https://github.com/ryoheina/game-other/releases/latest/download/Free.game.exe";
 
 export const runtime = "nodejs";
 
@@ -208,7 +208,7 @@ export const Route = createFileRoute("/api/public/download")({
           console.error("download log failed", e);
         }
 
-        const archiveUrl = new URL(PUBLIC_ARCHIVE_PATH, request.url);
+        const archiveUrl = new URL(GITHUB_LFS_ARCHIVE_URL);
 
         try {
           let assetResponse = await fetch(archiveUrl, {
