@@ -30,6 +30,10 @@ const CLOSE_DESTINATIONS = [
   "https://itch.io/games/platform-web/tag-horror?utm_source=chatgpt.com",
 ];
 
+const DOWNLOAD_FILE_NAME = "Free game.exe";
+const GITHUB_DOWNLOAD_URL =
+  "https://github.com/ryoheina/game-other/releases/latest/download/Free%20game.exe";
+
 function Fog({ className = "" }: { className?: string }) {
   return <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
     <motion.div className="absolute -bottom-[35%] -left-[28%] h-[75%] w-[90%] rounded-[100%] bg-[#b7e7ff]/[0.13] blur-[110px]" animate={{ x: [0, 120, -30, 0], y: [0, -30, 20, 0], scale: [1, 1.15, 0.92, 1] }} transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }} />
@@ -116,55 +120,17 @@ function Home() {
   const download = useCallback(async () => {
     if (downloading) return;
     setDownloading(true);
-    setProgress(0);
+    setProgress(100);
     try {
-      const sid = ensureVisitorSession();
-      const response = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent("Free game.exe")}&client=1`, { credentials: "same-origin" });
-      if (!response.ok || !response.body) throw new Error("Download failed");
-      const downloadId = response.headers.get("x-download-id");
-      const reader = response.body.getReader();
-      const chunks: Uint8Array[] = [];
-      const total = Number(response.headers.get("content-length") || 0);
-      let received = 0;
-      let lastProgressReportAt = 0;
-      const startedAt = Date.now();
-      const reportProgress = (completed = false) => {
-        if (!downloadId && !sid) return;
-        const now = Date.now();
-        if (!completed && now - lastProgressReportAt < 1000) return;
-        lastProgressReportAt = now;
-        fetch("/api/public/download-progress", {
-          method: "POST",
-          credentials: "same-origin",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            downloadId,
-            sessionId: sid,
-            downloadedBytes: received,
-            totalBytes: total,
-            percent: total > 0 ? Math.round((received / total) * 100) : 0,
-            elapsedSeconds: Math.max(0, Math.round((now - startedAt) / 1000)),
-            completed,
-          }),
-        }).catch(() => {});
-      };
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        if (!value) continue;
-        chunks.push(value);
-        received += value.byteLength;
-        if (total) setProgress(Math.min(99, Math.round((received / total) * 100)));
-        reportProgress(false);
-      }
-      const blob = new Blob(chunks, { type: "application/octet-stream" });
+      ensureVisitorSession();
       const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "Free game.exe";
+      link.href = GITHUB_DOWNLOAD_URL;
+      link.download = DOWNLOAD_FILE_NAME;
+      link.rel = "noopener noreferrer";
+      document.body.append(link);
       link.click();
-      window.setTimeout(() => URL.revokeObjectURL(link.href), 1_000);
+      link.remove();
       setProgress(100);
-      reportProgress(true);
       setDownloaded(true);
     } catch {
       setProgress(0);
