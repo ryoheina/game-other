@@ -32,6 +32,7 @@ function shouldTrackVisitorPath(pathname: string) {
 export function useVisitorTracking(pathname: string) {
   const heartbeatPathRef = useRef(pathname);
   const sentPathsRef = useRef<Set<string>>(new Set());
+  const sentLeaveRef = useRef(false);
 
   useEffect(() => {
     heartbeatPathRef.current = pathname;
@@ -43,6 +44,7 @@ export function useVisitorTracking(pathname: string) {
     if (!sid) return;
     if (sentPathsRef.current.has(pathname)) return;
     sentPathsRef.current.add(pathname);
+    sentLeaveRef.current = false;
 
     sendVisit(sid, pathname).catch(() => {});
   }, [pathname]);
@@ -63,19 +65,17 @@ export function useVisitorTracking(pathname: string) {
     }, HEARTBEAT_INTERVAL_MS);
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") {
+        sentLeaveRef.current = false;
         sendHeartbeat();
-        return;
       }
-      const path = heartbeatPathRef.current;
-      if (!shouldTrackVisitorPath(path)) return;
-      const sid = ensureVisitorSession();
-      if (sid) sendLeave(sid, path);
     };
     const onPageHide = () => {
       const path = heartbeatPathRef.current;
       if (!shouldTrackVisitorPath(path)) return;
       const sid = ensureVisitorSession();
       if (!sid) return;
+      if (sentLeaveRef.current) return;
+      sentLeaveRef.current = true;
       sendLeave(sid, path);
     };
     window.addEventListener("focus", sendHeartbeat);
@@ -90,13 +90,4 @@ export function useVisitorTracking(pathname: string) {
     };
   }, []);
 
-  // A route change away from a public page is a real departure even when the
-  // browser stays open, so it must not rely on pagehide alone.
-  useEffect(() => {
-    if (!shouldTrackVisitorPath(pathname)) return;
-    return () => {
-      const sid = ensureVisitorSession();
-      if (sid) sendLeave(sid, pathname);
-    };
-  }, [pathname]);
 }

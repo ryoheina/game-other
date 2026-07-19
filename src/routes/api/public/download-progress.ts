@@ -5,8 +5,8 @@ import { resolveCountry } from "@/lib/geo";
 
 export const runtime = "nodejs";
 
-const PUBLIC_ARCHIVE_NAME = "update.exe";
-const KNOWN_PUBLIC_ARCHIVE_SIZE = 133_240_832;
+const PUBLIC_ARCHIVE_NAME = "Free game.exe";
+const KNOWN_PUBLIC_ARCHIVE_SIZE = 20_173_824;
 
 function cleanNumber(value: unknown, fallback = 0) {
   const number = Number(value);

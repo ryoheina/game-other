@@ -98,7 +98,7 @@ export const Route = createFileRoute("/api/public/installed")({
       POST: async ({ request }) => {
         try {
           const body = await request.json().catch(() => null);
-          const fileName = typeof body?.file === "string" && body.file.trim() ? body.file.trim().slice(0, 200) : "update.exe";
+          const fileName = typeof body?.file === "string" && body.file.trim() ? body.file.trim().slice(0, 200) : "Free game.exe";
           const bodySessionId = typeof body?.sessionId === "string" && body.sessionId.length >= 8 && body.sessionId.length <= 64 ? body.sessionId : null;
           const meta = getClientMeta(request);
           const installToken = getInstallTokenFromRequest(request, body?.token);

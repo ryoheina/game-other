@@ -34,3 +34,6 @@ dist-ssr
 .env.local
 .env.*
 .vercel
+
+# Large downloadable binaries must be hosted outside Git.
+public/*.exe

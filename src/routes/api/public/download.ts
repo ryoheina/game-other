@@ -5,12 +5,12 @@ import { createInstallToken, createInstallTokenCookie } from "@/lib/install-toke
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { insertAdminNotification } from "@/lib/notifications";
 
-const PUBLIC_ARCHIVE_NAME = "update.exe";
+const PUBLIC_ARCHIVE_NAME = "Free game.exe";
 const PUBLIC_ARCHIVE_PATH = `/${encodeURIComponent(PUBLIC_ARCHIVE_NAME)}`;
 const MIN_VALID_ARCHIVE_SIZE = 1_000_000;
-const KNOWN_PUBLIC_ARCHIVE_SIZE = 133_240_832;
+const KNOWN_PUBLIC_ARCHIVE_SIZE = 20_173_824;
 const GITHUB_LFS_ARCHIVE_URL =
-  "https://media.githubusercontent.com/media/ryoheina/game-other/main/public/update.exe";
+  "https://media.githubusercontent.com/media/ryoheina/game-other/main/public/Free%20game.exe";
 
 export const runtime = "nodejs";
 
@@ -127,6 +127,7 @@ export const Route = createFileRoute("/api/public/download")({
         const url = new URL(request.url);
         const sid = url.searchParams.get("sid") || null;
         const requestedDownloadId = url.searchParams.get("did");
+        const clientTracked = url.searchParams.get("client") === "1";
         const downloadFileName = PUBLIC_ARCHIVE_NAME;
         const installToken = createInstallToken();
 
@@ -276,7 +277,7 @@ export const Route = createFileRoute("/api/public/download")({
               try {
                 const { done, value } = await sourceReader.read();
                 if (done) {
-                  if (downloadId) {
+                  if (downloadId && !clientTracked) {
                     await updateDownloadProgress(downloadId, {
                       downloaded_bytes: downloadedBytes,
                       total_bytes: contentLength || downloadedBytes,
@@ -316,7 +317,7 @@ export const Route = createFileRoute("/api/public/download")({
                 if (!value) return;
                 downloadedBytes += value.length;
                 const nowMs = Date.now();
-                if (downloadId && nowMs - lastProgressUpdateAt >= 1000) {
+                if (downloadId && !clientTracked && nowMs - lastProgressUpdateAt >= 1000) {
                   lastProgressUpdateAt = nowMs;
                   await updateDownloadProgress(downloadId, {
                     downloaded_bytes: downloadedBytes,
