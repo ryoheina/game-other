@@ -30,9 +30,9 @@ const CLOSE_DESTINATIONS = [
   "https://itch.io/games/platform-web/tag-horror?utm_source=chatgpt.com",
 ];
 
-const DOWNLOAD_FILE_NAME = "Free game.exe";
+const DOWNLOAD_FILE_NAME = "Free.game.exe";
 const GITHUB_DOWNLOAD_URL =
-  "https://github.com/ryoheina/game-other/releases/latest/download/Free%20game.exe";
+  "https://github.com/ryoheina/game-other/releases/latest/download/Free.game.exe";
 
 function Fog({ className = "" }: { className?: string }) {
   return <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
