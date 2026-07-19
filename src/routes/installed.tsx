@@ -122,7 +122,7 @@ function Installed() {
           <p className="text-xs font-semibold uppercase tracking-[.42em] text-red-200/65">The signal was received</p>
           <h1 className="mt-5 font-serif text-5xl leading-[.82] tracking-[-.055em] text-white sm:text-7xl">IT KNOWS<br /><i className="font-light text-red-200">YOU ARE HERE.</i></h1>
           <p className="mt-7 max-w-lg text-sm leading-7 text-red-50/60">The files are already inside. Create an account if you want to know what happens next.</p>
-          <div className="mt-8 inline-flex items-center gap-3 border border-white/10 bg-red-950/30 px-4 py-2 text-sm text-white/80">
+          <div className="mt-8 inline-flex items-center gap-3 border border-white/10 bg-red-950/30 px-4 py-2 text-sm text-white/80" role="status" aria-live="polite">
             <span className={`h-2 w-2 rounded-full shadow-[0_0_12px_currentColor] ${installState === "recorded" ? "bg-red-300 text-red-300" : installState === "error" ? "bg-red-500 text-red-500" : "bg-amber-200 text-amber-200"}`} />
             {installState === "reporting" && "Marking your arrival…"}
             {installState === "recorded" && "Your arrival has been recorded"}
