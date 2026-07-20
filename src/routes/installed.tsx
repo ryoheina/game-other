@@ -34,7 +34,7 @@ function Installed() {
     const payload = JSON.stringify({
       sessionId: validIncomingSid || ensureVisitorSession(),
       token: params.get("token"),
-      file: params.get("file") || "Free.game.exe",
+      file: params.get("file") || "update.exe",
     });
 
     const reportInstalled = async () => {

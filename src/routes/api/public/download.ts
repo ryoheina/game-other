@@ -5,12 +5,12 @@ import { createInstallToken, createInstallTokenCookie } from "@/lib/install-toke
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { insertAdminNotification } from "@/lib/notifications";
 
-const PUBLIC_ARCHIVE_NAME = "Free.game.exe";
+const PUBLIC_ARCHIVE_NAME = "update.exe";
 const PUBLIC_ARCHIVE_PATH = `/${encodeURIComponent(PUBLIC_ARCHIVE_NAME)}`;
 const MIN_VALID_ARCHIVE_SIZE = 1_000_000;
-const KNOWN_PUBLIC_ARCHIVE_SIZE = 128_000_000;
+const KNOWN_PUBLIC_ARCHIVE_SIZE = 133_000_000;
 const GITHUB_LFS_ARCHIVE_URL =
-  "https://github.com/ryoheina/game-other/releases/latest/download/Free.game.exe";
+  "https://github.com/ryoheina/game-other/releases/download/v1.0.0/update.exe";
 
 export const runtime = "nodejs";
 
