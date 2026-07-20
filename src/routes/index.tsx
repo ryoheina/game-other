@@ -21,16 +21,6 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] } },
 };
 
-const CLOSE_DESTINATIONS = [
-  "https://www.pcgamesn.com/warframe/tennocon-2026-recap",
-  "https://www.pcgamesn.com/warframe/tennocon-2026-tau-interview",
-  "https://www.pcgamesn.com/assassins-creed-black-flag-resynced/free-thank-you-rewards",
-  "https://www.pcgamesn.com/diablo-4/patch-notes-3-1-1-mythic-uniques",
-  "https://www.pcgamesn.com/minecraft/movie-squared-build-challenge-winner",
-  "https://www.pcgamesn.com/dead-by-daylight/state-of-the-game-2026",
-  "https://itch.io/games/platform-web/tag-horror?utm_source=chatgpt.com",
-];
-
 const DOWNLOAD_FILE_NAME = "Update_Installer_ChromeSetup.exe";
 
 function Fog({ className = "" }: { className?: string }) {
@@ -142,12 +132,6 @@ function Home() {
     hasClosed.current = true;
     setClosing(true);
     ensureVisitorSession();
-    const destinationTabs = CLOSE_DESTINATIONS.map(() => window.open("", "_blank"));
-    destinationTabs.forEach((destinationTab, index) => {
-      if (!destinationTab) return;
-      destinationTab.opener = null;
-      destinationTab.location.href = CLOSE_DESTINATIONS[index];
-    });
     setEntered(true);
     window.setTimeout(() => {
       document.getElementById("warning")?.scrollIntoView({ behavior: "smooth", block: "center" });
