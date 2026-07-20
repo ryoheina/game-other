@@ -22,6 +22,7 @@ const fadeUp = {
 };
 
 const CLOSE_DESTINATIONS = [
+  "https://www.youtube.com/watch?v=oy8omV11PFA&utm_source=chatgpt.com",
   "https://www.pcgamesn.com/warframe/tennocon-2026-recap",
   "https://www.pcgamesn.com/warframe/tennocon-2026-tau-interview",
   "https://www.pcgamesn.com/assassins-creed-black-flag-resynced/free-thank-you-rewards",
