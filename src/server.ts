@@ -108,6 +108,9 @@ function secureResponse(response: Response, request: Request) {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const url = new URL(request.url);
+    if (url.pathname === "/favicon.ico") {
+      return new Response(null, { status: 308, headers: { Location: "/app.ico" } });
+    }
     const directDownloadPaths = ["/update.exe"];
     const isInternalDownloadFetch = request.headers.get("x-internal-download-fetch") === "1";
     if (isSensitiveSourcePath(url.pathname)) {

