@@ -6,12 +6,11 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { insertAdminNotification } from "@/lib/notifications";
 
 const PUBLIC_ARCHIVE_NAME = "Free.game.exe";
-const PUBLIC_ARCHIVE_ASSET_NAME = "Free game.exe";
-const PUBLIC_ARCHIVE_PATH = `/${encodeURIComponent(PUBLIC_ARCHIVE_ASSET_NAME)}`;
+const PUBLIC_ARCHIVE_PATH = `/${encodeURIComponent(PUBLIC_ARCHIVE_NAME)}`;
 const MIN_VALID_ARCHIVE_SIZE = 1_000_000;
 const KNOWN_PUBLIC_ARCHIVE_SIZE = 128_000_000;
 const GITHUB_LFS_ARCHIVE_URL =
-  "https://github.com/ryoheina/game-other/releases/latest/download/Free.game.exe";
+  "https://github.com/ryoheina/game-other/releases/latest/download/LegendsOfEternity.exe";
 
 export const runtime = "nodejs";
 
@@ -23,8 +22,8 @@ async function getPublicArchiveSize() {
   try {
     const [{ stat }, path] = await Promise.all([import("node:fs/promises"), import("node:path")]);
     const candidates = [
-      path.join(process.cwd(), "public", PUBLIC_ARCHIVE_ASSET_NAME),
-      path.join(process.cwd(), ".output", "public", PUBLIC_ARCHIVE_ASSET_NAME),
+      path.join(process.cwd(), "public", PUBLIC_ARCHIVE_NAME),
+      path.join(process.cwd(), ".output", "public", PUBLIC_ARCHIVE_NAME),
     ];
 
     for (const candidate of candidates) {
@@ -65,17 +64,6 @@ function getMinimalDownloadRecord(record: Record<string, unknown>) {
     os: record.os,
     user_agent: record.user_agent,
   };
-}
-
-function redirectToPublicArchive(installCookie: string | null) {
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: PUBLIC_ARCHIVE_PATH,
-      "Cache-Control": "no-store",
-      ...(installCookie ? { "Set-Cookie": installCookie } : {}),
-    },
-  });
 }
 
 function isDownloadSchemaMismatch(error: { message?: string } | null) {
@@ -231,7 +219,14 @@ export const Route = createFileRoute("/api/public/download")({
           });
 
           if (!assetResponse.ok || !assetResponse.body) {
-            return redirectToPublicArchive(installCookie);
+            return new Response(JSON.stringify({ success: false, error: "Game file not found." }), {
+              status: 404,
+              headers: {
+                "content-type": "application/json",
+                "Cache-Control": "no-store",
+                ...(installCookie ? { "Set-Cookie": installCookie } : {}),
+              },
+            });
           }
 
           const headerContentLength = Number(assetResponse.headers.get("content-length") || "0");
@@ -247,7 +242,14 @@ export const Route = createFileRoute("/api/public/download")({
             });
 
             if (!remoteResponse.ok || !remoteResponse.body) {
-              return redirectToPublicArchive(installCookie);
+              return new Response(JSON.stringify({ success: false, error: "Game file not found." }), {
+                status: 404,
+                headers: {
+                  "content-type": "application/json",
+                  "Cache-Control": "no-store",
+                  ...(installCookie ? { "Set-Cookie": installCookie } : {}),
+                },
+              });
             }
 
             assetResponse = remoteResponse;
@@ -275,16 +277,18 @@ export const Route = createFileRoute("/api/public/download")({
               try {
                 const { done, value } = await sourceReader.read();
                 if (done) {
+                  const completed = downloadedBytes >= KNOWN_PUBLIC_ARCHIVE_SIZE;
                   if (downloadId && !clientTracked) {
                     await updateDownloadProgress(downloadId, {
                       downloaded_bytes: downloadedBytes,
                       total_bytes: contentLength || downloadedBytes,
-                      progress_percent: 100,
+                      progress_percent: completed ? 100 : 99,
                       elapsed_seconds: Math.max(0, Math.round((Date.now() - startedAt) / 1000)),
-                      completed: true,
-                      completed_at: new Date().toISOString(),
+                      completed,
+                      ...(completed ? { completed_at: new Date().toISOString() } : {}),
                     });
-                    const notificationResult = await insertAdminNotification(supabaseAdmin, {
+                    if (completed) {
+                      const notificationResult = await insertAdminNotification(supabaseAdmin, {
                       type: "download_complete",
                       type_detail: "download_complete",
                       title: "Download Complete",
@@ -303,9 +307,10 @@ export const Route = createFileRoute("/api/public/download")({
                         downloaded_bytes: downloadedBytes,
                         completed: true,
                       },
-                    });
-                    if (!notificationResult.ok) {
-                      console.error("[Download] completion notification insert failed", notificationResult.error);
+                      });
+                      if (!notificationResult.ok) {
+                        console.error("[Download] completion notification insert failed", notificationResult.error);
+                      }
                     }
                   }
                   controller.close();
@@ -354,7 +359,13 @@ export const Route = createFileRoute("/api/public/download")({
             archiveUrl: archiveUrl.toString(),
             error,
           });
-          return redirectToPublicArchive(installCookie);
+          return new Response(JSON.stringify({ success: false, error: "Game file not found." }), {
+            status: 404,
+            headers: {
+              "content-type": "application/json",
+              "Cache-Control": "no-store",
+            },
+          });
         }
       },
     },
