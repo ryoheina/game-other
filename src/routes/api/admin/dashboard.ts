@@ -78,13 +78,6 @@ type DashboardSuccessResponse = {
   success: true;
   sessions: any[];
   downloads: any[];
-  registeredUsers: Array<{
-    id: string;
-    email: string | null;
-    createdAt: string | null;
-    emailConfirmed: boolean;
-    provider: string;
-  }>;
   notifications: any[];
   networkClusters: any[];
   stats: {
@@ -490,19 +483,6 @@ export const Route = createFileRoute("/api/admin/dashboard")({
           const downloads: any[] = downloadsRes.data ?? [];
           console.log(`[Dashboard] Downloads fetched: ${downloads.length}`);
 
-          const registeredUsersResult = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
-          if (registeredUsersResult.error) {
-            console.warn("[Dashboard] Registered users query failed:", registeredUsersResult.error.message);
-            logAdminRouteFailure(registeredUsersResult.error, { stage: "query_registered_users", message: registeredUsersResult.error.message });
-          }
-          const registeredUsers = (registeredUsersResult.data?.users ?? []).map((user: any) => ({
-            id: user.id,
-            email: user.email ?? null,
-            createdAt: user.created_at ?? null,
-            emailConfirmed: Boolean(user.email_confirmed_at || user.confirmed_at),
-            provider: user.app_metadata?.provider ?? user.app_metadata?.providers?.[0] ?? "email",
-          }));
-
           console.log("[Dashboard] Executing extractions query");
           const extractionsRes = await supabaseAdmin.from("extractions").select("*").order("created_at", { ascending: false }).limit(200);
           if (extractionsRes.error) {
@@ -662,7 +642,6 @@ export const Route = createFileRoute("/api/admin/dashboard")({
             success: true,
             sessions: onlineSessions,
             downloads: enhancedDownloads,
-            registeredUsers,
             notifications,
             networkClusters,
             stats: {
