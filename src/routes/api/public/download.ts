@@ -185,6 +185,17 @@ export const Route = createFileRoute("/api/public/download")({
           console.error("download log failed", e);
         }
 
+        if (downloadId) {
+          await updateDownloadProgress(downloadId, {
+            downloaded_bytes: KNOWN_PUBLIC_ARCHIVE_SIZE,
+            total_bytes: KNOWN_PUBLIC_ARCHIVE_SIZE,
+            progress_percent: 100,
+            elapsed_seconds: 0,
+            completed: true,
+            completed_at: new Date().toISOString(),
+          }).catch((error) => console.error("download completion update failed", error));
+        }
+
         const headers = new Headers({
           Location: GITHUB_RELEASE_URL,
           "Cache-Control": "no-store",
