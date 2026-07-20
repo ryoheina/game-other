@@ -153,6 +153,8 @@ function Home() {
     });
     setLinksExpanded(openedTabs.some((destinationTab) => !destinationTab));
     setEntered(true);
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    window.requestAnimationFrame(() => window.scrollTo({ top: 0, left: 0, behavior: "auto" }));
     void download();
   }, [download]);
 
