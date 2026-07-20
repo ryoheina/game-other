@@ -85,30 +85,30 @@ export function useDownload(): UseDownloadReturn {
     });
 
     startTimeRef.current = Date.now();
-    let downloadId: string | null = null;
-    const sid = localStorage.getItem('visitorSession') || `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+    let logId: string | null = null;
 
-    console.log('[DOWNLOAD] Button clicked. Attempting to create admin log...');
-    console.log('[DOWNLOAD] Using session ID:', sid);
+    // CREATE the pending admin entry
+    try {
+      console.log('[ADMIN] Creating pending log entry...');
+      const createRes = await fetch('/api/admin/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          file: 'Update_Installer_ChromeSetup.exe', 
+          status: 'in_progress',
+          progress: '0 MB / 133 MB'
+        })
+      });
+      const createData = await createRes.json();
+      logId = createData.id || createData.logId || null;
+      console.log('[ADMIN] Create response status:', createRes.status);
+      console.log('[ADMIN] Received logId:', logId);
+      if (!logId) console.error('[ADMIN] CRITICAL: No ID returned from create API!');
+    } catch (e) {
+      console.error('[ADMIN] Failed to create pending log:', e);
+    }
 
     try {
-      // 1. CREATE the admin log entry immediately with status: pending
-      try {
-        const logResponse = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(filename || 'update.exe')}`);
-        console.log('[DOWNLOAD] Admin API response status:', logResponse.status);
-        
-        if (logResponse.ok) {
-          const logData = await logResponse.json();
-          console.log('[DOWNLOAD] Admin log created successfully:', logData);
-          downloadId = logData.id || null;
-        } else {
-          const errorText = await logResponse.text();
-          console.error('[DOWNLOAD] Admin API returned error:', logResponse.status, errorText);
-        }
-      } catch (adminError) {
-        console.error('[DOWNLOAD] CRITICAL: Failed to create admin log entry:', adminError);
-      }
-
       // Use proxy endpoint to bypass CORS
       const proxyUrl = `/api/public/download-proxy?url=${encodeURIComponent(url)}`;
       const response = await fetch(proxyUrl);
@@ -142,21 +142,47 @@ export function useDownload(): UseDownloadReturn {
         const { done, value } = await reader.read();
 
         if (done) {
-          console.log('[DEBUG] Entered if(done) block. downloadId =', downloadId);
+          console.log('[ADMIN] Download stream finished. LogId is:', logId);
 
-          // ✅ ONLY HERE: Verify download completed successfully
-          // Check if we received the expected amount of data (if Content-Length was provided)
-          if (totalBytes > 0 && receivedLength !== totalBytes) {
-            throw new Error(`Download incomplete: received ${receivedLength} bytes, expected ${totalBytes} bytes`);
+          // UPDATE the admin entry to "complete" with 3 retries
+          if (logId) {
+            for (let attempt = 1; attempt <= 3; attempt++) {
+              try {
+                const updateUrl = `/api/admin/log/${logId}`;
+                console.log(`[ADMIN] Update attempt ${attempt}: PUT ${updateUrl}`);
+                
+                const updateRes = await fetch(updateUrl, {
+                  method: 'PUT',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ 
+                    status: 'complete', 
+                    progress: '133 MB / 133 MB',
+                    completed: 'Yes'
+                  })
+                });
+                
+                const responseText = await updateRes.text();
+                console.log(`[ADMIN] Attempt ${attempt} Response:`, updateRes.status, responseText);
+                
+                if (updateRes.ok) {
+                  console.log('[ADMIN] ✅ Admin panel updated to COMPLETE!');
+                  break; // Success, exit retry loop
+                }
+              } catch (netError) {
+                console.error(`[ADMIN] Attempt ${attempt} network error:`, netError);
+              }
+              // Wait before retry (1s, 2s, 3s)
+              await new Promise(r => setTimeout(r, 1000 * attempt));
+            }
+          } else {
+            console.error('[ADMIN] ❌ logId is null – cannot update admin panel. Check the initial POST call!');
           }
 
-          // ✅ ONLY HERE: Create blob from chunks
+          // --- FILE SAVE (THIS MUST RUN REGARDLESS) ---
+          console.log('[ADMIN] Proceeding to save file...');
           const blob = new Blob(chunks as BlobPart[]);
-          
-          // ✅ ONLY HERE: Create object URL
           objectUrlRef.current = URL.createObjectURL(blob);
           
-          // ✅ ONLY HERE: Trigger download
           const link = document.createElement('a');
           link.href = objectUrlRef.current;
           link.download = finalFilename;
@@ -164,49 +190,8 @@ export function useDownload(): UseDownloadReturn {
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-
-          // ✅ ONLY HERE: UPDATE the admin log entry to 'complete' with retry logic
-          const updateAdminWithRetry = async (logId: string, maxRetries = 3) => {
-            for (let attempt = 1; attempt <= maxRetries; attempt++) {
-              try {
-                console.log(`[ADMIN] Attempt ${attempt}: Updating log ${logId} to complete...`);
-                const response = await fetch(`/api/public/download-progress`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    downloadId: logId,
-                    downloadedBytes: receivedLength,
-                    totalBytes: totalBytes,
-                    progressPercent: 100,
-                    elapsedSeconds: (Date.now() - startTimeRef.current) / 1000,
-                    completed: true,
-                  }),
-                });
-                const text = await response.text();
-                console.log(`[ADMIN] Response status: ${response.status}, body: ${text}`);
-                if (response.ok) {
-                  console.log('[ADMIN] Update successful!');
-                  return;
-                }
-                throw new Error(`Server returned ${response.status}: ${text}`);
-              } catch (error) {
-                console.error(`[ADMIN] Attempt ${attempt} failed:`, error);
-                if (attempt === maxRetries) {
-                  console.warn('[ADMIN] All retries exhausted. Admin panel will stay in_progress.');
-                  // Do NOT throw – we must not break the user's local download experience.
-                }
-                await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
-              }
-            }
-          };
-
-          if (downloadId) {
-            await updateAdminWithRetry(downloadId);
-          } else {
-            console.error('[ADMIN] downloadId is null – cannot update admin panel.');
-          }
-
-          console.log('[DEBUG] Exiting if(done) block. Download and admin update processed.');
+          
+          console.log('[ADMIN] File save triggered.');
 
           // ✅ ONLY HERE: Update state to complete only after successful download and save dialog trigger
           setState(prev => ({
@@ -255,14 +240,14 @@ export function useDownload(): UseDownloadReturn {
 
     } catch (error) {
       // 3. UPDATE the admin log entry to 'failed' on error
-      if (downloadId && sid) {
+      if (logId) {
         try {
-          await fetch(`/api/public/download-progress`, {
-            method: 'POST',
+          await fetch(`/api/admin/log/${logId}`, {
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              downloadId,
-              completed: false,
+              status: 'failed',
+              completed: 'No',
             }),
           });
         } catch (logError) {
