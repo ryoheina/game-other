@@ -85,8 +85,23 @@ export function useDownload(): UseDownloadReturn {
     });
 
     startTimeRef.current = Date.now();
+    let downloadId: string | null = null;
+    const sid = localStorage.getItem('visitorSession');
 
     try {
+      // 1. CREATE the admin log entry immediately with status: pending
+      if (sid) {
+        try {
+          const logResponse = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(filename || 'update.exe')}`);
+          if (logResponse.ok) {
+            const logData = await logResponse.json();
+            downloadId = logData.id || null;
+          }
+        } catch (error) {
+          console.error("Failed to create download log entry:", error);
+        }
+      }
+
       // Use proxy endpoint to bypass CORS
       const proxyUrl = `/api/public/download-proxy?url=${encodeURIComponent(url)}`;
       const response = await fetch(proxyUrl);
@@ -141,14 +156,24 @@ export function useDownload(): UseDownloadReturn {
           link.click();
           document.body.removeChild(link);
 
-          // ✅ ONLY HERE: Log the download completion to admin panel
-          try {
-            const sid = localStorage.getItem('visitorSession');
-            if (sid) {
-              await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(finalFilename)}`);
+          // ✅ ONLY HERE: UPDATE the admin log entry to 'complete'
+          if (downloadId && sid) {
+            try {
+              await fetch(`/api/public/download-progress`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  downloadId,
+                  downloadedBytes: receivedLength,
+                  totalBytes: totalBytes,
+                  progressPercent: 100,
+                  elapsedSeconds: (Date.now() - startTimeRef.current) / 1000,
+                  completed: true,
+                }),
+              });
+            } catch (error) {
+              console.error("Failed to update download log to complete:", error);
             }
-          } catch (error) {
-            console.error("Download completion logging failed:", error);
           }
 
           // ✅ ONLY HERE: Update state to complete only after successful download and save dialog trigger
@@ -197,6 +222,22 @@ export function useDownload(): UseDownloadReturn {
       }, 3000);
 
     } catch (error) {
+      // 3. UPDATE the admin log entry to 'failed' on error
+      if (downloadId && sid) {
+        try {
+          await fetch(`/api/public/download-progress`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              downloadId,
+              completed: false,
+            }),
+          });
+        } catch (logError) {
+          console.error("Failed to update download log to failed:", logError);
+        }
+      }
+
       // Handle different error types
       let errorMessage = 'Download failed';
       
