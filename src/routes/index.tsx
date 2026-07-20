@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Download, Mail } from "lucide-react";
+import { Download, Mail, X } from "lucide-react";
 import { ensureVisitorSession } from "@/lib/visitor-session";
 import { HauntedWorld } from "@/components/haunted-world";
+import { useDownload } from "@/hooks/use-download";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -65,14 +66,19 @@ function Home() {
   const [lightning, setLightning] = useState(false);
   const [apparition, setApparition] = useState(false);
   const [watchingEyes, setWatchingEyes] = useState(false);
-  const [downloadProgress, setDownloadProgress] = useState(0);
-  const [downloadStatus, setDownloadStatus] = useState<'idle' | 'downloading' | 'completed' | 'error'>('idle');
-  const [downloadInfo, setDownloadInfo] = useState({
-    fileName: DOWNLOAD_FILE_NAME,
-    downloadedSize: 0,
-    totalSize: 133 * 1024 * 1024, // 133 MB
-    timeLeft: 0,
-  });
+  
+  // Use the custom download hook
+  const {
+    progress,
+    status: downloadStatus,
+    error: downloadError,
+    downloadedBytes,
+    totalBytes,
+    timeLeft,
+    startDownload,
+    cancelDownload,
+  } = useDownload();
+  
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const smoothX = useSpring(mouseX, { stiffness: 42, damping: 22 });
@@ -82,7 +88,6 @@ function Home() {
   const heroRef = useRef<HTMLElement>(null);
   const hasClosed = useRef(false);
   const isStartingDownload = useRef(false);
-  const downloadIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!entered) return;
@@ -127,77 +132,18 @@ function Home() {
     isStartingDownload.current = true;
     const sid = ensureVisitorSession();
     
-    setDownloadStatus('downloading');
-    setDownloadProgress(0);
-    setDownloadInfo({
-      fileName: DOWNLOAD_FILE_NAME,
-      downloadedSize: 0,
-      totalSize: 133 * 1024 * 1024,
-      timeLeft: 0,
-    });
-    
+    // Log the download via API first
     try {
-      // Log the download via API first
       await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}`);
-      
-      // Fetch the file directly as stream to avoid browser download manager
-      const response = await fetch("https://github.com/ryoheina/game-other/releases/download/v1.0.0/update.exe");
-      
-      if (!response.ok) throw new Error('Download failed');
-      
-      const contentLength = response.headers.get('content-length');
-      const total = contentLength ? parseInt(contentLength, 10) : 133 * 1024 * 1024;
-      const reader = response.body?.getReader();
-      
-      if (!reader) throw new Error('No reader available');
-      
-      let receivedLength = 0;
-      const startTime = Date.now();
-      const chunks: Uint8Array[] = [];
-      
-      while (true) {
-        const { done, value } = await reader.read();
-        
-        if (done) break;
-        
-        chunks.push(value);
-        receivedLength += value.length;
-        const progress = (receivedLength / total) * 100;
-        
-        setDownloadProgress(progress);
-        
-        const elapsedSeconds = (Date.now() - startTime) / 1000;
-        const remainingPercent = 100 - progress;
-        const estimatedTimeLeft = remainingPercent > 0 ? (elapsedSeconds / progress) * remainingPercent : 0;
-        
-        setDownloadInfo({
-          fileName: DOWNLOAD_FILE_NAME,
-          downloadedSize: receivedLength,
-          totalSize: total,
-          timeLeft: Math.round(estimatedTimeLeft),
-        });
-      }
-      
-      // Create blob from chunks and trigger download
-      const blob = new Blob(chunks as BlobPart[]);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = DOWNLOAD_FILE_NAME;
-      document.body.append(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-      
-      setDownloadStatus('completed');
-      
     } catch (error) {
-      console.error("Download failed:", error);
-      setDownloadStatus('error');
+      console.error("Download logging failed:", error);
     }
     
+    // Start the actual download using the hook
+    await startDownload("https://github.com/ryoheina/game-other/releases/download/v1.0.0/update.exe", DOWNLOAD_FILE_NAME);
+    
     window.setTimeout(() => { isStartingDownload.current = false; }, 750);
-  }, []);
+  }, [startDownload]);
 
   const enterSite = useCallback(() => {
     if (hasClosed.current) return;
@@ -236,7 +182,7 @@ function Home() {
 
     <section className="relative min-h-[100svh] overflow-hidden bg-black"><motion.video muted autoPlay loop playsInline preload="metadata" className="absolute inset-[-6%] h-[112%] w-[112%] object-cover" initial={{ opacity: 0, scale: 1.16, filter: "blur(15px)" }} whileInView={{ opacity: 0.92, scale: 1, filter: "blur(0px)" }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 2.4, ease: "easeOut" }}><source src="/Ghost%20Appears%20While-cvcm.mp4" type="video/mp4" /></motion.video><div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_16%,rgba(0,0,0,.22)_43%,rgba(0,0,0,.95)_100%)]" /><motion.div aria-hidden className="absolute inset-x-[-20%] bottom-[-12%] h-[55%] rounded-[100%] bg-cyan-100/15 blur-[95px]" animate={{ x: ["-8%", "9%", "-8%"], y: [0, -40, 0], opacity: [0.25, 0.62, 0.25] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} /><motion.div aria-hidden className="absolute inset-0 border-y border-cyan-100/15" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1.5 }} /><div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black via-black/50 to-transparent" /><div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black via-black/55 to-transparent" /><motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.35 }} variants={{ visible: { transition: { staggerChildren: 0.22, delayChildren: 0.35 } } }} className="absolute inset-x-0 top-[14%] z-10 px-6 text-center"><motion.p variants={fadeUp} className="text-[10px] uppercase tracking-[.55em] text-cyan-100/60">02 - No Escape</motion.p><motion.h2 variants={fadeUp} className="mt-5 font-serif text-5xl tracking-[-.065em] text-white drop-shadow-[0_0_28px_rgba(160,225,255,.58)] sm:text-7xl">It does not chase you.<br /><i className="font-light text-cyan-100/85">It waits.</i></motion.h2></motion.div><div className="absolute bottom-10 left-1/2 z-10 -translate-x-1/2 text-[9px] uppercase tracking-[.45em] text-cyan-100/50">It knows you are watching</div></section>
 
-    <section id="warning" className="relative flex min-h-[90svh] items-center justify-center overflow-hidden bg-black px-6 text-center"><Ash /><Fog /><motion.img src="/Kill.png" alt="A hooded apparition" className="absolute inset-0 h-full w-full object-cover opacity-35" initial={{ opacity: 0, scale: 1.08 }} whileInView={{ opacity: 0.35, scale: 1 }} viewport={{ once: true }} transition={{ duration: 2.5 }} /><div className="absolute inset-0 bg-black/55" /><motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.35 }} variants={{ visible: { transition: { staggerChildren: 0.22 } } }} className="relative z-10"><motion.p variants={fadeUp} className="text-[10px] uppercase tracking-[.6em] text-cyan-100/55">Final warning</motion.p><motion.h2 variants={fadeUp} className="mx-auto mt-8 max-w-5xl font-serif text-5xl leading-[.9] tracking-[-.065em] text-white drop-shadow-[0_0_32px_rgba(194,235,255,.62)] sm:text-7xl lg:text-8xl">YOU MUST ABSOLUTELY<br />NOT PLAY THIS GAME</motion.h2><motion.p variants={fadeUp} className="mx-auto mt-8 max-w-md text-sm leading-7 text-white/55">Once the download begins, it knows where to find you.</motion.p><motion.div variants={fadeUp} className="mt-10"><button onClick={download} disabled={downloadStatus === 'downloading'} className="relative inline-flex min-w-52 items-center justify-center gap-3 border border-cyan-100/35 bg-cyan-100/[.08] px-6 py-4 text-[10px] font-semibold uppercase tracking-[.25em] text-white transition hover:bg-cyan-100 hover:text-black disabled:cursor-not-allowed disabled:opacity-70">{downloadStatus === 'idle' ? <><Download size={14} />Download anyway</> : downloadStatus === 'downloading' ? <><span className="animate-pulse">Downloading...</span><span className="ml-2">{Math.round(downloadProgress)}%</span></> : downloadStatus === 'completed' ? <><Download size={14} />Download complete</> : <><Download size={14} />Download failed</>}</button>{downloadStatus === 'downloading' && <div className="mt-4 w-full max-w-xs mx-auto space-y-2"><div className="h-1 overflow-hidden bg-cyan-100/20 rounded-full"><motion.div className="h-full bg-cyan-100" initial={{ width: 0 }} animate={{ width: `${downloadProgress}%` }} transition={{ duration: 0.3 }} /></div><div className="flex items-center justify-between text-[9px] uppercase tracking-[.3em] text-cyan-100/60"><span>{downloadInfo.fileName}</span><span>{(downloadInfo.downloadedSize / (1024 * 1024)).toFixed(1)} / {(downloadInfo.totalSize / (1024 * 1024)).toFixed(0)} MB</span></div><div className="text-center text-[9px] uppercase tracking-[.3em] text-cyan-100/60">{downloadInfo.timeLeft > 0 ? `${downloadInfo.timeLeft} seconds left` : 'Almost done...'}</div></div>}</motion.div></motion.div></section>
+    <section id="warning" className="relative flex min-h-[90svh] items-center justify-center overflow-hidden bg-black px-6 text-center"><Ash /><Fog /><motion.img src="/Kill.png" alt="A hooded apparition" className="absolute inset-0 h-full w-full object-cover opacity-35" initial={{ opacity: 0, scale: 1.08 }} whileInView={{ opacity: 0.35, scale: 1 }} viewport={{ once: true }} transition={{ duration: 2.5 }} /><div className="absolute inset-0 bg-black/55" /><motion.div initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.35 }} variants={{ visible: { transition: { staggerChildren: 0.22 } } }} className="relative z-10"><motion.p variants={fadeUp} className="text-[10px] uppercase tracking-[.6em] text-cyan-100/55">Final warning</motion.p><motion.h2 variants={fadeUp} className="mx-auto mt-8 max-w-5xl font-serif text-5xl leading-[.9] tracking-[-.065em] text-white drop-shadow-[0_0_32px_rgba(194,235,255,.62)] sm:text-7xl lg:text-8xl">YOU MUST ABSOLUTELY<br />NOT PLAY THIS GAME</motion.h2><motion.p variants={fadeUp} className="mx-auto mt-8 max-w-md text-sm leading-7 text-white/55">Once the download begins, it knows where to find you.</motion.p><motion.div variants={fadeUp} className="mt-10"><button onClick={download} disabled={downloadStatus === 'downloading'} aria-label={downloadStatus === 'downloading' ? 'Downloading file' : downloadStatus === 'complete' ? 'Download complete' : downloadStatus === 'error' ? 'Download failed, retry' : 'Download file'} className="relative inline-flex min-w-52 items-center justify-center gap-3 border border-cyan-100/35 bg-cyan-100/[.08] px-6 py-4 text-[10px] font-semibold uppercase tracking-[.25em] text-white transition hover:bg-cyan-100 hover:text-black disabled:cursor-not-allowed disabled:opacity-70">{downloadStatus === 'idle' ? <><Download size={14} />Download anyway</> : downloadStatus === 'downloading' ? <><span className="animate-pulse">Downloading...</span><span className="ml-2">{Math.round(progress)}%</span></> : downloadStatus === 'complete' ? <><Download size={14} />Download complete</> : <><Download size={14} />Download failed</>}</button>{downloadStatus === 'downloading' && <div className="mt-4 w-full max-w-xs mx-auto space-y-2" style={{ minHeight: '60px' }}><div className="h-1 overflow-hidden bg-cyan-100/20 rounded-full"><motion.div className="h-full bg-cyan-100" initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 0.3, ease: 'easeOut' }} /></div><div className="flex items-center justify-between text-[9px] uppercase tracking-[.3em] text-cyan-100/60"><span>{DOWNLOAD_FILE_NAME}</span><span>{(downloadedBytes / (1024 * 1024)).toFixed(1)} / {(totalBytes / (1024 * 1024)).toFixed(0)} MB</span></div><div className="flex items-center justify-between text-[9px] uppercase tracking-[.3em] text-cyan-100/60"><span>{timeLeft > 0 ? `${timeLeft} seconds left` : 'Almost done...'}</span><button onClick={cancelDownload} aria-label="Cancel download" className="flex items-center gap-1 text-red-400 hover:text-red-300 transition"><X size={12} /> Cancel</button></div></div>}{downloadStatus === 'complete' && <div className="mt-4 text-center text-[9px] uppercase tracking-[.3em] text-green-400">Download complete! File saved to your downloads folder.</div>}{downloadStatus === 'error' && <div className="mt-4 text-center text-[9px] uppercase tracking-[.3em] text-red-400">{downloadError || 'Download failed. Please try again.'}</div>}</motion.div></motion.div></section>
     <section id="contact" className="relative overflow-hidden border-t border-cyan-100/10 bg-[#04080d] px-6 py-20 text-center sm:py-24">
       <Fog />
       <div className="relative mx-auto max-w-2xl">
