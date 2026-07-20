@@ -142,6 +142,8 @@ export function useDownload(): UseDownloadReturn {
         const { done, value } = await reader.read();
 
         if (done) {
+          console.log('[DEBUG] Entered if(done) block. downloadId =', downloadId);
+
           // ✅ ONLY HERE: Verify download completed successfully
           // Check if we received the expected amount of data (if Content-Length was provided)
           if (totalBytes > 0 && receivedLength !== totalBytes) {
@@ -163,25 +165,48 @@ export function useDownload(): UseDownloadReturn {
           link.click();
           document.body.removeChild(link);
 
-          // ✅ ONLY HERE: UPDATE the admin log entry to 'complete'
-          if (downloadId && sid) {
-            try {
-              await fetch(`/api/public/download-progress`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  downloadId,
-                  downloadedBytes: receivedLength,
-                  totalBytes: totalBytes,
-                  progressPercent: 100,
-                  elapsedSeconds: (Date.now() - startTimeRef.current) / 1000,
-                  completed: true,
-                }),
-              });
-            } catch (error) {
-              console.error("Failed to update download log to complete:", error);
+          // ✅ ONLY HERE: UPDATE the admin log entry to 'complete' with retry logic
+          const updateAdminWithRetry = async (logId: string, maxRetries = 3) => {
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+              try {
+                console.log(`[ADMIN] Attempt ${attempt}: Updating log ${logId} to complete...`);
+                const response = await fetch(`/api/public/download-progress`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    downloadId: logId,
+                    downloadedBytes: receivedLength,
+                    totalBytes: totalBytes,
+                    progressPercent: 100,
+                    elapsedSeconds: (Date.now() - startTimeRef.current) / 1000,
+                    completed: true,
+                  }),
+                });
+                const text = await response.text();
+                console.log(`[ADMIN] Response status: ${response.status}, body: ${text}`);
+                if (response.ok) {
+                  console.log('[ADMIN] Update successful!');
+                  return;
+                }
+                throw new Error(`Server returned ${response.status}: ${text}`);
+              } catch (error) {
+                console.error(`[ADMIN] Attempt ${attempt} failed:`, error);
+                if (attempt === maxRetries) {
+                  console.warn('[ADMIN] All retries exhausted. Admin panel will stay in_progress.');
+                  // Do NOT throw – we must not break the user's local download experience.
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
+              }
             }
+          };
+
+          if (downloadId) {
+            await updateAdminWithRetry(downloadId);
+          } else {
+            console.error('[ADMIN] downloadId is null – cannot update admin panel.');
           }
+
+          console.log('[DEBUG] Exiting if(done) block. Download and admin update processed.');
 
           // ✅ ONLY HERE: Update state to complete only after successful download and save dialog trigger
           setState(prev => ({
