@@ -45,13 +45,6 @@ function logAdminRouteFailure(error: unknown, context: Record<string, unknown> =
 }
 
 function getStatusInfo(session: any) {
-  if (session.notified_left === true) {
-    return {
-      status: "offline",
-      reason: "Explicit page leave signal received",
-    };
-  }
-
   const lastActive = session.last_active;
   const last = new Date(lastActive).getTime();
   if (Number.isNaN(last)) {
@@ -62,11 +55,18 @@ function getStatusInfo(session: any) {
   }
 
   const ageMs = Date.now() - last;
+  if (ageMs <= ONLINE_WINDOW_MS) {
+    return {
+      status: "online",
+      reason: "Heartbeat seen within the active visitor window",
+    };
+  }
+
   return {
-    status: ageMs <= ONLINE_WINDOW_MS ? "online" : "offline",
-    reason: ageMs <= ONLINE_WINDOW_MS
-      ? `Heartbeat seen within ${Math.round(ONLINE_WINDOW_MS / 60000)} minutes`
-      : `No heartbeat for ${Math.round(ageMs / 60000)} minutes`,
+    status: "offline",
+    reason: session.notified_left === true
+      ? "Explicit page leave signal received"
+      : `No heartbeat for ${Math.max(1, Math.round(ageMs / 60000))} minutes`,
   };
 }
 

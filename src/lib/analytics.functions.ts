@@ -152,8 +152,6 @@ export async function recordVisit(request: Request | null, data: VisitPayload) {
         console.error("notify failed", e);
       }
     }
-  } else if (data.heartbeat) {
-    return { ok: true };
   }
 
   const visitRecord = {

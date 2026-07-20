@@ -5,9 +5,8 @@ import { resolveCountry } from "@/lib/geo";
 
 export const runtime = "nodejs";
 
-const PUBLIC_ARCHIVE_NAME = "Free game.exe";
+const PUBLIC_ARCHIVE_NAME = "Free.game.exe";
 const KNOWN_PUBLIC_ARCHIVE_SIZE = 128 * 1024 * 1024;
-const MIN_COMPLETE_DOWNLOAD_SIZE = 128 * 1024 * 1024;
 
 function cleanNumber(value: unknown, fallback = 0) {
   const number = Number(value);
@@ -116,7 +115,7 @@ export const Route = createFileRoute("/api/public/download-progress")({
           const downloadedBytes = Math.round(cleanNumber(body?.downloadedBytes));
           const totalBytes = Math.round(cleanNumber(body?.totalBytes, KNOWN_PUBLIC_ARCHIVE_SIZE) || KNOWN_PUBLIC_ARCHIVE_SIZE);
           const elapsedSeconds = Math.round(cleanNumber(body?.elapsedSeconds));
-          const completed = body?.completed === true && downloadedBytes >= MIN_COMPLETE_DOWNLOAD_SIZE;
+          const completed = body?.completed === true && downloadedBytes > 0;
           const progressPercent = completed
             ? 100
             : Math.max(0, Math.min(99, Math.round(cleanNumber(body?.percent) || (totalBytes > 0 ? (downloadedBytes / totalBytes) * 100 : 0))));
