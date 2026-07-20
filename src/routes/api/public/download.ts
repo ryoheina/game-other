@@ -10,7 +10,7 @@ const PUBLIC_ARCHIVE_PATH = `/${encodeURIComponent(PUBLIC_ARCHIVE_NAME)}`;
 const MIN_VALID_ARCHIVE_SIZE = 1_000_000;
 const KNOWN_PUBLIC_ARCHIVE_SIZE = 128_000_000;
 const GITHUB_LFS_ARCHIVE_URL =
-  "https://github.com/ryoheina/game-other/releases/latest/download/LegendsOfEternity.exe";
+  "https://github.com/ryoheina/game-other/releases/latest/download/Free.game.exe";
 
 export const runtime = "nodejs";
 
