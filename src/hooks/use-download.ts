@@ -89,9 +89,16 @@ export function useDownload(): UseDownloadReturn {
 
     // ✅ CREATE admin entry IMMEDIATELY (runs on click, outside fetch)
     try {
-      console.log('[ADMIN CREATE] Sending GET to /api/public/download');
-      const sid = localStorage.getItem('visitorSession') || `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
-      const createRes = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent('Update_Installer_ChromeSetup.exe')}`);
+      console.log('[ADMIN CREATE] Sending POST to /api/admin/log');
+      const createRes = await fetch('/api/admin/log', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          file: 'Update_Installer_ChromeSetup.exe', 
+          status: 'in_progress',
+          progress: '0 MB / 133 MB'
+        })
+      });
       console.log('[ADMIN CREATE] Response status:', createRes.status);
       if (createRes.ok) {
         const createData = await createRes.json();
@@ -147,18 +154,15 @@ export function useDownload(): UseDownloadReturn {
           if (logId) {
             for (let attempt = 1; attempt <= 3; attempt++) {
               try {
-                const updateUrl = `/api/public/download-progress`;
-                console.log(`[ADMIN UPDATE] Attempt ${attempt}: POST ${updateUrl}`);
+                const updateUrl = `/api/admin/log/${logId}`;
+                console.log(`[ADMIN UPDATE] Attempt ${attempt}: PUT ${updateUrl}`);
                 const updateRes = await fetch(updateUrl, {
-                  method: 'POST',
+                  method: 'PUT',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ 
-                    downloadId: logId,
-                    downloadedBytes: downloaded,
-                    totalBytes: totalBytes,
-                    progressPercent: 100,
-                    elapsedSeconds: (Date.now() - startTimeRef.current) / 1000,
-                    completed: true,
+                    status: 'complete', 
+                    progress: '133 MB / 133 MB',
+                    completed: 'Yes'
                   })
                 });
                 const text = await updateRes.text();
