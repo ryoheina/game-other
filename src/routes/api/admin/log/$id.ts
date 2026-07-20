@@ -11,10 +11,14 @@ export const Route = createFileRoute("/api/admin/log/$id")({
           
           const updateData: any = {};
           if (body.status === 'complete') {
+            const downloadedBytes = Number(body.downloaded_bytes);
+            const totalBytes = Number(body.total_bytes);
+            const progressPercent = Number(body.progress_percent);
             updateData.completed = true;
             updateData.completed_at = new Date().toISOString();
-            updateData.progress_percent = 100;
-            updateData.downloaded_bytes = 133_000_000;
+            updateData.progress_percent = Number.isFinite(progressPercent) ? Math.min(100, Math.max(0, Math.round(progressPercent))) : 100;
+            updateData.downloaded_bytes = Number.isFinite(downloadedBytes) ? Math.max(0, Math.round(downloadedBytes)) : 133_000_000;
+            if (Number.isFinite(totalBytes)) updateData.total_bytes = Math.max(0, Math.round(totalBytes));
           }
           if (body.status === 'failed') {
             updateData.completed = false;

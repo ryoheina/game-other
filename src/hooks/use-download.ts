@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ensureVisitorSession } from '@/lib/visitor-session';
 
 type DownloadStatus = 'idle' | 'downloading' | 'complete' | 'error';
 
@@ -90,7 +91,7 @@ export function useDownload(): UseDownloadReturn {
     // ✅ CREATE admin entry IMMEDIATELY (runs on click, outside fetch)
     try {
       console.log('[ADMIN CREATE] Sending POST to /api/admin/log');
-      const sid = localStorage.getItem('visitorSession') || `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+      const sid = ensureVisitorSession();
       const createRes = await fetch('/api/admin/log', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -163,7 +164,9 @@ export function useDownload(): UseDownloadReturn {
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ 
                     status: 'complete', 
-                    progress: '133 MB / 133 MB',
+                    downloaded_bytes: downloaded,
+                    total_bytes: totalBytes || downloaded,
+                    progress_percent: totalBytes > 0 ? Math.round((downloaded / totalBytes) * 100) : 100,
                     completed: 'Yes'
                   })
                 });

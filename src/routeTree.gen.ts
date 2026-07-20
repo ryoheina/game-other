@@ -18,15 +18,18 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as ApiPublicVisitRouteImport } from './routes/api/public/visit'
 import { Route as ApiPublicMarkExtractedRouteImport } from './routes/api/public/mark-extracted'
 import { Route as ApiPublicInstalledRouteImport } from './routes/api/public/installed'
+import { Route as ApiPublicDownloadProxyRouteImport } from './routes/api/public/download-proxy'
 import { Route as ApiPublicDownloadProgressRouteImport } from './routes/api/public/download-progress'
 import { Route as ApiPublicDownloadRouteImport } from './routes/api/public/download'
 import { Route as ApiMeStatsRouteImport } from './routes/api/me/stats'
 import { Route as ApiMeLogoutRouteImport } from './routes/api/me/logout'
 import { Route as ApiMeLoginRouteImport } from './routes/api/me/login'
 import { Route as ApiAdminMarkNotificationReadRouteImport } from './routes/api/admin/mark-notification-read'
+import { Route as ApiAdminLogsRouteImport } from './routes/api/admin/logs'
 import { Route as ApiAdminLogoutRouteImport } from './routes/api/admin/logout'
 import { Route as ApiAdminLoginRouteImport } from './routes/api/admin/login'
 import { Route as ApiAdminLogNotificationRouteImport } from './routes/api/admin/log-notification'
+import { Route as ApiAdminLogRouteImport } from './routes/api/admin/log'
 import { Route as ApiAdminDeleteUserRouteImport } from './routes/api/admin/delete-user'
 import { Route as ApiAdminDeleteSessionRouteImport } from './routes/api/admin/delete-session'
 import { Route as ApiAdminDeleteNotificationRouteImport } from './routes/api/admin/delete-notification'
@@ -36,6 +39,7 @@ import { Route as ApiAdminClearNotificationsRouteImport } from './routes/api/adm
 import { Route as ApiAdminClearNetworkRouteImport } from './routes/api/admin/clear-network'
 import { Route as ApiAdminClearHistoryRouteImport } from './routes/api/admin/clear-history'
 import { Route as ApiAdminClearDownloadsRouteImport } from './routes/api/admin/clear-downloads'
+import { Route as ApiAdminLogIdRouteImport } from './routes/api/admin/log/$id'
 
 const MeRoute = MeRouteImport.update({
   id: '/me',
@@ -81,6 +85,11 @@ const ApiPublicInstalledRoute = ApiPublicInstalledRouteImport.update({
   path: '/api/public/installed',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDownloadProxyRoute = ApiPublicDownloadProxyRouteImport.update({
+  id: '/api/public/download-proxy',
+  path: '/api/public/download-proxy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicDownloadProgressRoute =
   ApiPublicDownloadProgressRouteImport.update({
     id: '/api/public/download-progress',
@@ -113,6 +122,11 @@ const ApiAdminMarkNotificationReadRoute =
     path: '/api/admin/mark-notification-read',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiAdminLogsRoute = ApiAdminLogsRouteImport.update({
+  id: '/api/admin/logs',
+  path: '/api/admin/logs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminLogoutRoute = ApiAdminLogoutRouteImport.update({
   id: '/api/admin/logout',
   path: '/api/admin/logout',
@@ -126,6 +140,11 @@ const ApiAdminLoginRoute = ApiAdminLoginRouteImport.update({
 const ApiAdminLogNotificationRoute = ApiAdminLogNotificationRouteImport.update({
   id: '/api/admin/log-notification',
   path: '/api/admin/log-notification',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminLogRoute = ApiAdminLogRouteImport.update({
+  id: '/api/admin/log',
+  path: '/api/admin/log',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAdminDeleteUserRoute = ApiAdminDeleteUserRouteImport.update({
@@ -175,6 +194,11 @@ const ApiAdminClearDownloadsRoute = ApiAdminClearDownloadsRouteImport.update({
   path: '/api/admin/clear-downloads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminLogIdRoute = ApiAdminLogIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ApiAdminLogRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -191,18 +215,22 @@ export interface FileRoutesByFullPath {
   '/api/admin/delete-notification': typeof ApiAdminDeleteNotificationRoute
   '/api/admin/delete-session': typeof ApiAdminDeleteSessionRoute
   '/api/admin/delete-user': typeof ApiAdminDeleteUserRoute
+  '/api/admin/log': typeof ApiAdminLogRouteWithChildren
   '/api/admin/log-notification': typeof ApiAdminLogNotificationRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
+  '/api/admin/logs': typeof ApiAdminLogsRoute
   '/api/admin/mark-notification-read': typeof ApiAdminMarkNotificationReadRoute
   '/api/me/login': typeof ApiMeLoginRoute
   '/api/me/logout': typeof ApiMeLogoutRoute
   '/api/me/stats': typeof ApiMeStatsRoute
   '/api/public/download': typeof ApiPublicDownloadRoute
   '/api/public/download-progress': typeof ApiPublicDownloadProgressRoute
+  '/api/public/download-proxy': typeof ApiPublicDownloadProxyRoute
   '/api/public/installed': typeof ApiPublicInstalledRoute
   '/api/public/mark-extracted': typeof ApiPublicMarkExtractedRoute
   '/api/public/visit': typeof ApiPublicVisitRoute
+  '/api/admin/log/$id': typeof ApiAdminLogIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -219,18 +247,22 @@ export interface FileRoutesByTo {
   '/api/admin/delete-notification': typeof ApiAdminDeleteNotificationRoute
   '/api/admin/delete-session': typeof ApiAdminDeleteSessionRoute
   '/api/admin/delete-user': typeof ApiAdminDeleteUserRoute
+  '/api/admin/log': typeof ApiAdminLogRouteWithChildren
   '/api/admin/log-notification': typeof ApiAdminLogNotificationRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
+  '/api/admin/logs': typeof ApiAdminLogsRoute
   '/api/admin/mark-notification-read': typeof ApiAdminMarkNotificationReadRoute
   '/api/me/login': typeof ApiMeLoginRoute
   '/api/me/logout': typeof ApiMeLogoutRoute
   '/api/me/stats': typeof ApiMeStatsRoute
   '/api/public/download': typeof ApiPublicDownloadRoute
   '/api/public/download-progress': typeof ApiPublicDownloadProgressRoute
+  '/api/public/download-proxy': typeof ApiPublicDownloadProxyRoute
   '/api/public/installed': typeof ApiPublicInstalledRoute
   '/api/public/mark-extracted': typeof ApiPublicMarkExtractedRoute
   '/api/public/visit': typeof ApiPublicVisitRoute
+  '/api/admin/log/$id': typeof ApiAdminLogIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -249,18 +281,22 @@ export interface FileRoutesById {
   '/api/admin/delete-notification': typeof ApiAdminDeleteNotificationRoute
   '/api/admin/delete-session': typeof ApiAdminDeleteSessionRoute
   '/api/admin/delete-user': typeof ApiAdminDeleteUserRoute
+  '/api/admin/log': typeof ApiAdminLogRouteWithChildren
   '/api/admin/log-notification': typeof ApiAdminLogNotificationRoute
   '/api/admin/login': typeof ApiAdminLoginRoute
   '/api/admin/logout': typeof ApiAdminLogoutRoute
+  '/api/admin/logs': typeof ApiAdminLogsRoute
   '/api/admin/mark-notification-read': typeof ApiAdminMarkNotificationReadRoute
   '/api/me/login': typeof ApiMeLoginRoute
   '/api/me/logout': typeof ApiMeLogoutRoute
   '/api/me/stats': typeof ApiMeStatsRoute
   '/api/public/download': typeof ApiPublicDownloadRoute
   '/api/public/download-progress': typeof ApiPublicDownloadProgressRoute
+  '/api/public/download-proxy': typeof ApiPublicDownloadProxyRoute
   '/api/public/installed': typeof ApiPublicInstalledRoute
   '/api/public/mark-extracted': typeof ApiPublicMarkExtractedRoute
   '/api/public/visit': typeof ApiPublicVisitRoute
+  '/api/admin/log/$id': typeof ApiAdminLogIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -279,18 +315,22 @@ export interface FileRouteTypes {
     | '/api/admin/delete-notification'
     | '/api/admin/delete-session'
     | '/api/admin/delete-user'
+    | '/api/admin/log'
     | '/api/admin/log-notification'
     | '/api/admin/login'
     | '/api/admin/logout'
+    | '/api/admin/logs'
     | '/api/admin/mark-notification-read'
     | '/api/me/login'
     | '/api/me/logout'
     | '/api/me/stats'
     | '/api/public/download'
     | '/api/public/download-progress'
+    | '/api/public/download-proxy'
     | '/api/public/installed'
     | '/api/public/mark-extracted'
     | '/api/public/visit'
+    | '/api/admin/log/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -307,18 +347,22 @@ export interface FileRouteTypes {
     | '/api/admin/delete-notification'
     | '/api/admin/delete-session'
     | '/api/admin/delete-user'
+    | '/api/admin/log'
     | '/api/admin/log-notification'
     | '/api/admin/login'
     | '/api/admin/logout'
+    | '/api/admin/logs'
     | '/api/admin/mark-notification-read'
     | '/api/me/login'
     | '/api/me/logout'
     | '/api/me/stats'
     | '/api/public/download'
     | '/api/public/download-progress'
+    | '/api/public/download-proxy'
     | '/api/public/installed'
     | '/api/public/mark-extracted'
     | '/api/public/visit'
+    | '/api/admin/log/$id'
   id:
     | '__root__'
     | '/'
@@ -336,18 +380,22 @@ export interface FileRouteTypes {
     | '/api/admin/delete-notification'
     | '/api/admin/delete-session'
     | '/api/admin/delete-user'
+    | '/api/admin/log'
     | '/api/admin/log-notification'
     | '/api/admin/login'
     | '/api/admin/logout'
+    | '/api/admin/logs'
     | '/api/admin/mark-notification-read'
     | '/api/me/login'
     | '/api/me/logout'
     | '/api/me/stats'
     | '/api/public/download'
     | '/api/public/download-progress'
+    | '/api/public/download-proxy'
     | '/api/public/installed'
     | '/api/public/mark-extracted'
     | '/api/public/visit'
+    | '/api/admin/log/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -365,15 +413,18 @@ export interface RootRouteChildren {
   ApiAdminDeleteNotificationRoute: typeof ApiAdminDeleteNotificationRoute
   ApiAdminDeleteSessionRoute: typeof ApiAdminDeleteSessionRoute
   ApiAdminDeleteUserRoute: typeof ApiAdminDeleteUserRoute
+  ApiAdminLogRoute: typeof ApiAdminLogRouteWithChildren
   ApiAdminLogNotificationRoute: typeof ApiAdminLogNotificationRoute
   ApiAdminLoginRoute: typeof ApiAdminLoginRoute
   ApiAdminLogoutRoute: typeof ApiAdminLogoutRoute
+  ApiAdminLogsRoute: typeof ApiAdminLogsRoute
   ApiAdminMarkNotificationReadRoute: typeof ApiAdminMarkNotificationReadRoute
   ApiMeLoginRoute: typeof ApiMeLoginRoute
   ApiMeLogoutRoute: typeof ApiMeLogoutRoute
   ApiMeStatsRoute: typeof ApiMeStatsRoute
   ApiPublicDownloadRoute: typeof ApiPublicDownloadRoute
   ApiPublicDownloadProgressRoute: typeof ApiPublicDownloadProgressRoute
+  ApiPublicDownloadProxyRoute: typeof ApiPublicDownloadProxyRoute
   ApiPublicInstalledRoute: typeof ApiPublicInstalledRoute
   ApiPublicMarkExtractedRoute: typeof ApiPublicMarkExtractedRoute
   ApiPublicVisitRoute: typeof ApiPublicVisitRoute
@@ -444,6 +495,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicInstalledRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/download-proxy': {
+      id: '/api/public/download-proxy'
+      path: '/api/public/download-proxy'
+      fullPath: '/api/public/download-proxy'
+      preLoaderRoute: typeof ApiPublicDownloadProxyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/download-progress': {
       id: '/api/public/download-progress'
       path: '/api/public/download-progress'
@@ -486,6 +544,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminMarkNotificationReadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/logs': {
+      id: '/api/admin/logs'
+      path: '/api/admin/logs'
+      fullPath: '/api/admin/logs'
+      preLoaderRoute: typeof ApiAdminLogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/logout': {
       id: '/api/admin/logout'
       path: '/api/admin/logout'
@@ -505,6 +570,13 @@ declare module '@tanstack/react-router' {
       path: '/api/admin/log-notification'
       fullPath: '/api/admin/log-notification'
       preLoaderRoute: typeof ApiAdminLogNotificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/log': {
+      id: '/api/admin/log'
+      path: '/api/admin/log'
+      fullPath: '/api/admin/log'
+      preLoaderRoute: typeof ApiAdminLogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/admin/delete-user': {
@@ -570,6 +642,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminClearDownloadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/log/$id': {
+      id: '/api/admin/log/$id'
+      path: '/$id'
+      fullPath: '/api/admin/log/$id'
+      preLoaderRoute: typeof ApiAdminLogIdRouteImport
+      parentRoute: typeof ApiAdminLogRoute
+    }
   }
 }
 
@@ -583,6 +662,18 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface ApiAdminLogRouteChildren {
+  ApiAdminLogIdRoute: typeof ApiAdminLogIdRoute
+}
+
+const ApiAdminLogRouteChildren: ApiAdminLogRouteChildren = {
+  ApiAdminLogIdRoute: ApiAdminLogIdRoute,
+}
+
+const ApiAdminLogRouteWithChildren = ApiAdminLogRoute._addFileChildren(
+  ApiAdminLogRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -599,15 +690,18 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminDeleteNotificationRoute: ApiAdminDeleteNotificationRoute,
   ApiAdminDeleteSessionRoute: ApiAdminDeleteSessionRoute,
   ApiAdminDeleteUserRoute: ApiAdminDeleteUserRoute,
+  ApiAdminLogRoute: ApiAdminLogRouteWithChildren,
   ApiAdminLogNotificationRoute: ApiAdminLogNotificationRoute,
   ApiAdminLoginRoute: ApiAdminLoginRoute,
   ApiAdminLogoutRoute: ApiAdminLogoutRoute,
+  ApiAdminLogsRoute: ApiAdminLogsRoute,
   ApiAdminMarkNotificationReadRoute: ApiAdminMarkNotificationReadRoute,
   ApiMeLoginRoute: ApiMeLoginRoute,
   ApiMeLogoutRoute: ApiMeLogoutRoute,
   ApiMeStatsRoute: ApiMeStatsRoute,
   ApiPublicDownloadRoute: ApiPublicDownloadRoute,
   ApiPublicDownloadProgressRoute: ApiPublicDownloadProgressRoute,
+  ApiPublicDownloadProxyRoute: ApiPublicDownloadProxyRoute,
   ApiPublicInstalledRoute: ApiPublicInstalledRoute,
   ApiPublicMarkExtractedRoute: ApiPublicMarkExtractedRoute,
   ApiPublicVisitRoute: ApiPublicVisitRoute,
