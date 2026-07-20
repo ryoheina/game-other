@@ -120,30 +120,13 @@ function Home() {
     setProgress(0);
     try {
       const sid = ensureVisitorSession();
-      const response = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}`, { credentials: "same-origin" });
-      if (!response.ok || !response.body) throw new Error("Download failed");
-      const reader = response.body.getReader();
-      const chunks: Uint8Array[] = [];
-      const total = Number(response.headers.get("content-length") || 0);
-      let received = 0;
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        if (!value) continue;
-        chunks.push(value);
-        received += value.byteLength;
-        if (total) setProgress(Math.min(99, Math.round((received / total) * 100)));
-      }
-      const blob = new Blob(chunks, { type: "application/octet-stream" });
-      const objectUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.href = objectUrl;
+      link.href = `/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}`;
       link.download = DOWNLOAD_FILE_NAME;
       document.body.append(link);
       link.click();
       link.remove();
-      setProgress(100);
-      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
+      setProgress(1);
     } catch {
       setProgress(0);
     } finally {

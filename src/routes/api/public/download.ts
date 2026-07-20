@@ -277,11 +277,12 @@ export const Route = createFileRoute("/api/public/download")({
               try {
                 const { done, value } = await sourceReader.read();
                 if (done) {
-                  const completed = downloadedBytes >= KNOWN_PUBLIC_ARCHIVE_SIZE;
+                  const expectedBytes = contentLength || downloadedBytes;
+                  const completed = expectedBytes > 0 && downloadedBytes >= expectedBytes;
                   if (downloadId && !clientTracked) {
                     await updateDownloadProgress(downloadId, {
                       downloaded_bytes: downloadedBytes,
-                      total_bytes: contentLength || downloadedBytes,
+                      total_bytes: expectedBytes,
                       progress_percent: completed ? 100 : 99,
                       elapsed_seconds: Math.max(0, Math.round((Date.now() - startedAt) / 1000)),
                       completed,
