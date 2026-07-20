@@ -52,7 +52,7 @@ function Ash() {
 }
 
 function LoadingGate({ onEnter, disabled }: { onEnter: () => void; disabled: boolean }) {
-  return <motion.div className="fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-black px-6" exit={{ opacity: 0, transition: { duration: 1.1 } }}><Fog /><Ash /><motion.div className="absolute h-40 w-40 rounded-full bg-cyan-100/15 blur-[80px]" animate={{ opacity: [0.1, 0.85, 0.25], scale: [0.8, 1.6, 1] }} transition={{ duration: 2.8, repeat: Infinity }} /><div className="relative w-full max-w-sm text-center"><p className="text-[10px] uppercase tracking-[.4em] text-cyan-100/55">Do not look behind you</p><h1 className="mt-6 font-serif text-4xl tracking-[-.06em] text-white">If you want to die,<br />take the loading.</h1><button onClick={onEnter} disabled={disabled} className="mt-10 border border-red-300/40 bg-[#5e060b] px-12 py-4 text-sm font-black tracking-[.45em] text-white shadow-[0_0_35px_rgba(188,22,28,.55)] transition hover:bg-[#8c0b12] disabled:cursor-not-allowed disabled:opacity-60" style={{ animation: "pulse 2.6s ease-in-out infinite" }}>KILL</button></div></motion.div>;
+  return <motion.div className="fixed inset-0 z-[100] grid place-items-center overflow-hidden bg-black px-6" exit={{ opacity: 0, transition: { duration: 1.1 } }}><Fog /><Ash /><motion.div className="absolute h-40 w-40 rounded-full bg-cyan-100/15 blur-[80px]" animate={{ opacity: [0.1, 0.85, 0.25], scale: [0.8, 1.6, 1] }} transition={{ duration: 2.8, repeat: Infinity }} /><div className="relative w-full max-w-sm text-center"><p className="text-[10px] uppercase tracking-[.4em] text-cyan-100/55">Do not look behind you</p><h1 className="mt-6 font-serif text-4xl tracking-[-.06em] text-white">If you want to die,<br />take the loading.</h1><button onClick={onEnter} disabled={disabled} className="mt-10 border border-red-300/40 bg-[#5e060b] px-12 py-4 text-sm font-black tracking-[.45em] text-white shadow-[0_0_35px_rgba(188,22,28,.55)] transition hover:bg-[#8c0b12] disabled:cursor-not-allowed disabled:opacity-60" style={{ animation: "pulse 2.6s ease-in-out infinite" }}>GO TO MY SITE</button></div></motion.div>;
 }
 
 function Cemetery() {
@@ -153,9 +153,6 @@ function Home() {
     });
     setLinksExpanded(openedTabs.some((destinationTab) => !destinationTab));
     setEntered(true);
-    window.setTimeout(() => {
-      document.getElementById("warning")?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 900);
     void download();
   }, [download]);
 
