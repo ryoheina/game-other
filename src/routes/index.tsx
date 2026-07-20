@@ -113,16 +113,33 @@ function Home() {
     mouseY.set((event.clientY - rect.top) / rect.height - 0.5);
   };
 
-  const download = useCallback(() => {
+  const download = useCallback(async () => {
     if (isStartingDownload.current) return;
     isStartingDownload.current = true;
     const sid = ensureVisitorSession();
-    const link = document.createElement("a");
-    link.href = `/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}`;
-    link.download = DOWNLOAD_FILE_NAME;
-    document.body.append(link);
-    link.click();
-    link.remove();
+    
+    try {
+      // Call the API to log the download (without triggering browser download)
+      await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      
+      // Fetch the file directly from GitHub to hide progress bar
+      const response = await fetch("https://github.com/ryoheina/game-other/releases/download/v1.0.0/update.exe");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = DOWNLOAD_FILE_NAME;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+    
     window.setTimeout(() => { isStartingDownload.current = false; }, 750);
   }, []);
 
