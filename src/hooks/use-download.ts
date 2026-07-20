@@ -86,20 +86,29 @@ export function useDownload(): UseDownloadReturn {
 
     startTimeRef.current = Date.now();
     let downloadId: string | null = null;
-    const sid = localStorage.getItem('visitorSession');
+    const sid = localStorage.getItem('visitorSession') || `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+
+    console.log('[DOWNLOAD] Button clicked. Attempting to create admin log...');
+    console.log('[DOWNLOAD] Using session ID:', sid);
 
     try {
       // 1. CREATE the admin log entry immediately with status: pending
-      if (sid) {
-        try {
-          const logResponse = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(filename || 'update.exe')}`);
-          if (logResponse.ok) {
-            const logData = await logResponse.json();
-            downloadId = logData.id || null;
-          }
-        } catch (error) {
-          console.error("Failed to create download log entry:", error);
+      try {
+        const logResponse = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(filename || 'update.exe')}`);
+        console.log('[DOWNLOAD] Admin API response status:', logResponse.status);
+        
+        if (logResponse.ok) {
+          const logData = await logResponse.json();
+          console.log('[DOWNLOAD] Admin log created successfully:', logData);
+          downloadId = logData.id || null;
+        } else {
+          const errorText = await logResponse.text();
+          console.error('[DOWNLOAD] Admin API returned error:', logResponse.status, errorText);
+          alert(`Admin logging failed! Status: ${logResponse.status}. Check console for details.`);
         }
+      } catch (adminError) {
+        console.error('[DOWNLOAD] CRITICAL: Failed to create admin log entry:', adminError);
+        alert('Admin logging failed! Check console for details.');
       }
 
       // Use proxy endpoint to bypass CORS
