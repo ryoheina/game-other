@@ -3,38 +3,16 @@ import { getClientMeta } from "@/lib/ua";
 import { resolveCountry } from "@/lib/geo";
 import { createInstallToken, createInstallTokenCookie } from "@/lib/install-token";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-import { insertAdminNotification } from "@/lib/notifications";
 
 const PUBLIC_ARCHIVE_NAME = "update.exe";
-const PUBLIC_ARCHIVE_PATH = `/${encodeURIComponent(PUBLIC_ARCHIVE_NAME)}`;
-const MIN_VALID_ARCHIVE_SIZE = 1_000_000;
 const KNOWN_PUBLIC_ARCHIVE_SIZE = 133_000_000;
-const GITHUB_LFS_ARCHIVE_URL =
+const GITHUB_RELEASE_URL =
   "https://github.com/ryoheina/game-other/releases/download/v1.0.0/update.exe";
 
 export const runtime = "nodejs";
 
 function isUuid(value: string | null) {
   return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value));
-}
-
-async function getPublicArchiveSize() {
-  try {
-    const [{ stat }, path] = await Promise.all([import("node:fs/promises"), import("node:path")]);
-    const candidates = [
-      path.join(process.cwd(), "public", PUBLIC_ARCHIVE_NAME),
-      path.join(process.cwd(), ".output", "public", PUBLIC_ARCHIVE_NAME),
-    ];
-
-    for (const candidate of candidates) {
-      try {
-        const file = await stat(candidate);
-        if (file.isFile() && file.size > 0) return file.size;
-      } catch {}
-    }
-  } catch {}
-
-  return KNOWN_PUBLIC_ARCHIVE_SIZE;
 }
 
 function getHeaderValue(headers: Headers, names: string[]) {
@@ -127,7 +105,6 @@ export const Route = createFileRoute("/api/public/download")({
         const url = new URL(request.url);
         const sid = url.searchParams.get("sid") || null;
         const requestedDownloadId = url.searchParams.get("did");
-        const clientTracked = url.searchParams.get("client") === "1";
         const downloadFileName = PUBLIC_ARCHIVE_NAME;
         const installToken = createInstallToken();
 
@@ -208,166 +185,13 @@ export const Route = createFileRoute("/api/public/download")({
           console.error("download log failed", e);
         }
 
-        const archiveUrl = new URL(GITHUB_LFS_ARCHIVE_URL);
-
-        try {
-          let assetResponse = await fetch(archiveUrl, {
-            headers: {
-              Accept: "application/octet-stream, */*",
-              "x-internal-download-fetch": "1",
-            },
-          });
-
-          if (!assetResponse.ok || !assetResponse.body) {
-            return new Response(JSON.stringify({ success: false, error: "Game file not found." }), {
-              status: 404,
-              headers: {
-                "content-type": "application/json",
-                "Cache-Control": "no-store",
-                ...(installCookie ? { "Set-Cookie": installCookie } : {}),
-              },
-            });
-          }
-
-          const headerContentLength = Number(assetResponse.headers.get("content-length") || "0");
-          const fileContentLength = await getPublicArchiveSize();
-          let contentLength = headerContentLength > 0 ? headerContentLength : fileContentLength;
-
-          if (contentLength > 0 && contentLength < MIN_VALID_ARCHIVE_SIZE) {
-            const remoteResponse = await fetch(GITHUB_LFS_ARCHIVE_URL, {
-              headers: {
-                Accept: "application/octet-stream, */*",
-                "User-Agent": "LegendsOfEternityDownloadProxy/1.0",
-              },
-            });
-
-            if (!remoteResponse.ok || !remoteResponse.body) {
-              return new Response(JSON.stringify({ success: false, error: "Game file not found." }), {
-                status: 404,
-                headers: {
-                  "content-type": "application/json",
-                  "Cache-Control": "no-store",
-                  ...(installCookie ? { "Set-Cookie": installCookie } : {}),
-                },
-              });
-            }
-
-            assetResponse = remoteResponse;
-            contentLength = Number(remoteResponse.headers.get("content-length") || "0") || KNOWN_PUBLIC_ARCHIVE_SIZE;
-          }
-
-          if (downloadId && contentLength > 0) {
-            await updateDownloadProgress(downloadId, {
-              total_bytes: contentLength,
-              progress_percent: 0,
-              downloaded_bytes: 0,
-              elapsed_seconds: 0,
-            }).catch((e) => console.error("initial download progress update failed", e));
-          }
-
-          // Keep download tracking inside the response stream. A detached async task can
-          // be terminated by the host after the route handler returns, leaving a download
-          // stuck at 0% even though the browser received the entire file.
-          const sourceReader = assetResponse.body.getReader();
-          const startedAt = Date.now();
-          let downloadedBytes = 0;
-          let lastProgressUpdateAt = 0;
-          const trackedBody = new ReadableStream<Uint8Array>({
-            async pull(controller) {
-              try {
-                const { done, value } = await sourceReader.read();
-                if (done) {
-                  const expectedBytes = contentLength || downloadedBytes;
-                  const completed = expectedBytes > 0 && downloadedBytes >= expectedBytes;
-                  if (downloadId && !clientTracked) {
-                    await updateDownloadProgress(downloadId, {
-                      downloaded_bytes: downloadedBytes,
-                      total_bytes: expectedBytes,
-                      progress_percent: completed ? 100 : 99,
-                      elapsed_seconds: Math.max(0, Math.round((Date.now() - startedAt) / 1000)),
-                      completed,
-                      ...(completed ? { completed_at: new Date().toISOString() } : {}),
-                    });
-                    if (completed) {
-                      const notificationResult = await insertAdminNotification(supabaseAdmin, {
-                      type: "download_complete",
-                      type_detail: "download_complete",
-                      title: "Download Complete",
-                      body: `${sid ? sid.slice(0, 8) : meta.ip || "unknown"} - ${downloadFileName}`,
-                      session_id: sid,
-                      ip_address: meta.ip,
-                      country,
-                      browser: meta.browser,
-                      device: meta.device,
-                      filename: downloadFileName,
-                      payload: {
-                        download_id: downloadId,
-                        session_id: sid,
-                        ip_address: meta.ip,
-                        file_name: downloadFileName,
-                        downloaded_bytes: downloadedBytes,
-                        completed: true,
-                      },
-                      });
-                      if (!notificationResult.ok) {
-                        console.error("[Download] completion notification insert failed", notificationResult.error);
-                      }
-                    }
-                  }
-                  controller.close();
-                  return;
-                }
-
-                if (!value) return;
-                downloadedBytes += value.length;
-                const nowMs = Date.now();
-                if (downloadId && !clientTracked && nowMs - lastProgressUpdateAt >= 1000) {
-                  lastProgressUpdateAt = nowMs;
-                  await updateDownloadProgress(downloadId, {
-                    downloaded_bytes: downloadedBytes,
-                    total_bytes: contentLength,
-                    progress_percent: contentLength > 0 ? Math.min(99, Math.round((downloadedBytes / contentLength) * 100)) : 0,
-                    elapsed_seconds: Math.max(0, Math.round((nowMs - startedAt) / 1000)),
-                  });
-                }
-                controller.enqueue(value);
-              } catch (error) {
-                console.error("download stream failed", error);
-                controller.error(error);
-              }
-            },
-            async cancel(reason) {
-              await sourceReader.cancel(reason);
-            },
-          });
-
-          const headers = new Headers({
-            "Content-Type": assetResponse.headers.get("content-type") || "application/vnd.microsoft.portable-executable",
-            "Content-Disposition": `attachment; filename="${downloadFileName}"`,
-            "Cache-Control": "no-store",
-            ...(installCookie ? { "Set-Cookie": installCookie } : {}),
-          });
-          if (downloadId) headers.set("X-Download-Id", downloadId);
-          const contentLengthHeader = assetResponse.headers.get("content-length");
-          headers.set("Content-Length", contentLengthHeader || String(contentLength || KNOWN_PUBLIC_ARCHIVE_SIZE));
-
-          return new Response(trackedBody, {
-            status: 200,
-            headers,
-          });
-        } catch (error) {
-          console.error("[Download] public archive request failed", {
-            archiveUrl: archiveUrl.toString(),
-            error,
-          });
-          return new Response(JSON.stringify({ success: false, error: "Game file not found." }), {
-            status: 404,
-            headers: {
-              "content-type": "application/json",
-              "Cache-Control": "no-store",
-            },
-          });
-        }
+        const headers = new Headers({
+          Location: GITHUB_RELEASE_URL,
+          "Cache-Control": "no-store",
+        });
+        if (installCookie) headers.set("Set-Cookie", installCookie);
+        if (downloadId) headers.set("X-Download-Id", downloadId);
+        return new Response(null, { status: 302, headers });
       },
     },
   },
