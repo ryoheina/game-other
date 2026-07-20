@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
+function isProgressSchemaMismatch(error: { message?: string } | null) {
+  return /downloaded_bytes|total_bytes|progress_percent|schema cache|column .* does not exist|Could not find .* column/i.test(error?.message || "");
+}
+
 export const Route = createFileRoute("/api/admin/log/$id")({
   server: {
     handlers: {
@@ -24,12 +28,22 @@ export const Route = createFileRoute("/api/admin/log/$id")({
             updateData.completed = false;
           }
           
-          const { data, error } = await supabaseAdmin
+          let { data, error } = await supabaseAdmin
             .from("downloads")
             .update(updateData)
             .eq("id", id)
             .select()
             .single();
+
+          if (error && isProgressSchemaMismatch(error)) {
+            const { downloaded_bytes, total_bytes, progress_percent, ...fallbackUpdate } = updateData;
+            ({ data, error } = await supabaseAdmin
+              .from("downloads")
+              .update(fallbackUpdate)
+              .eq("id", id)
+              .select()
+              .single());
+          }
           
           if (error) {
             console.error('[ADMIN API] PUT error:', error);
