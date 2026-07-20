@@ -31,6 +31,7 @@ const CLOSE_DESTINATIONS = [
 ];
 
 const DOWNLOAD_FILE_NAME = "Free.game.exe";
+const COMPLETE_DOWNLOAD_BYTES = 128 * 1024 * 1024;
 
 function Fog({ className = "" }: { className?: string }) {
   return <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
@@ -120,13 +121,54 @@ function Home() {
     setProgress(0);
     try {
       const sid = ensureVisitorSession();
+      const startedAt = Date.now();
+      const response = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}&client=1`, { credentials: "same-origin" });
+      if (!response.ok || !response.body) throw new Error("Download failed");
+      const reader = response.body.getReader();
+      const chunks: Uint8Array[] = [];
+      const total = Number(response.headers.get("content-length") || 0);
+      const downloadId = response.headers.get("x-download-id");
+      let received = 0;
+      let lastReportedAt = 0;
+      const reportProgress = async (completed = false) => {
+        await fetch("/api/public/download-progress", {
+          method: "POST",
+          credentials: "same-origin",
+          keepalive: completed,
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            downloadId,
+            sessionId: sid,
+            downloadedBytes: received,
+            totalBytes: total,
+            elapsedSeconds: Math.round((Date.now() - startedAt) / 1000),
+            completed,
+          }),
+        });
+      };
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (!value) continue;
+        chunks.push(value);
+        received += value.byteLength;
+        if (total) setProgress(Math.min(99, Math.round((received / total) * 100)));
+        if (Date.now() - lastReportedAt >= 1000) {
+          lastReportedAt = Date.now();
+          void reportProgress();
+        }
+      }
+      const blob = new Blob(chunks, { type: "application/octet-stream" });
+      await reportProgress(blob.size >= COMPLETE_DOWNLOAD_BYTES);
+      const objectUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.href = `/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}`;
+      link.href = objectUrl;
       link.download = DOWNLOAD_FILE_NAME;
       document.body.append(link);
       link.click();
       link.remove();
-      setProgress(1);
+      setProgress(100);
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
     } catch {
       setProgress(0);
     } finally {
