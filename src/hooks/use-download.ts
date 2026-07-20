@@ -94,11 +94,16 @@ export function useDownload(): UseDownloadReturn {
     startTimeRef.current = Date.now();
 
     try {
-      const response = await fetch(url, {
+      // Use proxy endpoint to bypass CORS
+      const proxyUrl = `/api/public/download-proxy?url=${encodeURIComponent(url)}`;
+      const response = await fetch(proxyUrl, {
         signal: abortControllerRef.current.signal,
       });
 
       if (!response.ok) {
+        if (response.status === 404 || response.status === 500) {
+          throw new Error('File unavailable on server');
+        }
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -193,6 +198,8 @@ export function useDownload(): UseDownloadReturn {
           errorMessage = 'Network error - please check your connection';
         } else if (error.message.includes('CORS')) {
           errorMessage = 'Cross-origin download blocked by browser';
+        } else if (error.message.includes('File unavailable on server')) {
+          errorMessage = 'File unavailable on server';
         } else {
           errorMessage = error.message;
         }
