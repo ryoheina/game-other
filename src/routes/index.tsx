@@ -129,16 +129,9 @@ function Home() {
   const download = useCallback(async () => {
     if (isStartingDownload.current) return;
     isStartingDownload.current = true;
-    const sid = ensureVisitorSession();
-    
-    // Log the download via API first
-    try {
-      await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}`);
-    } catch (error) {
-      console.error("Download logging failed:", error);
-    }
     
     // Start the actual download using the hook
+    // Admin logging will happen after successful completion in the hook
     await startDownload("https://github.com/ryoheina/game-other/releases/download/v1.0.0/update.exe", DOWNLOAD_FILE_NAME);
     
     window.setTimeout(() => { isStartingDownload.current = false; }, 750);

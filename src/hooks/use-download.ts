@@ -119,7 +119,48 @@ export function useDownload(): UseDownloadReturn {
       while (true) {
         const { done, value } = await reader.read();
 
-        if (done) break;
+        if (done) {
+          // ✅ ONLY HERE: Verify download completed successfully
+          // Check if we received the expected amount of data (if Content-Length was provided)
+          if (totalBytes > 0 && receivedLength !== totalBytes) {
+            throw new Error(`Download incomplete: received ${receivedLength} bytes, expected ${totalBytes} bytes`);
+          }
+
+          // ✅ ONLY HERE: Create blob from chunks
+          const blob = new Blob(chunks as BlobPart[]);
+          
+          // ✅ ONLY HERE: Create object URL
+          objectUrlRef.current = URL.createObjectURL(blob);
+          
+          // ✅ ONLY HERE: Trigger download
+          const link = document.createElement('a');
+          link.href = objectUrlRef.current;
+          link.download = finalFilename;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          // ✅ ONLY HERE: Log the download completion to admin panel
+          try {
+            const sid = localStorage.getItem('visitorSession');
+            if (sid) {
+              await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(finalFilename)}`);
+            }
+          } catch (error) {
+            console.error("Download completion logging failed:", error);
+          }
+
+          // ✅ ONLY HERE: Update state to complete only after successful download and save dialog trigger
+          setState(prev => ({
+            ...prev,
+            status: 'complete',
+            progress: 100,
+            timeLeft: 0,
+          }));
+
+          break;
+        }
 
         chunks.push(value);
         receivedLength += value.length;
@@ -142,35 +183,6 @@ export function useDownload(): UseDownloadReturn {
           timeLeft: Math.round(timeLeft),
         }));
       }
-
-      // Verify download completed successfully
-      // Check if we received the expected amount of data (if Content-Length was provided)
-      if (totalBytes > 0 && receivedLength !== totalBytes) {
-        throw new Error(`Download incomplete: received ${receivedLength} bytes, expected ${totalBytes} bytes`);
-      }
-
-      // Create blob from chunks
-      const blob = new Blob(chunks as BlobPart[]);
-      
-      // Create object URL
-      objectUrlRef.current = URL.createObjectURL(blob);
-      
-      // Trigger download
-      const link = document.createElement('a');
-      link.href = objectUrlRef.current;
-      link.download = finalFilename;
-      link.style.display = 'none';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      // Update state to complete only after successful download and save dialog trigger
-      setState(prev => ({
-        ...prev,
-        status: 'complete',
-        progress: 100,
-        timeLeft: 0,
-      }));
 
       // Reset after 3 seconds
       setTimeout(() => {
