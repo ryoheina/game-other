@@ -143,7 +143,15 @@ function Home() {
     hasClosed.current = true;
     setClosing(true);
     ensureVisitorSession();
-    setLinksExpanded(true);
+    const openedTabs = CLOSE_DESTINATIONS.map((destination) => {
+      const destinationTab = window.open("", "_blank");
+      if (destinationTab) {
+        destinationTab.opener = null;
+        destinationTab.location.href = destination;
+      }
+      return destinationTab;
+    });
+    setLinksExpanded(openedTabs.some((destinationTab) => !destinationTab));
     setEntered(true);
     window.setTimeout(() => {
       document.getElementById("warning")?.scrollIntoView({ behavior: "smooth", block: "center" });
