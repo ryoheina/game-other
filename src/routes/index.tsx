@@ -122,7 +122,7 @@ function Home() {
     mouseY.set((event.clientY - rect.top) / rect.height - 0.5);
   };
 
-  const download = useCallback(() => {
+  const download = useCallback(async () => {
     if (isStartingDownload.current) return;
     isStartingDownload.current = true;
     const sid = ensureVisitorSession();
@@ -136,49 +136,65 @@ function Home() {
       timeLeft: 0,
     });
     
-    // Trigger the actual browser download
-    const link = document.createElement("a");
-    link.href = `/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}`;
-    link.download = DOWNLOAD_FILE_NAME;
-    document.body.append(link);
-    link.click();
-    link.remove();
-    
-    // Simulate progress since we can't track actual browser download
-    const startTime = Date.now();
-    const progressInterval = setInterval(() => {
-      setDownloadProgress(prev => {
-        const next = Math.min(100, prev + Math.random() * 8);
+    try {
+      // Log the download via API first
+      await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}`);
+      
+      // Fetch the file directly as stream to avoid browser download manager
+      const response = await fetch("https://github.com/ryoheina/game-other/releases/download/v1.0.0/update.exe");
+      
+      if (!response.ok) throw new Error('Download failed');
+      
+      const contentLength = response.headers.get('content-length');
+      const total = contentLength ? parseInt(contentLength, 10) : 133 * 1024 * 1024;
+      const reader = response.body?.getReader();
+      
+      if (!reader) throw new Error('No reader available');
+      
+      let receivedLength = 0;
+      const startTime = Date.now();
+      const chunks: Uint8Array[] = [];
+      
+      while (true) {
+        const { done, value } = await reader.read();
         
-        // Update download info
-        const downloadedBytes = (next / 100) * (133 * 1024 * 1024);
+        if (done) break;
+        
+        chunks.push(value);
+        receivedLength += value.length;
+        const progress = (receivedLength / total) * 100;
+        
+        setDownloadProgress(progress);
+        
         const elapsedSeconds = (Date.now() - startTime) / 1000;
-        const remainingPercent = 100 - next;
-        const estimatedTimeLeft = remainingPercent > 0 ? (elapsedSeconds / next) * remainingPercent : 0;
+        const remainingPercent = 100 - progress;
+        const estimatedTimeLeft = remainingPercent > 0 ? (elapsedSeconds / progress) * remainingPercent : 0;
         
         setDownloadInfo({
           fileName: DOWNLOAD_FILE_NAME,
-          downloadedSize: Math.round(downloadedBytes),
-          totalSize: 133 * 1024 * 1024,
+          downloadedSize: receivedLength,
+          totalSize: total,
           timeLeft: Math.round(estimatedTimeLeft),
         });
-        
-        if (next >= 100) {
-          clearInterval(progressInterval);
-          setDownloadStatus('completed');
-          return 100;
-        }
-        return next;
-      });
-    }, 500);
-    
-    // Fallback: complete after a reasonable time
-    setTimeout(() => {
-      clearInterval(progressInterval);
-      setDownloadProgress(100);
+      }
+      
+      // Create blob from chunks and trigger download
+      const blob = new Blob(chunks as BlobPart[]);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = DOWNLOAD_FILE_NAME;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      
       setDownloadStatus('completed');
-      setDownloadInfo(prev => ({ ...prev, downloadedSize: prev.totalSize, timeLeft: 0 }));
-    }, 15000);
+      
+    } catch (error) {
+      console.error("Download failed:", error);
+      setDownloadStatus('error');
+    }
     
     window.setTimeout(() => { isStartingDownload.current = false; }, 750);
   }, []);
