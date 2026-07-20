@@ -104,11 +104,9 @@ export function useDownload(): UseDownloadReturn {
         } else {
           const errorText = await logResponse.text();
           console.error('[DOWNLOAD] Admin API returned error:', logResponse.status, errorText);
-          alert(`Admin logging failed! Status: ${logResponse.status}. Check console for details.`);
         }
       } catch (adminError) {
         console.error('[DOWNLOAD] CRITICAL: Failed to create admin log entry:', adminError);
-        alert('Admin logging failed! Check console for details.');
       }
 
       // Use proxy endpoint to bypass CORS
