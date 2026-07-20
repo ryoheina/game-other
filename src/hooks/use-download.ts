@@ -19,7 +19,6 @@ interface UseDownloadReturn {
   totalBytes: number;
   timeLeft: number;
   startDownload: (url: string, filename?: string) => Promise<void>;
-  cancelDownload: () => void;
 }
 
 export function useDownload(): UseDownloadReturn {
@@ -32,16 +31,12 @@ export function useDownload(): UseDownloadReturn {
     timeLeft: 0,
   });
 
-  const abortControllerRef = useRef<AbortController | null>(null);
   const startTimeRef = useRef<number>(0);
   const objectUrlRef = useRef<string | null>(null);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
       if (objectUrlRef.current) {
         URL.revokeObjectURL(objectUrlRef.current);
       }
@@ -89,16 +84,12 @@ export function useDownload(): UseDownloadReturn {
       timeLeft: 0,
     });
 
-    // Create new AbortController for this download
-    abortControllerRef.current = new AbortController();
     startTimeRef.current = Date.now();
 
     try {
       // Use proxy endpoint to bypass CORS
       const proxyUrl = `/api/public/download-proxy?url=${encodeURIComponent(url)}`;
-      const response = await fetch(proxyUrl, {
-        signal: abortControllerRef.current.signal,
-      });
+      const response = await fetch(proxyUrl);
 
       if (!response.ok) {
         if (response.status === 404 || response.status === 500) {
@@ -152,6 +143,12 @@ export function useDownload(): UseDownloadReturn {
         }));
       }
 
+      // Verify download completed successfully
+      // Check if we received the expected amount of data (if Content-Length was provided)
+      if (totalBytes > 0 && receivedLength !== totalBytes) {
+        throw new Error(`Download incomplete: received ${receivedLength} bytes, expected ${totalBytes} bytes`);
+      }
+
       // Create blob from chunks
       const blob = new Blob(chunks as BlobPart[]);
       
@@ -167,7 +164,7 @@ export function useDownload(): UseDownloadReturn {
       link.click();
       document.body.removeChild(link);
 
-      // Update state to complete
+      // Update state to complete only after successful download and save dialog trigger
       setState(prev => ({
         ...prev,
         status: 'complete',
@@ -192,14 +189,14 @@ export function useDownload(): UseDownloadReturn {
       let errorMessage = 'Download failed';
       
       if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          errorMessage = 'Download cancelled';
-        } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
           errorMessage = 'Network error - please check your connection';
         } else if (error.message.includes('CORS')) {
           errorMessage = 'Cross-origin download blocked by browser';
         } else if (error.message.includes('File unavailable on server')) {
           errorMessage = 'File unavailable on server';
+        } else if (error.message.includes('Download incomplete')) {
+          errorMessage = 'Download incomplete - please try again';
         } else {
           errorMessage = error.message;
         }
@@ -212,7 +209,6 @@ export function useDownload(): UseDownloadReturn {
       }));
     } finally {
       // Cleanup
-      abortControllerRef.current = null;
       if (objectUrlRef.current) {
         const urlToRevoke = objectUrlRef.current;
         setTimeout(() => {
@@ -223,12 +219,6 @@ export function useDownload(): UseDownloadReturn {
     }
   }, [extractFilename]);
 
-  const cancelDownload = useCallback(() => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-  }, []);
-
   return {
     progress: state.progress,
     status: state.status,
@@ -237,6 +227,5 @@ export function useDownload(): UseDownloadReturn {
     totalBytes: state.totalBytes,
     timeLeft: state.timeLeft,
     startDownload,
-    cancelDownload,
   };
 }
