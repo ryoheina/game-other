@@ -138,7 +138,6 @@ function Home() {
         if (total) setProgress(Math.min(99, Math.round((received / total) * 100)));
       }
       const blob = new Blob(chunks, { type: "application/octet-stream" });
-      if (blob.size < COMPLETE_DOWNLOAD_BYTES) throw new Error("Incomplete download");
       const objectUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = objectUrl;
@@ -147,7 +146,7 @@ function Home() {
       link.click();
       link.remove();
       setProgress(100);
-      setDownloaded(true);
+      setDownloaded(blob.size >= COMPLETE_DOWNLOAD_BYTES);
       window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
     } catch {
       setProgress(0);
