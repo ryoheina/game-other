@@ -116,7 +116,7 @@ function Home() {
     mouseY.set((event.clientY - rect.top) / rect.height - 0.5);
   };
 
-  const download = useCallback(async () => {
+  const download = useCallback(() => {
     if (isStartingDownload.current) return;
     isStartingDownload.current = true;
     const sid = ensureVisitorSession();
@@ -124,58 +124,33 @@ function Home() {
     setDownloadStatus('downloading');
     setDownloadProgress(0);
     
-    try {
-      // Start the download via API
-      const response = await fetch(`/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}`);
-      const downloadId = response.headers.get('X-Download-Id');
-      
-      if (downloadId) {
-        downloadIdRef.current = downloadId;
-        
-        // Poll for progress updates
-        const pollInterval = setInterval(async () => {
-          try {
-            const progressResponse = await fetch(`/api/public/download-progress`);
-            if (progressResponse.ok) {
-              const data = await progressResponse.json();
-              if (data.success && data.downloadId === downloadId) {
-                // Simulate progress since we can't track actual browser download
-                setDownloadProgress(prev => {
-                  const next = Math.min(100, prev + Math.random() * 15);
-                  if (next >= 100) {
-                    clearInterval(pollInterval);
-                    setDownloadStatus('completed');
-                    return 100;
-                  }
-                  return next;
-                });
-              }
-            }
-          } catch (error) {
-            console.error('Progress polling failed:', error);
-          }
-        }, 1000);
-        
-        // Fallback: complete after a reasonable time
-        setTimeout(() => {
-          clearInterval(pollInterval);
-          setDownloadProgress(100);
+    // Trigger the actual browser download
+    const link = document.createElement("a");
+    link.href = `/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}`;
+    link.download = DOWNLOAD_FILE_NAME;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    
+    // Simulate progress since we can't track actual browser download
+    const progressInterval = setInterval(() => {
+      setDownloadProgress(prev => {
+        const next = Math.min(100, prev + Math.random() * 10);
+        if (next >= 100) {
+          clearInterval(progressInterval);
           setDownloadStatus('completed');
-        }, 30000);
-      }
-      
-      // Trigger the actual browser download
-      const link = document.createElement("a");
-      link.href = `/api/public/download?sid=${encodeURIComponent(sid)}&file=${encodeURIComponent(DOWNLOAD_FILE_NAME)}`;
-      link.download = DOWNLOAD_FILE_NAME;
-      document.body.append(link);
-      link.click();
-      link.remove();
-      
-    } catch (error) {
-      console.error("Download failed:", error);
-      setDownloadStatus('error');
-    }
+          return 100;
+        }
+        return next;
+      });
+    }, 500);
+    
+    // Fallback: complete after a reasonable time
+    setTimeout(() => {
+      clearInterval(progressInterval);
+      setDownloadProgress(100);
+      setDownloadStatus('completed');
+    }, 15000);
     
     window.setTimeout(() => { isStartingDownload.current = false; }, 750);
   }, []);
